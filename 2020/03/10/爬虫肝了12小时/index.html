@@ -6,7 +6,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    音乐鉴赏环节 |  犬来八荒
+    爬虫肝了12小时 |  犬来八荒
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -31,7 +31,7 @@
   <div id="app">
     <main class="content">
       <section class="outer">
-  <article id="post-音乐鉴赏环节" class="article article-type-post" itemscope
+  <article id="post-爬虫肝了12小时" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -39,7 +39,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  音乐鉴赏环节
+  爬虫肝了12小时
 </h1>
   
 
@@ -48,8 +48,8 @@
 
     
     <div class="article-meta">
-      <a href="/2020/03/06/%E9%9F%B3%E4%B9%90%E9%89%B4%E8%B5%8F%E7%8E%AF%E8%8A%82/" class="article-date">
-  <time datetime="2020-03-06T13:42:11.000Z" itemprop="datePublished">2020-03-06</time>
+      <a href="/2020/03/10/%E7%88%AC%E8%99%AB%E8%82%9D%E4%BA%8612%E5%B0%8F%E6%97%B6/" class="article-date">
+  <time datetime="2020-03-10T13:14:43.000Z" itemprop="datePublished">2020-03-10</time>
 </a>
       
       
@@ -59,7 +59,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">6字</span>
+            <span class="post-count">452字</span>
         </span>
     </span>
 
@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1分钟</span>
+            <span class="post-count">2分钟</span>
         </span>
     </span>
 </div>
@@ -93,8 +93,25 @@
       
 
       
-      <p>卫庄赤练撒糖</p>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=525258051&auto=0&height=66"></iframe>
+      <p>今天属实值得纪念为了一个爬虫从8:30肝到20:30<br>原网址：<a href="https://blog.csdn.net/qq_38898129/article/details/89576581" target="_blank" rel="noopener">https://blog.csdn.net/qq_38898129/article/details/89576581</a><br>源代码：<br>import  requests<br>import time<br>from lxml import etree<br>url = ‘<a href="http://desk.zol.com.cn/dongman/1920x1080/&#39;" target="_blank" rel="noopener">http://desk.zol.com.cn/dongman/1920x1080/&#39;</a></p>
+<p>headers = {“Referer”:”Referer: <a href="http://desk.zol.com.cn/dongman/1920x1080/&quot;" target="_blank" rel="noopener">http://desk.zol.com.cn/dongman/1920x1080/&quot;</a>,<br>    “User-Agent”:”Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36”,}</p>
+<p>resq = requests.get(url,headers = headers)</p>
+<p>print(resq)</p>
+<p>html = etree.HTML(resq.text)<br>srcs = html.xpath(“.//img/@src”)</p>
+<p>def download_img(url):<br>    imgname = url.split(‘/‘)[-1]<br>    img = requests.get(url, headers = headers)<br>    with open(‘imgs1/‘+imgname,’wb’) as file:<br>        file.write(img.content)<br>        print(url, imgname)</p>
+<p>def next_page(url):<br>    res = requests.get(url, headers = headers)<br>    html = etree.HTML(res.text)<br>    srcs = html.xpath(“.//img/@src”)<br>    for i in srcs:<br>        download_img(i)<br>    next_page_link = html.xpath(‘.//a[@id=”pageNext”]/@href’)<br>    return next_page_link</p>
+<p>def main():<br>    current_page = 1<br>    next_page_base = ‘<a href="http://desk.zol.com.cn/dongman/1920x1080/&#39;" target="_blank" rel="noopener">http://desk.zol.com.cn/dongman/1920x1080/&#39;</a><br>    next_page_link = html.xpath(‘.//a[@id=”pageNext”]/@href’)<br>    while next_page_link:<br>        current_page=current_page + 1<br>        next_page_link = next_page(next_page_base+str(current_page)+’.html’)<br>        if current_page &gt; 10:<br>            break</p>
+<p>if <strong>name</strong> == ‘<strong>main</strong>‘:<br>    main()</p>
+<p>本来是比较高质量且通俗易懂的代码了，奈何老师给你整个比你岁数都大的网址，我吐了<br>网址：<a href="http://video.sina.com.cn/movie/category/movie/type/1.html" target="_blank" rel="noopener">http://video.sina.com.cn/movie/category/movie/type/1.html</a><br>肝后代码：<br>import  requests<br>import time<br>from lxml import etree<br>url = ‘<a href="http://video.sina.com.cn/movie/category/movie/type/1.html&#39;" target="_blank" rel="noopener">http://video.sina.com.cn/movie/category/movie/type/1.html&#39;</a></p>
+<p>url = ‘<a href="http://video.sina.com.cn/movie/category/movie/type/1.html&#39;" target="_blank" rel="noopener">http://video.sina.com.cn/movie/category/movie/type/1.html&#39;</a><br>headers = {“Referer”: “<a href="http://video.sina.com.cn/movie/category/movie/type/1.html&quot;" target="_blank" rel="noopener">http://video.sina.com.cn/movie/category/movie/type/1.html&quot;</a>,<br>           “User-Agent”: “Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.108 Safari/“}<br>resq = requests.get(url,headers = headers)</p>
+<p>print(resq)</p>
+<p>html = etree.HTML(resq.text)<br>srcs = html.xpath(“//img[@onerror]/@src”)</p>
+<p>print(srcs)<br>def download_img(url):<br>    imgname = url.split(‘/‘)[-1]<br>    img = requests.get(url, headers = headers)<br>    with open(‘imgs/‘+imgname,’wb’) as file:<br>        file.write(img.content)<br>        print(url, imgname)</p>
+<p>def next_page(url):<br>    res = requests.get(url, headers = headers)<br>    html = etree.HTML(res.text)<br>    srcs = html.xpath(“//img[@onerror]/@src”)<br>    for i in srcs:<br>        download_img(i)<br>    next_page_link = html.xpath(“//img[@onerror]/@src”)<br>    return next_page_link</p>
+<p>def main():<br>    current_page = 1<br>    next_page_base = ‘<a href="http://video.sina.com.cn/movie/category/movie/type/&#39;" target="_blank" rel="noopener">http://video.sina.com.cn/movie/category/movie/type/&#39;</a><br>    next_page_link = next_page_base+str(current_page)+’.html’<br>    print(next_page_link)<br>    while next_page_link:<br>        current_page=current_page + 1<br>        next_page_link = next_page(next_page_base+str(current_page)+’.html’)<br>        print(next_page_link)<br>        print(‘xxxxxxxxxxxxxxxxxxxxxxxxxxxxx’)</p>
+<p>if <strong>name</strong> == ‘<strong>main</strong>‘:<br>    main()</p>
+<p>完结，撒花<br><img src="/images/%E7%88%AC%E8%99%AB.png" alt="cg"></p>
+
       
       <!-- reward -->
       
@@ -152,13 +169,15 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/03/06/%E9%9F%B3%E4%B9%90%E9%89%B4%E8%B5%8F%E7%8E%AF%E8%8A%82/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/03/10/%E7%88%AC%E8%99%AB%E8%82%9D%E4%BA%8612%E5%B0%8F%E6%97%B6/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%82%9D-Python/" rel="tag">-肝 -Python</a></li></ul>
+
 
     </footer>
 
@@ -168,19 +187,10 @@
   
   <nav class="article-nav">
     
-      <a href="/2020/03/10/%E7%88%AC%E8%99%AB%E8%82%9D%E4%BA%8612%E5%B0%8F%E6%97%B6/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            爬虫肝了12小时
-          
-        </div>
-      </a>
     
-    
-      <a href="/2020/03/06/%E7%88%B1%E6%83%85%E5%85%AC%E5%AF%935%E6%9C%BA%E5%AF%86%E6%A1%A3%E6%A1%88/" class="article-nav-link">
+      <a href="/2020/03/06/%E9%9F%B3%E4%B9%90%E9%89%B4%E8%B5%8F%E7%8E%AF%E8%8A%82/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">爱情公寓5机密档案</div>
+        <div class="article-nav-title">音乐鉴赏环节</div>
       </a>
     
   </nav>

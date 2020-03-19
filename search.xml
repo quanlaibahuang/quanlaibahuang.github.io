@@ -14,6 +14,7 @@ MyBatis 本是apache的一个开源项目ibatis, 2010年这个项目由apache �
 2013年11月迁移到Github .
 Mybatis官方文档 : http://www.mybatis.org/mybatis-3/zh/index.html
 GitHub : https://github.com/mybatis/mybatis-3
+<a id="more"></a>
 <h3>持久化</h3>>
 持久化是将程序数据在持久状态和瞬时状态间转换的机制。
 

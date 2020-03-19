@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    MyBatis：缓存 |  犬来八荒
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-MyBatis：缓存" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  MyBatis：缓存
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/03/19/MyBatis%EF%BC%9A%E7%BC%93%E5%AD%98/" class="article-date">
+  <time datetime="2020-03-19T10:35:43.000Z" itemprop="datePublished">2020-03-19</time>
+</a>
+      
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.3k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">9分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h3 id="a">缓存简介</h3>
+1.什么是缓存 [ Cache ]？
+
+<p>存在内存中的临时数据。<br>将用户经常查询的数据放在缓存（内存）中，用户去查询数据就不用从磁盘上(关系型数据库数据文件)查询，从缓存中查询，从而提高查询效率，解决了高并发系统的性能问题。</p>
+<a id="more"></a>
+<p>2.为什么使用缓存？</p>
+<p>减少和数据库的交互次数，减少系统开销，提高系统效率。<br>3.什么样的数据能使用缓存？</p>
+<p>经常查询并且不经常改变的数据。</p>
+<h3 id="b">Mybatis缓存</h3>
+MyBatis包含一个非常强大的查询缓存特性，它可以非常方便地定制和配置缓存。缓存可以极大的提升查询效率。
+MyBatis系统中默认定义了两级缓存：一级缓存和二级缓存
+
+<p>默认情况下，只有一级缓存开启。（SqlSession级别的缓存，也称为本地缓存）<br>二级缓存需要手动开启和配置，他是基于namespace级别的缓存。<br>为了提高扩展性，MyBatis定义了缓存接口Cache。我们可以通过实现Cache接口来自定义二级缓存</p>
+<h3 id="c">一级缓存</h3>
+一级缓存也叫本地缓存：
+
+<p>与数据库同一次会话期间查询到的数据会放在本地缓存中。<br>以后如果需要获取相同的数据，直接从缓存中拿，没必须再去查询数据库；</p>
+<h3 id="d">初体验测试</h3>
+1.在mybatis中加入日志，方便测试结果
+2.编写接口方法
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//根据id查询用户</span><br><span class="line">User queryUserById(@Param(<span class="string">"id"</span>) int id);</span><br></pre></td></tr></table></figure>
+
+<p>3.接口对应的Mapper文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;select id=<span class="string">"queryUserById"</span> resultType=<span class="string">"user"</span>&gt;</span><br><span class="line">    select * from user <span class="built_in">where</span> id = <span class="comment">#&#123;id&#125;</span></span><br><span class="line">&lt;/select&gt;</span><br></pre></td></tr></table></figure>
+
+<p>4.测试</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void <span class="function"><span class="title">testQueryUserById</span></span>()&#123;</span><br><span class="line">    SqlSession session = MybatisUtils.getSession();</span><br><span class="line">    UserMapper mapper = session.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    User user = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user);</span><br><span class="line">    User user2 = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user2);</span><br><span class="line">    System.out.println(user==user2);</span><br><span class="line"></span><br><span class="line">    session.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>5.结果分析</p>
+<p><img src="/images/innerimage/MybatisImage/20200319002.png" alt="cg"></p>
+<h3 id="e">一级缓存失效的四种情况</h3>
+一级缓存是SqlSession级别的缓存，是一直开启的，我们关闭不了它；
+一级缓存失效情况：没有使用到当前的一级缓存，效果就是，还需要再向数据库中发起一次查询请求！
+
+<p>sqlSession不同</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void <span class="function"><span class="title">testQueryUserById</span></span>()&#123;</span><br><span class="line">    SqlSession session = MybatisUtils.getSession();</span><br><span class="line">    SqlSession session2 = MybatisUtils.getSession();</span><br><span class="line">    UserMapper mapper = session.getMapper(UserMapper.class);</span><br><span class="line">    UserMapper mapper2 = session2.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    User user = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user);</span><br><span class="line">    User user2 = mapper2.queryUserById(1);</span><br><span class="line">    System.out.println(user2);</span><br><span class="line">    System.out.println(user==user2);</span><br><span class="line"></span><br><span class="line">    session.close();</span><br><span class="line">    session2.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>观察结果：发现发送了两条SQL语句！结论：每个sqlSession中的缓存相互独立</p>
+<p>sqlSession相同，查询条件不同</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void <span class="function"><span class="title">testQueryUserById</span></span>()&#123;</span><br><span class="line">    SqlSession session = MybatisUtils.getSession();</span><br><span class="line">    UserMapper mapper = session.getMapper(UserMapper.class);</span><br><span class="line">    UserMapper mapper2 = session.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    User user = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user);</span><br><span class="line">    User user2 = mapper2.queryUserById(2);</span><br><span class="line">    System.out.println(user2);</span><br><span class="line">    System.out.println(user==user2);</span><br><span class="line"></span><br><span class="line">    session.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>观察结果：发现发送了两条SQL语句！很正常的理解，结论：当前缓存中，不存在这个数据</p>
+<p>sqlSession相同，两次查询之间执行了增删改操作！</p>
+<p>增加方法</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//修改用户</span><br><span class="line">int updateUser(Map map);</span><br></pre></td></tr></table></figure>
+
+<p>编写SQL</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;update id=<span class="string">"updateUser"</span> parameterType=<span class="string">"map"</span>&gt;</span><br><span class="line">    update user <span class="built_in">set</span> name = <span class="comment">#&#123;name&#125; where id = #&#123;id&#125;</span></span><br><span class="line">&lt;/update&gt;</span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void <span class="function"><span class="title">testQueryUserById</span></span>()&#123;</span><br><span class="line">    SqlSession session = MybatisUtils.getSession();</span><br><span class="line">    UserMapper mapper = session.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    User user = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user);</span><br><span class="line"></span><br><span class="line">    HashMap map = new HashMap();</span><br><span class="line">    map.put(<span class="string">"name"</span>,<span class="string">"kuangshen"</span>);</span><br><span class="line">    map.put(<span class="string">"id"</span>,4);</span><br><span class="line">    mapper.updateUser(map);</span><br><span class="line"></span><br><span class="line">    User user2 = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user2);</span><br><span class="line"></span><br><span class="line">    System.out.println(user==user2);</span><br><span class="line"></span><br><span class="line">    session.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>观察结果：查询在中间执行了增删改操作后，重新执行了，结论：因为增删改操作可能会对当前数据产生影响</p>
+<p>sqlSession相同，手动清除一级缓存</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void <span class="function"><span class="title">testQueryUserById</span></span>()&#123;</span><br><span class="line">    SqlSession session = MybatisUtils.getSession();</span><br><span class="line">    UserMapper mapper = session.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    User user = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user);</span><br><span class="line"></span><br><span class="line">    session.clearCache();//手动清除缓存</span><br><span class="line"></span><br><span class="line">    User user2 = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user2);</span><br><span class="line"></span><br><span class="line">    System.out.println(user==user2);</span><br><span class="line"></span><br><span class="line">    session.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><b>所以说，一级缓存就是一个map</b></p>
+<h2 id="f">二级缓存</h2>
+二级缓存也叫全局缓存，一级缓存作用域太低了，所以诞生了二级缓存
+基于namespace级别的缓存，一个名称空间，对应一个二级缓存；
+工作机制
+
+<p>一个会话查询一条数据，这个数据就会被放在当前会话的一级缓存中；<br>如果当前会话关闭了，这个会话对应的一级缓存就没了；但是我们想要的是，会话关闭了，一级缓存中的数据被保存到二级缓存中；<br>新的会话查询信息，就可以从二级缓存中获取内容；<br>不同的mapper查出的数据会放在自己对应的缓存（map）中；</p>
+<h3 id="g">使用步骤</h3>
+官方文档
+
+<p>1.开启全局缓存 【mybatis-config.xml】</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;setting name=<span class="string">"cacheEnabled"</span> value=<span class="string">"true"</span>/&gt;</span><br></pre></td></tr></table></figure>
+
+<p>2.去每个mapper.xml中配置使用二级缓存，这个配置非常简单；【xxxMapper.xml】</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;cache/&gt;</span><br><span class="line"></span><br><span class="line">官方示例=====&gt;查看官方文档</span><br><span class="line">&lt;cache</span><br><span class="line">  eviction=<span class="string">"FIFO"</span></span><br><span class="line">  flushInterval=<span class="string">"60000"</span></span><br><span class="line">  size=<span class="string">"512"</span></span><br><span class="line">  readOnly=<span class="string">"true"</span>/&gt;</span><br><span class="line"></span><br><span class="line">&lt;!--这个更高级的配置创建了一个 FIFO 缓存，每隔 60 秒刷新，最多可以存储结果对象或列表的 512 个引用，而且返回的对象被认为是只读的，因此对它们进行修改可能会在不同线程中的调用者产生冲突。--&gt;</span><br></pre></td></tr></table></figure>
+
+<p>3.代码测试</p>
+<p>所有的实体类先实现序列化接口<br>测试代码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void <span class="function"><span class="title">testQueryUserById</span></span>()&#123;</span><br><span class="line">    SqlSession session = MybatisUtils.getSession();</span><br><span class="line">    SqlSession session2 = MybatisUtils.getSession();</span><br><span class="line"></span><br><span class="line">    UserMapper mapper = session.getMapper(UserMapper.class);</span><br><span class="line">    UserMapper mapper2 = session2.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    User user = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user);</span><br><span class="line">    session.close();</span><br><span class="line"></span><br><span class="line">    User user2 = mapper2.queryUserById(1);</span><br><span class="line">    System.out.println(user2);</span><br><span class="line">    System.out.println(user==user2);</span><br><span class="line"></span><br><span class="line">    session2.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="h">结论</h3>
+只要开启了二级缓存，我们在同一个Mapper中的查询，可以在二级缓存中拿到数据
+查出的数据都会被默认先放在一级缓存中
+只有会话提交或者关闭以后，一级缓存中的数据才会转到二级缓存中
+
+<h3 id="i">缓存原理</h3>
+
+<p><img src="/images/innerimage/MybatisImage/319004.png" alt="cg"></p>
+<h3 id="j">EhCache</h3>
+第三方缓存实现--EhCache: 查看百度百科
+
+<p>官方文档<br>Ehcache是一种广泛使用的java分布式缓存，用于通用缓存；<br>要在应用程序中使用Ehcache，需要引入依赖的jar包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- https://mvnrepository.com/artifact/org.mybatis.caches/mybatis-ehcache --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.mybatis.caches&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;mybatis-ehcache&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.1.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在mapper.xml中使用对应的缓存即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;mapper namespace = “org.acme.FooMapper” &gt; </span><br><span class="line">    &lt;cache <span class="built_in">type</span> = “org.mybatis.caches.ehcache.EhcacheCache” /&gt; </span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure>
+
+<p>编写ehcache.xml文件，如果在加载时未找到/ehcache.xml资源或出现问题，则将使用默认配置。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span>?&gt;</span><br><span class="line">&lt;ehcache xmlns:xsi=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span><br><span class="line">         xsi:noNamespaceSchemaLocation=<span class="string">"http://ehcache.org/ehcache.xsd"</span></span><br><span class="line">         updateCheck=<span class="string">"false"</span>&gt;</span><br><span class="line">    &lt;!--</span><br><span class="line">       diskStore：为缓存路径，ehcache分为内存和磁盘两级，此属性定义磁盘的缓存位置。参数解释如下：</span><br><span class="line">       user.home – 用户主目录</span><br><span class="line">       user.dir  – 用户当前工作目录</span><br><span class="line">       java.io.tmpdir – 默认临时文件路径</span><br><span class="line">     --&gt;</span><br><span class="line">    &lt;diskStore path=<span class="string">"./tmpdir/Tmp_EhCache"</span>/&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;defaultCache</span><br><span class="line">            eternal=<span class="string">"false"</span></span><br><span class="line">            maxElementsInMemory=<span class="string">"10000"</span></span><br><span class="line">            overflowToDisk=<span class="string">"false"</span></span><br><span class="line">            diskPersistent=<span class="string">"false"</span></span><br><span class="line">            timeToIdleSeconds=<span class="string">"1800"</span></span><br><span class="line">            timeToLiveSeconds=<span class="string">"259200"</span></span><br><span class="line">            memoryStoreEvictionPolicy=<span class="string">"LRU"</span>/&gt;</span><br><span class="line"> </span><br><span class="line">    &lt;cache</span><br><span class="line">            name=<span class="string">"cloud_user"</span></span><br><span class="line">            eternal=<span class="string">"false"</span></span><br><span class="line">            maxElementsInMemory=<span class="string">"5000"</span></span><br><span class="line">            overflowToDisk=<span class="string">"false"</span></span><br><span class="line">            diskPersistent=<span class="string">"false"</span></span><br><span class="line">            timeToIdleSeconds=<span class="string">"1800"</span></span><br><span class="line">            timeToLiveSeconds=<span class="string">"1800"</span></span><br><span class="line">            memoryStoreEvictionPolicy=<span class="string">"LRU"</span>/&gt;</span><br><span class="line">    &lt;!--</span><br><span class="line">       defaultCache：默认缓存策略，当ehcache找不到定义的缓存时，则使用这个缓存策略。只能定义一个。</span><br><span class="line">     --&gt;</span><br><span class="line">    &lt;!--</span><br><span class="line">      name:缓存名称。</span><br><span class="line">      maxElementsInMemory:缓存最大数目</span><br><span class="line">      maxElementsOnDisk：硬盘最大缓存个数。</span><br><span class="line">      eternal:对象是否永久有效，一但设置了，timeout将不起作用。</span><br><span class="line">      overflowToDisk:是否保存到磁盘，当系统当机时</span><br><span class="line">      timeToIdleSeconds:设置对象在失效前的允许闲置时间（单位：秒）。仅当eternal=<span class="literal">false</span>对象不是永久有效时使用，可选属性，默认值是0，也就是可闲置时间无穷大。</span><br><span class="line">      timeToLiveSeconds:设置对象在失效前允许存活时间（单位：秒）。最大时间介于创建时间和失效时间之间。仅当eternal=<span class="literal">false</span>对象不是永久有效时使用，默认是0.，也就是对象存活时间无穷大。</span><br><span class="line">      diskPersistent：是否缓存虚拟机重启期数据 Whether the disk store persists between restarts of the Virtual Machine. The default value is <span class="literal">false</span>.</span><br><span class="line">      diskSpoolBufferSizeMB：这个参数设置DiskStore（磁盘缓存）的缓存区大小。默认是30MB。每个Cache都应该有自己的一个缓冲区。</span><br><span class="line">      diskExpiryThreadIntervalSeconds：磁盘失效线程运行时间间隔，默认是120秒。</span><br><span class="line">      memoryStoreEvictionPolicy：当达到maxElementsInMemory限制时，Ehcache将会根据指定的策略去清理内存。默认策略是LRU（最近最少使用）。你可以设置为FIFO（先进先出）或是LFU（较少使用）。</span><br><span class="line">      clearOnFlush：内存数量最大时是否清除。</span><br><span class="line">      memoryStoreEvictionPolicy:可选策略有：LRU（最近最少使用，默认策略）、FIFO（先进先出）、LFU（最少访问次数）。</span><br><span class="line">      FIFO，first <span class="keyword">in</span> first out，这个是大家最熟的，先进先出。</span><br><span class="line">      LFU， Less Frequently Used，就是上面例子中使用的策略，直白一点就是讲一直以来最少被使用的。如上面所讲，缓存的元素有一个hit属性，hit值最小的将会被清出缓存。</span><br><span class="line">      LRU，Least Recently Used，最近最少使用的，缓存的元素有一个时间戳，当缓存容量满了，而又需要腾出地方来缓存新的元素的时候，那么现有缓存元素中时间戳离当前时间最远的元素将被清出缓存。</span><br><span class="line">   --&gt;</span><br><span class="line"></span><br><span class="line">&lt;/ehcache&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+          
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/03/19/MyBatis%EF%BC%9A%E7%BC%93%E5%AD%98/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mybatis/" rel="tag">Mybatis</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+    
+      <a href="/2020/03/19/MyBatis%EF%BC%9A%E4%B8%80%E5%AF%B9%E5%A4%9A%E3%80%81%E5%A4%9A%E5%AF%B9%E4%B8%80%E5%A4%84%E7%90%86/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">MyBatis：一对多、多对一处理</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: '',
+        app_key: '',
+        path: window.location.pathname,
+        notify: 'false',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2020
+        花重锦官城
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <kbd>访问量:<span id="busuanzi_value_page_pv"></span></kbd>
+  <kbd>访客数:<span id="busuanzi_value_site_uv"></span></kbd>
+</span>
+        
+      </li>
+      
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+    <aside class="sidebar">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="犬来八荒"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">目录</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://chengguolaogongya.lofter.com/" target="_blank" rel="noopener">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+    strings: ['浮生有梦三千场 穷尽千里诗酒荒','徒把理想倾倒','不如早还乡'],
+    startDelay: 0,
+    typeSpeed: 100,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+  } catch (err) {
+  }
+  
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1321020935&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

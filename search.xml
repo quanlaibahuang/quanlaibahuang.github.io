@@ -1,6 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>MyBatis：缓存</title>
+    <url>/2020/03/19/MyBatis%EF%BC%9A%E7%BC%93%E5%AD%98/</url>
+    <content><![CDATA[<h3 id="a">缓存简介</h3>
+1.什么是缓存 [ Cache ]？
+
+<p>存在内存中的临时数据。<br>将用户经常查询的数据放在缓存（内存）中，用户去查询数据就不用从磁盘上(关系型数据库数据文件)查询，从缓存中查询，从而提高查询效率，解决了高并发系统的性能问题。</p>
+<a id="more"></a>
+<p>2.为什么使用缓存？</p>
+<p>减少和数据库的交互次数，减少系统开销，提高系统效率。<br>3.什么样的数据能使用缓存？</p>
+<p>经常查询并且不经常改变的数据。</p>
+<h3 id="b">Mybatis缓存</h3>
+MyBatis包含一个非常强大的查询缓存特性，它可以非常方便地定制和配置缓存。缓存可以极大的提升查询效率。
+MyBatis系统中默认定义了两级缓存：一级缓存和二级缓存
+
+<p>默认情况下，只有一级缓存开启。（SqlSession级别的缓存，也称为本地缓存）<br>二级缓存需要手动开启和配置，他是基于namespace级别的缓存。<br>为了提高扩展性，MyBatis定义了缓存接口Cache。我们可以通过实现Cache接口来自定义二级缓存</p>
+<h3 id="c">一级缓存</h3>
+一级缓存也叫本地缓存：
+
+<p>与数据库同一次会话期间查询到的数据会放在本地缓存中。<br>以后如果需要获取相同的数据，直接从缓存中拿，没必须再去查询数据库；</p>
+<h3 id="d">初体验测试</h3>
+1.在mybatis中加入日志，方便测试结果
+2.编写接口方法
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">//根据id查询用户</span><br><span class="line">User queryUserById(@Param(<span class="string">"id"</span>) int id);</span><br></pre></td></tr></table></figure>
+
+<p>3.接口对应的Mapper文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;select id=<span class="string">"queryUserById"</span> resultType=<span class="string">"user"</span>&gt;</span><br><span class="line">    select * from user <span class="built_in">where</span> id = <span class="comment">#&#123;id&#125;</span></span><br><span class="line">&lt;/select&gt;</span><br></pre></td></tr></table></figure>
+
+<p>4.测试</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void <span class="function"><span class="title">testQueryUserById</span></span>()&#123;</span><br><span class="line">    SqlSession session = MybatisUtils.getSession();</span><br><span class="line">    UserMapper mapper = session.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    User user = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user);</span><br><span class="line">    User user2 = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user2);</span><br><span class="line">    System.out.println(user==user2);</span><br><span class="line"></span><br><span class="line">    session.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>5.结果分析</p>
+<p><img src="/images/innerimage/MybatisImage/20200319002.png" alt="cg"></p>
+<h3 id="e">一级缓存失效的四种情况</h3>
+一级缓存是SqlSession级别的缓存，是一直开启的，我们关闭不了它；
+一级缓存失效情况：没有使用到当前的一级缓存，效果就是，还需要再向数据库中发起一次查询请求！
+
+<p>sqlSession不同</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void <span class="function"><span class="title">testQueryUserById</span></span>()&#123;</span><br><span class="line">    SqlSession session = MybatisUtils.getSession();</span><br><span class="line">    SqlSession session2 = MybatisUtils.getSession();</span><br><span class="line">    UserMapper mapper = session.getMapper(UserMapper.class);</span><br><span class="line">    UserMapper mapper2 = session2.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    User user = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user);</span><br><span class="line">    User user2 = mapper2.queryUserById(1);</span><br><span class="line">    System.out.println(user2);</span><br><span class="line">    System.out.println(user==user2);</span><br><span class="line"></span><br><span class="line">    session.close();</span><br><span class="line">    session2.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>观察结果：发现发送了两条SQL语句！结论：每个sqlSession中的缓存相互独立</p>
+<p>sqlSession相同，查询条件不同</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void <span class="function"><span class="title">testQueryUserById</span></span>()&#123;</span><br><span class="line">    SqlSession session = MybatisUtils.getSession();</span><br><span class="line">    UserMapper mapper = session.getMapper(UserMapper.class);</span><br><span class="line">    UserMapper mapper2 = session.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    User user = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user);</span><br><span class="line">    User user2 = mapper2.queryUserById(2);</span><br><span class="line">    System.out.println(user2);</span><br><span class="line">    System.out.println(user==user2);</span><br><span class="line"></span><br><span class="line">    session.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>观察结果：发现发送了两条SQL语句！很正常的理解，结论：当前缓存中，不存在这个数据</p>
+<p>sqlSession相同，两次查询之间执行了增删改操作！</p>
+<p>增加方法</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">//修改用户</span><br><span class="line">int updateUser(Map map);</span><br></pre></td></tr></table></figure>
+
+<p>编写SQL</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;update id=<span class="string">"updateUser"</span> parameterType=<span class="string">"map"</span>&gt;</span><br><span class="line">    update user <span class="built_in">set</span> name = <span class="comment">#&#123;name&#125; where id = #&#123;id&#125;</span></span><br><span class="line">&lt;/update&gt;</span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void <span class="function"><span class="title">testQueryUserById</span></span>()&#123;</span><br><span class="line">    SqlSession session = MybatisUtils.getSession();</span><br><span class="line">    UserMapper mapper = session.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    User user = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user);</span><br><span class="line"></span><br><span class="line">    HashMap map = new HashMap();</span><br><span class="line">    map.put(<span class="string">"name"</span>,<span class="string">"kuangshen"</span>);</span><br><span class="line">    map.put(<span class="string">"id"</span>,4);</span><br><span class="line">    mapper.updateUser(map);</span><br><span class="line"></span><br><span class="line">    User user2 = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user2);</span><br><span class="line"></span><br><span class="line">    System.out.println(user==user2);</span><br><span class="line"></span><br><span class="line">    session.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>观察结果：查询在中间执行了增删改操作后，重新执行了，结论：因为增删改操作可能会对当前数据产生影响</p>
+<p>sqlSession相同，手动清除一级缓存</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void <span class="function"><span class="title">testQueryUserById</span></span>()&#123;</span><br><span class="line">    SqlSession session = MybatisUtils.getSession();</span><br><span class="line">    UserMapper mapper = session.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    User user = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user);</span><br><span class="line"></span><br><span class="line">    session.clearCache();//手动清除缓存</span><br><span class="line"></span><br><span class="line">    User user2 = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user2);</span><br><span class="line"></span><br><span class="line">    System.out.println(user==user2);</span><br><span class="line"></span><br><span class="line">    session.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><b>所以说，一级缓存就是一个map</b></p>
+<h2 id="f">二级缓存</h2>
+二级缓存也叫全局缓存，一级缓存作用域太低了，所以诞生了二级缓存
+基于namespace级别的缓存，一个名称空间，对应一个二级缓存；
+工作机制
+
+<p>一个会话查询一条数据，这个数据就会被放在当前会话的一级缓存中；<br>如果当前会话关闭了，这个会话对应的一级缓存就没了；但是我们想要的是，会话关闭了，一级缓存中的数据被保存到二级缓存中；<br>新的会话查询信息，就可以从二级缓存中获取内容；<br>不同的mapper查出的数据会放在自己对应的缓存（map）中；</p>
+<h3 id="g">使用步骤</h3>
+官方文档
+
+<p>1.开启全局缓存 【mybatis-config.xml】</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;setting name=<span class="string">"cacheEnabled"</span> value=<span class="string">"true"</span>/&gt;</span><br></pre></td></tr></table></figure>
+
+<p>2.去每个mapper.xml中配置使用二级缓存，这个配置非常简单；【xxxMapper.xml】</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;cache/&gt;</span><br><span class="line"></span><br><span class="line">官方示例=====&gt;查看官方文档</span><br><span class="line">&lt;cache</span><br><span class="line">  eviction=<span class="string">"FIFO"</span></span><br><span class="line">  flushInterval=<span class="string">"60000"</span></span><br><span class="line">  size=<span class="string">"512"</span></span><br><span class="line">  readOnly=<span class="string">"true"</span>/&gt;</span><br><span class="line"></span><br><span class="line">&lt;!--这个更高级的配置创建了一个 FIFO 缓存，每隔 60 秒刷新，最多可以存储结果对象或列表的 512 个引用，而且返回的对象被认为是只读的，因此对它们进行修改可能会在不同线程中的调用者产生冲突。--&gt;</span><br></pre></td></tr></table></figure>
+
+<p>3.代码测试</p>
+<p>所有的实体类先实现序列化接口<br>测试代码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void <span class="function"><span class="title">testQueryUserById</span></span>()&#123;</span><br><span class="line">    SqlSession session = MybatisUtils.getSession();</span><br><span class="line">    SqlSession session2 = MybatisUtils.getSession();</span><br><span class="line"></span><br><span class="line">    UserMapper mapper = session.getMapper(UserMapper.class);</span><br><span class="line">    UserMapper mapper2 = session2.getMapper(UserMapper.class);</span><br><span class="line"></span><br><span class="line">    User user = mapper.queryUserById(1);</span><br><span class="line">    System.out.println(user);</span><br><span class="line">    session.close();</span><br><span class="line"></span><br><span class="line">    User user2 = mapper2.queryUserById(1);</span><br><span class="line">    System.out.println(user2);</span><br><span class="line">    System.out.println(user==user2);</span><br><span class="line"></span><br><span class="line">    session2.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="h">结论</h3>
+只要开启了二级缓存，我们在同一个Mapper中的查询，可以在二级缓存中拿到数据
+查出的数据都会被默认先放在一级缓存中
+只有会话提交或者关闭以后，一级缓存中的数据才会转到二级缓存中
+
+<h3 id="i">缓存原理</h3>
+
+<p><img src="/images/innerimage/MybatisImage/319004.png" alt="cg"></p>
+<h3 id="j">EhCache</h3>
+第三方缓存实现--EhCache: 查看百度百科
+
+<p>官方文档<br>Ehcache是一种广泛使用的java分布式缓存，用于通用缓存；<br>要在应用程序中使用Ehcache，需要引入依赖的jar包</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;!-- https://mvnrepository.com/artifact/org.mybatis.caches/mybatis-ehcache --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.mybatis.caches&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;mybatis-ehcache&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.1.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在mapper.xml中使用对应的缓存即可</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;mapper namespace = “org.acme.FooMapper” &gt; </span><br><span class="line">    &lt;cache <span class="built_in">type</span> = “org.mybatis.caches.ehcache.EhcacheCache” /&gt; </span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure>
+
+<p>编写ehcache.xml文件，如果在加载时未找到/ehcache.xml资源或出现问题，则将使用默认配置。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span>?&gt;</span><br><span class="line">&lt;ehcache xmlns:xsi=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span><br><span class="line">         xsi:noNamespaceSchemaLocation=<span class="string">"http://ehcache.org/ehcache.xsd"</span></span><br><span class="line">         updateCheck=<span class="string">"false"</span>&gt;</span><br><span class="line">    &lt;!--</span><br><span class="line">       diskStore：为缓存路径，ehcache分为内存和磁盘两级，此属性定义磁盘的缓存位置。参数解释如下：</span><br><span class="line">       user.home – 用户主目录</span><br><span class="line">       user.dir  – 用户当前工作目录</span><br><span class="line">       java.io.tmpdir – 默认临时文件路径</span><br><span class="line">     --&gt;</span><br><span class="line">    &lt;diskStore path=<span class="string">"./tmpdir/Tmp_EhCache"</span>/&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;defaultCache</span><br><span class="line">            eternal=<span class="string">"false"</span></span><br><span class="line">            maxElementsInMemory=<span class="string">"10000"</span></span><br><span class="line">            overflowToDisk=<span class="string">"false"</span></span><br><span class="line">            diskPersistent=<span class="string">"false"</span></span><br><span class="line">            timeToIdleSeconds=<span class="string">"1800"</span></span><br><span class="line">            timeToLiveSeconds=<span class="string">"259200"</span></span><br><span class="line">            memoryStoreEvictionPolicy=<span class="string">"LRU"</span>/&gt;</span><br><span class="line"> </span><br><span class="line">    &lt;cache</span><br><span class="line">            name=<span class="string">"cloud_user"</span></span><br><span class="line">            eternal=<span class="string">"false"</span></span><br><span class="line">            maxElementsInMemory=<span class="string">"5000"</span></span><br><span class="line">            overflowToDisk=<span class="string">"false"</span></span><br><span class="line">            diskPersistent=<span class="string">"false"</span></span><br><span class="line">            timeToIdleSeconds=<span class="string">"1800"</span></span><br><span class="line">            timeToLiveSeconds=<span class="string">"1800"</span></span><br><span class="line">            memoryStoreEvictionPolicy=<span class="string">"LRU"</span>/&gt;</span><br><span class="line">    &lt;!--</span><br><span class="line">       defaultCache：默认缓存策略，当ehcache找不到定义的缓存时，则使用这个缓存策略。只能定义一个。</span><br><span class="line">     --&gt;</span><br><span class="line">    &lt;!--</span><br><span class="line">      name:缓存名称。</span><br><span class="line">      maxElementsInMemory:缓存最大数目</span><br><span class="line">      maxElementsOnDisk：硬盘最大缓存个数。</span><br><span class="line">      eternal:对象是否永久有效，一但设置了，timeout将不起作用。</span><br><span class="line">      overflowToDisk:是否保存到磁盘，当系统当机时</span><br><span class="line">      timeToIdleSeconds:设置对象在失效前的允许闲置时间（单位：秒）。仅当eternal=<span class="literal">false</span>对象不是永久有效时使用，可选属性，默认值是0，也就是可闲置时间无穷大。</span><br><span class="line">      timeToLiveSeconds:设置对象在失效前允许存活时间（单位：秒）。最大时间介于创建时间和失效时间之间。仅当eternal=<span class="literal">false</span>对象不是永久有效时使用，默认是0.，也就是对象存活时间无穷大。</span><br><span class="line">      diskPersistent：是否缓存虚拟机重启期数据 Whether the disk store persists between restarts of the Virtual Machine. The default value is <span class="literal">false</span>.</span><br><span class="line">      diskSpoolBufferSizeMB：这个参数设置DiskStore（磁盘缓存）的缓存区大小。默认是30MB。每个Cache都应该有自己的一个缓冲区。</span><br><span class="line">      diskExpiryThreadIntervalSeconds：磁盘失效线程运行时间间隔，默认是120秒。</span><br><span class="line">      memoryStoreEvictionPolicy：当达到maxElementsInMemory限制时，Ehcache将会根据指定的策略去清理内存。默认策略是LRU（最近最少使用）。你可以设置为FIFO（先进先出）或是LFU（较少使用）。</span><br><span class="line">      clearOnFlush：内存数量最大时是否清除。</span><br><span class="line">      memoryStoreEvictionPolicy:可选策略有：LRU（最近最少使用，默认策略）、FIFO（先进先出）、LFU（最少访问次数）。</span><br><span class="line">      FIFO，first <span class="keyword">in</span> first out，这个是大家最熟的，先进先出。</span><br><span class="line">      LFU， Less Frequently Used，就是上面例子中使用的策略，直白一点就是讲一直以来最少被使用的。如上面所讲，缓存的元素有一个hit属性，hit值最小的将会被清出缓存。</span><br><span class="line">      LRU，Least Recently Used，最近最少使用的，缓存的元素有一个时间戳，当缓存容量满了，而又需要腾出地方来缓存新的元素的时候，那么现有缓存元素中时间戳离当前时间最远的元素将被清出缓存。</span><br><span class="line">   --&gt;</span><br><span class="line"></span><br><span class="line">&lt;/ehcache&gt;</span><br></pre></td></tr></table></figure>
+
+
+]]></content>
+      <tags>
+        <tag>Mybatis</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MyBatis：一对多、多对一处理</title>
     <url>/2020/03/19/MyBatis%EF%BC%9A%E4%B8%80%E5%AF%B9%E5%A4%9A%E3%80%81%E5%A4%9A%E5%AF%B9%E4%B8%80%E5%A4%84%E7%90%86/</url>
     <content><![CDATA[<h2>多对一的处理</h2>

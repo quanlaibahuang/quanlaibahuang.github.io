@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Spring：自动装配 |  犬来八荒
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-Spring：自动装配" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Spring：自动装配
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/03/20/Spring%EF%BC%9A%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D/" class="article-date">
+  <time datetime="2020-03-20T11:48:10.000Z" itemprop="datePublished">2020-03-20</time>
+</a>
+      
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.8k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">8分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="z">Bean的自动装配</h2>
+自动装配是使用spring满足bean依赖的一种方法
+spring会在应用上下文中为某个bean寻找其依赖的bean。
+Spring中bean有三种装配机制，分别是：
+
+<p>1.在xml中显式配置；<br>2.在java中显式配置；<br>3.隐式的bean发现机制和自动装配。</p>
+<a id="more"></a>
+
+<p>这里我们主要讲第三种：自动化的装配bean。</p>
+<p>Spring的自动装配需要从两个角度来实现，或者说是两个操作：</p>
+<p>1.组件扫描(component scanning)：spring会自动发现应用上下文中所创建的bean；<br>2.自动装配(autowiring)：spring自动满足bean之间的依赖，也就是我们说的IoC/DI；<br>组件扫描和自动装配组合发挥巨大威力，使的显示的配置降低到最少。</p>
+<p><b>推荐不使用自动装配xml配置 , 而使用注解 .</b></p>
+<h3 id="a">测试环境搭建</h3>
+1.新建一个项目
+2.新建两个实体类，Cat Dog 都有一个叫的方法
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class Cat &#123;</span><br><span class="line">    public void <span class="function"><span class="title">shout</span></span>() &#123;</span><br><span class="line">        System.out.println(<span class="string">"miao~"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class Dog &#123;</span><br><span class="line">    public void <span class="function"><span class="title">shout</span></span>() &#123;</span><br><span class="line">        System.out.println(<span class="string">"wang~"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3.新建一个用户类 User</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class User &#123;</span><br><span class="line">    private Cat cat;</span><br><span class="line">    private Dog dog;</span><br><span class="line">    private String str;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>4.编写Spring配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span>?&gt;</span><br><span class="line">&lt;beans xmlns=<span class="string">"http://www.springframework.org/schema/beans"</span></span><br><span class="line">       xmlns:xsi=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span><br><span class="line">       xsi:schemaLocation=<span class="string">"http://www.springframework.org/schema/beans</span></span><br><span class="line"><span class="string">        http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;bean id=<span class="string">"dog"</span> class=<span class="string">"com.kuang.pojo.Dog"</span>/&gt;</span><br><span class="line">    &lt;bean id=<span class="string">"cat"</span> class=<span class="string">"com.kuang.pojo.Cat"</span>/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;bean id=<span class="string">"user"</span> class=<span class="string">"com.kuang.pojo.User"</span>&gt;</span><br><span class="line">        &lt;property name=<span class="string">"cat"</span> ref=<span class="string">"cat"</span>/&gt;</span><br><span class="line">        &lt;property name=<span class="string">"dog"</span> ref=<span class="string">"dog"</span>/&gt;</span><br><span class="line">        &lt;property name=<span class="string">"str"</span> value=<span class="string">"qinjiang"</span>/&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+
+<p>5.测试</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class MyTest &#123;</span><br><span class="line">    @Test</span><br><span class="line">    public void <span class="function"><span class="title">testMethodAutowire</span></span>() &#123;</span><br><span class="line">        ApplicationContext context = new ClassPathXmlApplicationContext(<span class="string">"beans.xml"</span>);</span><br><span class="line">        User user = (User) context.getBean(<span class="string">"user"</span>);</span><br><span class="line">        user.getCat().shout();</span><br><span class="line">        user.getDog().shout();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果正常输出，环境OK</p>
+<h3 id="b">byName</h3>
+<b>autowire byName (按名称自动装配)</b>
+
+<p>由于在手动配置xml过程中，常常发生字母缺漏和大小写等错误，而无法对其进行检查，使得开发效率降低。</p>
+<p>采用自动装配将避免这些错误，并且使配置简单化。</p>
+<p>测试：</p>
+<p>1.修改bean配置，增加一个属性 autowire=”byName”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;bean id=<span class="string">"user"</span> class=<span class="string">"com.kuang.pojo.User"</span> autowire=<span class="string">"byName"</span>&gt;</span><br><span class="line">    &lt;property name=<span class="string">"str"</span> value=<span class="string">"qinjiang"</span>/&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+
+<p>2.再次测试，结果依旧成功输出！<br>3.我们将 cat 的bean id修改为 catXXX<br>4.再次测试， 执行时报空指针java.lang.NullPointerException。因为按byName规则找不对应set方法，真正的setCat就没执行，对象就没有初始化，所以调用时就会报空指针错误。<br><b>小结：</b></p>
+<p>当一个bean节点带有 autowire byName的属性时。</p>
+<p>1.将查找其类中所有的set方法名，例如setCat，获得将set去掉并且首字母小写的字符串，即cat。<br>2.去spring容器中寻找是否有此字符串名称id的对象。<br>3.如果有，就取出注入；如果没有，就报空指针异常。</p>
+<h3 id="c">byType</h3>
+<b>autowire byType (按类型自动装配)</b>
+
+<p>使用autowire byType首先需要保证：同一类型的对象，在spring容器中唯一。如果不唯一，会报不唯一的异常。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NoUniqueBeanDefinitionException</span><br></pre></td></tr></table></figure>
+
+<p>测试：</p>
+<p>1.将user的bean配置修改一下 ： autowire=”byType”<br>2.测试，正常输出<br>3.在注册一个cat 的bean对象！</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;bean id=<span class="string">"dog"</span> class=<span class="string">"com.kuang.pojo.Dog"</span>/&gt;</span><br><span class="line">&lt;bean id=<span class="string">"cat"</span> class=<span class="string">"com.kuang.pojo.Cat"</span>/&gt;</span><br><span class="line">&lt;bean id=<span class="string">"cat2"</span> class=<span class="string">"com.kuang.pojo.Cat"</span>/&gt;</span><br><span class="line"></span><br><span class="line">&lt;bean id=<span class="string">"user"</span> class=<span class="string">"com.kuang.pojo.User"</span> autowire=<span class="string">"byType"</span>&gt;</span><br><span class="line">    &lt;property name=<span class="string">"str"</span> value=<span class="string">"qinjiang"</span>/&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+
+<p>4.测试，报错：NoUniqueBeanDefinitionException<br>5.删掉cat2，将cat的bean名称改掉！测试！因为是按类型装配，所以并不会报异常，也不影响最后的结果。甚至将id属性去掉，也不影响结果。</p>
+<p>这就是按照类型自动装配！</p>
+<h3 id="d">使用注解</h3>
+jdk1.5开始支持注解，spring2.5开始全面支持注解。
+
+<p>准备工作： 利用注解的方式注入属性。</p>
+<p>1.在spring配置文件中引入context文件头</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xmlns:context=<span class="string">"http://www.springframework.org/schema/context"</span></span><br><span class="line"></span><br><span class="line">http://www.springframework.org/schema/context</span><br><span class="line">http://www.springframework.org/schema/context/spring-context.xsd</span><br></pre></td></tr></table></figure>
+
+<p>2.开启属性注解支持！</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;context:annotation-config/&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="e">@Autowired</h3>
+@Autowired是按类型自动转配的，不支持id匹配。
+需要导入 spring-aop的包！
+测试：
+
+<p>1.将User类中的set方法去掉，使用@Autowired注解</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public class User &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private Cat cat;</span><br><span class="line">    @Autowired</span><br><span class="line">    private Dog dog;</span><br><span class="line">    private String str;</span><br><span class="line"></span><br><span class="line">    public Cat <span class="function"><span class="title">getCat</span></span>() &#123;</span><br><span class="line">        <span class="built_in">return</span> cat;</span><br><span class="line">    &#125;</span><br><span class="line">    public Dog <span class="function"><span class="title">getDog</span></span>() &#123;</span><br><span class="line">        <span class="built_in">return</span> dog;</span><br><span class="line">    &#125;</span><br><span class="line">    public String <span class="function"><span class="title">getStr</span></span>() &#123;</span><br><span class="line">        <span class="built_in">return</span> str;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2.此时配置文件内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;context:annotation-config/&gt;</span><br><span class="line"></span><br><span class="line">&lt;bean id=<span class="string">"dog"</span> class=<span class="string">"com.kuang.pojo.Dog"</span>/&gt;</span><br><span class="line">&lt;bean id=<span class="string">"cat"</span> class=<span class="string">"com.kuang.pojo.Cat"</span>/&gt;</span><br><span class="line">&lt;bean id=<span class="string">"user"</span> class=<span class="string">"com.kuang.pojo.User"</span>/&gt;</span><br></pre></td></tr></table></figure>
+
+<p>3.测试，成功输出结果！<br>【秦疆科普时间】</p>
+<p>@Autowired(required=false) 说明： false，对象可以为null；true，对象必须存对象，不能为null。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">//如果允许对象为null，设置required = <span class="literal">false</span>,默认为<span class="literal">true</span></span><br><span class="line">@Autowired(required = <span class="literal">false</span>)</span><br><span class="line">private Cat cat;</span><br></pre></td></tr></table></figure>
+
+<h3 id="f">@Qualifier</h3>
+@Autowired是根据类型自动装配的，加上@Qualifier则可以根据byName的方式自动装配
+@Qualifier不能单独使用。
+测试实验步骤：
+
+<p>1.配置文件修改内容，保证类型存在对象。且名字不为类的默认名字！</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;bean id=<span class="string">"dog1"</span> class=<span class="string">"com.kuang.pojo.Dog"</span>/&gt;</span><br><span class="line">&lt;bean id=<span class="string">"dog2"</span> class=<span class="string">"com.kuang.pojo.Dog"</span>/&gt;</span><br><span class="line">&lt;bean id=<span class="string">"cat1"</span> class=<span class="string">"com.kuang.pojo.Cat"</span>/&gt;</span><br><span class="line">&lt;bean id=<span class="string">"cat2"</span> class=<span class="string">"com.kuang.pojo.Cat"</span>/&gt;</span><br></pre></td></tr></table></figure>
+
+<p>2.没有加Qualifier测试，直接报错<br>3.在属性上添加Qualifier注解</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@Autowired</span><br><span class="line">@Qualifier(value = <span class="string">"cat2"</span>)</span><br><span class="line">private Cat cat;</span><br><span class="line">@Autowired</span><br><span class="line">@Qualifier(value = <span class="string">"dog2"</span>)</span><br><span class="line">private Dog dog;</span><br></pre></td></tr></table></figure>
+
+<p>4.测试，成功输出！</p>
+<h3 id="g">@Resource</h3>
+@Resource如有指定的name属性，先按该属性进行byName方式查找装配；
+其次再进行默认的byName方式进行装配；
+如果以上都不成功，则按byType的方式自动装配。
+都不成功，则报异常。
+
+<p>实体类：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class User &#123;</span><br><span class="line">    //如果允许对象为null，设置required = <span class="literal">false</span>,默认为<span class="literal">true</span></span><br><span class="line">    @Resource(name = <span class="string">"cat2"</span>)</span><br><span class="line">    private Cat cat;</span><br><span class="line">    @Resource</span><br><span class="line">    private Dog dog;</span><br><span class="line">    private String str;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>beans.xml</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;bean id=<span class="string">"dog"</span> class=<span class="string">"com.kuang.pojo.Dog"</span>/&gt;</span><br><span class="line">&lt;bean id=<span class="string">"cat1"</span> class=<span class="string">"com.kuang.pojo.Cat"</span>/&gt;</span><br><span class="line">&lt;bean id=<span class="string">"cat2"</span> class=<span class="string">"com.kuang.pojo.Cat"</span>/&gt;</span><br><span class="line"></span><br><span class="line">&lt;bean id=<span class="string">"user"</span> class=<span class="string">"com.kuang.pojo.User"</span>/&gt;</span><br></pre></td></tr></table></figure>
+
+<p>测试：结果OK</p>
+<p>配置文件2：beans.xml ， 删掉cat2</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;bean id=<span class="string">"dog"</span> class=<span class="string">"com.kuang.pojo.Dog"</span>/&gt;</span><br><span class="line">&lt;bean id=<span class="string">"cat1"</span> class=<span class="string">"com.kuang.pojo.Cat"</span>/&gt;</span><br></pre></td></tr></table></figure>
+
+<p>实体类上只保留注解</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Resource</span><br><span class="line">private Cat cat;</span><br><span class="line">@Resource</span><br><span class="line">private Dog dog;</span><br></pre></td></tr></table></figure>
+
+<p>结果：OK</p>
+<p>结论：先进行byName查找，失败；再进行byType查找，成功。</p>
+<h2 id="x">小结</h2>
+
+<p>@Autowired与@Resource异同：</p>
+<p>1.@Autowired与@Resource都可以用来装配bean。都可以写在字段上，或写在setter方法上。<br>2.@Autowired默认按类型装配（属于spring规范），默认情况下必须要求依赖对象必须存在，如果要允许null 值，可以设置它的required属性为false，如：@Autowired(required=false) ，如果我们想使用名称装配可以结合@Qualifier注解进行使用<br>3.@Resource（属于J2EE复返），默认按照名称进行装配，名称可以通过name属性进行指定。如果没有指定name属性，当注解写在字段上时，默认取字段名进行按照名称查找，如果注解写在setter方法上默认取属性名进行装配。 当找不到与名称匹配的bean时才按照类型进行装配。但是需要注意的是，如果name属性一旦指定，就只会按照名称进行装配。<br>它们的作用相同都是用注解方式注入对象，但执行顺序不同。@Autowired先byType，@Resource先byName。</p>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+          
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/03/20/Spring%EF%BC%9A%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/2020/03/20/Spring%EF%BC%9A%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3%E5%BC%80%E5%8F%91/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Spring：使用注解开发
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/03/20/Spring%EF%BC%9A%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%EF%BC%88DI%EF%BC%89/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Spring：依赖注入（DI）</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: '',
+        app_key: '',
+        path: window.location.pathname,
+        notify: 'false',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2020
+        花重锦官城
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <kbd>访问量:<span id="busuanzi_value_page_pv"></span></kbd>
+  <kbd>访客数:<span id="busuanzi_value_site_uv"></span></kbd>
+</span>
+        
+      </li>
+      
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+    <aside class="sidebar">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="犬来八荒"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">目录</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://chengguolaogongya.lofter.com/" target="_blank" rel="noopener">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+    strings: ['浮生有梦三千场 穷尽千里诗酒荒','徒把理想倾倒','不如早还乡'],
+    startDelay: 0,
+    typeSpeed: 100,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+  } catch (err) {
+  }
+  
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1321020935&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

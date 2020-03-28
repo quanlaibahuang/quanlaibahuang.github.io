@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>怎样优雅的自定义Typora</title>
+    <url>/2020/03/28/%E6%80%8E%E6%A0%B7%E4%BC%98%E9%9B%85%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89Typora/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
     <title>关于Hadoop</title>
     <url>/2020/03/28/%E5%85%B3%E4%BA%8EHadoop/</url>
     <content><![CDATA[<p>Hadoop是一个开源框架，允许使用简单的编程模型在跨计算机集群的分布式环境中存储和处理大数据。它的设计是从单个服务器扩展到数千个机器，每个都提供本地计算和存储。</p>

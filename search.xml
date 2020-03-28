@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>关于Hadoop</title>
+    <url>/2020/03/28/%E5%85%B3%E4%BA%8EHadoop/</url>
+    <content><![CDATA[<p>Hadoop是一个开源框架，允许使用简单的编程模型在跨计算机集群的分布式环境中存储和处理大数据。它的设计是从单个服务器扩展到数千个机器，每个都提供本地计算和存储。</p>
+<h2>Hadoop - 简介</h2>
+Hadoop可运行于一般的商用服务器上，具有高容错、高可靠性、高扩展性等特点
+
+<p>特别适合写一次，读多次的场景</p>
+<p>适合<br>-大规模数据<br>-流式数据（写一次，读多次）<br>-商用硬件（一般硬件）<br>不适合<br>*低延时的数据访问<br>*大量的小文件<br>*频繁修改文件（基本就是写1次）</p>
+<p>Hadoop架构<br><img src="/images/innerimage/branch/h2.png" alt="hadoop"></p>
+<p>HDFS: 分布式文件存储<br>YARN: 分布式资源管理<br>MapReduce: 分布式计算<br>Others: 利用YARN的资源管理功能实现其他的数据处理方式<br>内部各个节点基本都是采用Master-Woker架构</p>
+<a id="more"></a>
+<p><img src="/images/innerimage/branch/hadoop.png" alt="hadoop"></p>
+]]></content>
+  </entry>
+  <entry>
     <title>Spring：AOP--面向切面编程</title>
     <url>/2020/03/20/Spring%EF%BC%9AAOP-%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B/</url>
     <content><![CDATA[<h3 id="a">什么是AOP</h3>

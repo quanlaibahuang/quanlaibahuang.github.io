@@ -3,7 +3,28 @@
   <entry>
     <title>怎样优雅的自定义Typora</title>
     <url>/2020/03/28/%E6%80%8E%E6%A0%B7%E4%BC%98%E9%9B%85%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89Typora/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<h1 id="更改所有文本字体"><a href="#更改所有文本字体" class="headerlink" title="更改所有文本字体"></a>更改所有文本字体</h1><ol>
+<li><p>找到你的主题路径，例如我的：C:\Users\17159\AppData\Roaming\Typora\themes</p>
+</li>
+<li><p>找到你想重置的主题css文件，例如我的：solarized.css</p>
+</li>
+<li><p>ctrl+f 替换所有的 <strong>font-family</strong> 为 <strong>font-family: ‘新字体’,</strong> 例如我的<strong>‘Open Sans’</strong>,所以我把全局的 <strong>font-family</strong> 替换为 <strong>font-family: ‘Open Sans’,</strong></p>
+</li>
+<li><p>同理可证其他的主体其他的样式</p>
+</li>
+</ol>
+]]></content>
+  </entry>
+  <entry>
+    <title>怎样优雅的自定义Typora</title>
+    <url>/2020/03/28/%E6%80%8E%E6%A0%B7%E4%BC%98%E9%9B%85%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89Typora%E5%91%A2/</url>
+    <content><![CDATA[<h1 id="更改所有文本字体"><a href="#更改所有文本字体" class="headerlink" title="更改所有文本字体"></a>更改所有文本字体</h1><ol>
+<li>找到你的主题路径，例如我的：C:\Users\17159\AppData\Roaming\Typora\themes</li>
+<li>找到你想重置的主题css文件，例如我的：solarized.css</li>
+<li>ctrl+f 替换所有的 <strong>font-family</strong> 为 <strong>font-family: ‘新字体’,</strong> 例如我的<strong>‘Open Sans’</strong>,所以我把全局的 <strong>font-family</strong> 替换为 <strong>font-family: ‘Open Sans’,</strong></li>
+<li>同理可证其他的主体其他的样式</li>
+</ol>
+]]></content>
   </entry>
   <entry>
     <title>关于Hadoop</title>
@@ -18,7 +39,7 @@ Hadoop可运行于一般的商用服务器上，具有高容错、高可靠性�
 <p>HDFS: 分布式文件存储<br>YARN: 分布式资源管理<br>MapReduce: 分布式计算<br>Others: 利用YARN的资源管理功能实现其他的数据处理方式<br>内部各个节点基本都是采用Master-Woker架构</p>
 <a id="more"></a>
 <p><img src="/images/innerimage/branch/hadoop.png" alt="hadoop"></p>
-]]></content>
+<h1 id="test"><a href="#test" class="headerlink" title="test"></a>test</h1><h2 id="test-1"><a href="#test-1" class="headerlink" title="test"></a>test</h2>]]></content>
   </entry>
   <entry>
     <title>Spring：AOP--面向切面编程</title>

@@ -166,17 +166,17 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/hello"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello World"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>3、编写完毕后，从主程序启动项目，浏览器发起请求，看页面返回；控制台输出了 Tomcat 访问的端口号！</p>
-<p><img src="images/innerimage/qin/8.png" alt=""></p>
+<p><img src="/images/innerimage/qin/8.png" alt=""></p>
 <p>简单几步，就完成了一个web接口的开发，SpringBoot就是这么简单。所以我们常用它来建立我们的微服务项目！</p>
 <blockquote>
 <p>  将项目打成jar包，点击 maven的 package</p>
 </blockquote>
-<p><img src="images/innerimage/qin/9.png" alt=""></p>
+<p><img src="/images/innerimage/qin/9.png" alt=""></p>
 <p>如果遇到以上错误，可以配置打包时 跳过项目运行测试用例</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    在工作中,很多情况下我们打包是不想执行测试用例的</span></span><br><span class="line"><span class="comment">    可能是测试用例不完事,或是测试用例会影响数据库数据</span></span><br><span class="line"><span class="comment">    跳过测试用例执</span></span><br><span class="line"><span class="comment">    --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-surefire-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--跳过项目运行测试用例--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">skipTests</span>&gt;</span>true<span class="tag">&lt;/<span class="name">skipTests</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>如果打包成功，则会在target目录下生成一个 jar 包</p>
-<p><img src="images/innerimage/qin/10.png" alt=""></p>
+<p><img src="/images/innerimage/qin/10.png" alt=""></p>
 <p>打成了jar包后，就可以在任何地方运行了！OK</p>
 <h3 id="小彩蛋"><a href="#小彩蛋" class="headerlink" title="小彩蛋"></a>小彩蛋</h3><p>如何更改启动时显示的字符拼成的字母，SpringBoot呢？也就是 banner 图案；</p>
 <p>只需一步：到项目下的 resources 目录下新建一个banner.txt 即可。</p>

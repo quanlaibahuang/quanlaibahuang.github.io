@@ -89,7 +89,7 @@
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DemoApplicationTests</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span> <span class="comment">//将狗狗自动注入进来</span></span><br><span class="line">    Dog dog;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextLoads</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(dog); <span class="comment">//打印看下狗狗对象</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>结果成功输出，@Value注入成功，这是我们原来的办法对吧。</p>
-<p><img src="images/innerimage/qin/14.png" alt=""></p>
+<p><img src="/images/innerimage/qin/14.png" alt=""></p>
 <p>5、我们在编写一个复杂一点的实体类：Person 类</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span> <span class="comment">//注册bean到容器中</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="keyword">private</span> Boolean happy;</span><br><span class="line">    <span class="keyword">private</span> Date birth;</span><br><span class="line">    <span class="keyword">private</span> Map&lt;String,Object&gt; maps;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Object&gt; lists;</span><br><span class="line">    <span class="keyword">private</span> Dog dog;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//有参无参构造、get、set方法、toString()方法  </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -100,15 +100,15 @@
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">@ConfigurationProperties作用：</span></span><br><span class="line"><span class="comment">将配置文件中配置的每一个属性的值，映射到这个组件中；</span></span><br><span class="line"><span class="comment">告诉SpringBoot将本类中的所有属性和配置文件中相关的配置进行绑定</span></span><br><span class="line"><span class="comment">参数 prefix = “person” : 将配置文件中的person下面的所有属性一一对应</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@Component</span> <span class="comment">//注册bean</span></span><br><span class="line"><span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"person"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="keyword">private</span> Boolean happy;</span><br><span class="line">    <span class="keyword">private</span> Date birth;</span><br><span class="line">    <span class="keyword">private</span> Map&lt;String,Object&gt; maps;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Object&gt; lists;</span><br><span class="line">    <span class="keyword">private</span> Dog dog;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>8、IDEA 提示，springboot配置注解处理器没有找到，让我们看文档，我们可以查看文档，找到一个依赖！</p>
-<p><img src="images/innerimage/qin/15.png" alt=""></p>
-<p><img src="images/innerimage/qin/16.png" alt=""></p>
+<p><img src="/images/innerimage/qin/15.png" alt=""></p>
+<p><img src="/images/innerimage/qin/16.png" alt=""></p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 导入配置文件处理器，配置文件进行绑定就会有提示，需要重启 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-configuration-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>9、确认以上配置都OK之后，我们去测试类中测试一下：</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DemoApplicationTests</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    Person person; <span class="comment">//将person自动注入进来</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextLoads</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(person); <span class="comment">//打印person信息</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>结果：所有值全部注入成功！全体起立！！！</p>
-<p><img src="images/innerimage/qin/17.png" alt=""></p>
+<p><img src="/images/innerimage/qin/17.png" alt=""></p>
 <p><strong>yaml配置注入到实体类完全OK！</strong></p>
 <p>课堂测试：</p>
 <p>1、将配置文件的key 值 和 属性的值设置为不一样，则结果输出为null，注入失败</p>
@@ -122,14 +122,14 @@
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@PropertySource</span>(value = <span class="string">"classpath:person.properties"</span>)</span><br><span class="line"><span class="meta">@Component</span> <span class="comment">//注册bean</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;name&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    ......  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>3、再次输出测试一下：指定配置文件绑定成功！</p>
-<p><img src="images/innerimage/qin/18.png" alt=""></p>
+<p><img src="/images/innerimage/qin/18.png" alt=""></p>
 <h2 id="配置文件占位符"><a href="#配置文件占位符" class="headerlink" title="配置文件占位符"></a>配置文件占位符</h2><p>配置文件还可以编写占位符生成随机数</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">person:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">chengguo$&#123;random.uuid&#125;</span> <span class="comment"># 随机uuid</span></span><br><span class="line">    <span class="attr">age:</span> <span class="string">$&#123;random.int&#125;</span>  <span class="comment"># 随机int</span></span><br><span class="line">    <span class="attr">happy:</span> <span class="literal">false</span></span><br><span class="line">    <span class="attr">birth:</span> <span class="number">2000</span><span class="string">/01/01</span></span><br><span class="line">    <span class="attr">maps:</span> <span class="string">&#123;k1:</span> <span class="string">v1,k2:</span> <span class="string">v2&#125;</span></span><br><span class="line">    <span class="attr">lists:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">code</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">girl</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">music</span></span><br><span class="line">    <span class="attr">dog:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">$&#123;person.hello:other&#125;_大力</span></span><br><span class="line">      <span class="attr">age:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
 
 <h2 id="回顾properties配置"><a href="#回顾properties配置" class="headerlink" title="回顾properties配置"></a>回顾properties配置</h2><p>我们上面采用的yaml方法都是最简单的方式，开发中最常用的；也是springboot所推荐的！那我们来唠唠其他的实现方式，道理都是相同的；写还是那样写；配置文件除了yml还有我们之前常用的properties ， 我们没有讲，我们来唠唠！</p>
 <p>【注意】properties配置文件在写中文的时候，会有乱码 ， 我们需要去IDEA中设置编码格式为UTF-8；</p>
 <p>settings–&gt;FileEncodings 中配置；</p>
-<p><img src="images/innerimage/qin/19.png" alt=""></p>
+<p><img src="/images/innerimage/qin/19.png" alt=""></p>
 <p><strong>测试步骤：</strong></p>
 <p>1、新建一个实体类User</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span> <span class="comment">//注册bean</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">    <span class="keyword">private</span> String sex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -144,9 +144,9 @@
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DemoApplicationTests</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    User user;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextLoads</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>结果正常输出：</p>
-<p><img src="images/innerimage/qin/20.png" alt=""></p>
+<p><img src="/images/innerimage/qin/20.png" alt=""></p>
 <h2 id="对比小结"><a href="#对比小结" class="headerlink" title="对比小结"></a>对比小结</h2><p>@Value这个使用起来并不友好！我们需要为每个属性单独注解赋值，比较麻烦；我们来看个功能对比图</p>
-<p><img src="images/innerimage/qin/21.png" alt=""></p>
+<p><img src="/images/innerimage/qin/21.png" alt=""></p>
 <p>1、@ConfigurationProperties只需要写一次即可 ， @Value则需要每个字段都添加</p>
 <p>2、松散绑定：这个什么意思呢? 比如我的yml中写的last-name，这个和lastName是一样的， - 后面跟着的字母默认是大写的。这就是松散绑定。可以测试一下</p>
 <p>3、JSR303数据校验 ， 这个就是我们可以在字段是增加一层过滤器验证 ， 可以保证数据的合法性</p>
@@ -352,17 +352,17 @@
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/hello"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello World"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>3、编写完毕后，从主程序启动项目，浏览器发起请求，看页面返回；控制台输出了 Tomcat 访问的端口号！</p>
-<p><img src="images/innerimage/qin/8.png" alt=""></p>
+<p><img src="/images/innerimage/qin/8.png" alt=""></p>
 <p>简单几步，就完成了一个web接口的开发，SpringBoot就是这么简单。所以我们常用它来建立我们的微服务项目！</p>
 <blockquote>
 <p>  将项目打成jar包，点击 maven的 package</p>
 </blockquote>
-<p><img src="images/innerimage/qin/9.png" alt=""></p>
+<p><img src="/images/innerimage/qin/9.png" alt=""></p>
 <p>如果遇到以上错误，可以配置打包时 跳过项目运行测试用例</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    在工作中,很多情况下我们打包是不想执行测试用例的</span></span><br><span class="line"><span class="comment">    可能是测试用例不完事,或是测试用例会影响数据库数据</span></span><br><span class="line"><span class="comment">    跳过测试用例执</span></span><br><span class="line"><span class="comment">    --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-surefire-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--跳过项目运行测试用例--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">skipTests</span>&gt;</span>true<span class="tag">&lt;/<span class="name">skipTests</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>如果打包成功，则会在target目录下生成一个 jar 包</p>
-<p><img src="images/innerimage/qin/10.png" alt=""></p>
+<p><img src="/images/innerimage/qin/10.png" alt=""></p>
 <p>打成了jar包后，就可以在任何地方运行了！OK</p>
 <h3 id="小彩蛋"><a href="#小彩蛋" class="headerlink" title="小彩蛋"></a>小彩蛋</h3><p>如何更改启动时显示的字符拼成的字母，SpringBoot呢？也就是 banner 图案；</p>
 <p>只需一步：到项目下的 resources 目录下新建一个banner.txt 即可。</p>
@@ -375,14 +375,13 @@
   <entry>
     <title>Java学习路线</title>
     <url>/2020/04/01/Java%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF/</url>
-    <content><![CDATA[<p>、</p>
-<p><img src="images/innerimage/qin/1.png" alt=""></p>
-<p><img src="images/innerimage/qin/2.png" alt=""></p>
-<p><img src="images/innerimage/qin/3.png" alt=""></p>
-<p><img src="images/innerimage/qin/4.png" alt=""></p>
-<p><img src="images/innerimage/qin/5.png" alt=""></p>
-<p><img src="images/innerimage/qin/6.png" alt=""></p>
-<p><img src="images/innerimage/qin/7.png" alt=""></p>
+    <content><![CDATA[<h2 id="Java全栈路线"><a href="#Java全栈路线" class="headerlink" title="Java全栈路线"></a>Java全栈路线</h2><p><img src="/images/innerimage/qin/1.png" alt=""></p>
+<p><img src="/images/innerimage/qin/2.png" alt=""></p>
+<p><img src="/images/innerimage/qin/3.png" alt=""></p>
+<p><img src="/images/innerimage/qin/4.png" alt=""></p>
+<p><img src="/images/innerimage/qin/5.png" alt=""></p>
+<p><img src="/images/innerimage/qin/6.png" alt=""></p>
+<p><img src="/images/innerimage/qin/7.png" alt=""></p>
 <h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>成为一个合格的工程师需要 1~3 年时间，最好的学习方法就是找经典的书籍系统地学习，而不要遇到一个问题到网上搜搜然后就解决了事。例如 Java 的各种数据结构的实现原理，因为只有深入掌握了这些实现原理，才能对其优缺点和使用场景有深刻理解，这样在做具体方案设计的时候才能选择合适的数据结构。</p>
 <p>针对技术深度，我的建议还是系统地学习，包括看书和研究源码。例如，研究 Java 虚拟机可以看《深入理解 Java 虚拟机》、研究 MySQL 可以看《MySQL 技术内幕：InnoDB 存储引擎》、研究 Memcache 可以去看其源码。</p>
 ]]></content>

@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Spring经典报错@Autowired报错</title>
+    <url>/2020/04/01/Spring%E7%BB%8F%E5%85%B8%E6%8A%A5%E9%94%99-Autowired%E6%8A%A5%E9%94%99/</url>
+    <content><![CDATA[<h1 id="【Spring】-Autowired报错Could-not-autowire-No-beans-of-xxx"><a href="#【Spring】-Autowired报错Could-not-autowire-No-beans-of-xxx" class="headerlink" title="【Spring】@Autowired报错Could not autowire. No beans of xxx"></a>【Spring】@Autowired报错Could not autowire. No beans of xxx</h1><p>在使用springboot main方法启动项目时遇到[@Autowdired]注解无法注入</p>
+<h4 id="SpringBoot项目的Bean装配默认规则是根据Application类所在的包位置从上往下扫描！“Application类”是指SpringBoot项目入口类。这个类的位置很关键：如果Application类所在的包为：com-boot-app，则只会扫描com-boot-app包及其所有子包，如果service或dao所在包不在com-boot-app及其子包下，则不会被扫描！即-把Application类放到dao、service所在包的上级，com-boot-Application知道这一点非常关键"><a href="#SpringBoot项目的Bean装配默认规则是根据Application类所在的包位置从上往下扫描！“Application类”是指SpringBoot项目入口类。这个类的位置很关键：如果Application类所在的包为：com-boot-app，则只会扫描com-boot-app包及其所有子包，如果service或dao所在包不在com-boot-app及其子包下，则不会被扫描！即-把Application类放到dao、service所在包的上级，com-boot-Application知道这一点非常关键" class="headerlink" title="SpringBoot项目的Bean装配默认规则是根据Application类所在的包位置从上往下扫描！“Application类”是指SpringBoot项目入口类。这个类的位置很关键：如果Application类所在的包为：com.boot.app，则只会扫描com.boot.app包及其所有子包，如果service或dao所在包不在com.boot.app及其子包下，则不会被扫描！即, 把Application类放到dao、service所在包的上级，com.boot.Application知道这一点非常关键"></a>SpringBoot项目的Bean装配默认规则是根据Application类所在的包位置从上往下扫描！“Application类”是指SpringBoot项目入口类。这个类的位置很关键：如果Application类所在的包为：com.boot.app，则只会扫描com.boot.app包及其所有子包，如果service或dao所在包不在com.boot.app及其子包下，则不会被扫描！即, 把Application类放到dao、service所在包的上级，com.boot.Application知道这一点非常关键</h4>]]></content>
+      <tags>
+        <tag>error</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SpringBoot03：yaml配置注入</title>
     <url>/2020/04/01/SpringBoot03%EF%BC%9Ayaml%E9%85%8D%E7%BD%AE%E6%B3%A8%E5%85%A5/</url>
     <content><![CDATA[<h1 id="yaml语法学习"><a href="#yaml语法学习" class="headerlink" title="yaml语法学习"></a>yaml语法学习</h1><h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><p>SpringBoot使用一个全局的配置文件 ， 配置文件名称是固定的</p>

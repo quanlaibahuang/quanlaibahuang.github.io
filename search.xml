@@ -24,7 +24,7 @@
 
 <p>Github地址：<a href="https://github.com/alibaba/druid/" target="_blank" rel="noopener">https://github.com/alibaba/druid/</a></p>
 <p><strong>com.alibaba.druid.pool.DruidDataSource 基本配置参数如下：</strong></p>
-<p><img src="../images/innerimage/qinzidong/image-20200403204359019.png" alt="image-20200403204359019"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200403204359019.png" alt="image-20200403204359019"></p>
 <h2 id="配置数据源"><a href="#配置数据源" class="headerlink" title="配置数据源"></a>配置数据源</h2><p>1、添加上 Druid 数据源依赖。</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- https://mvnrepository.com/artifact/com.alibaba/druid --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>druid<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.1.21<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 

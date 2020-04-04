@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>SpringBoot09：整合MyBatis</title>
+    <url>/2020/04/04/SpringBoot09%EF%BC%9A%E6%95%B4%E5%90%88MyBatis/</url>
+    <content><![CDATA[<p>#整合MyBatis</p>
+<p>官方文档：<a href="http://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/" target="_blank" rel="noopener">http://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/</a></p>
+<p>Maven仓库地址：<a href="https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter/2.1.1" target="_blank" rel="noopener">https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter/2.1.1</a></p>
+<p><img src="/images/innerimage/qinzidong/image-20200404083128894.png" alt="image-20200404083128894"></p>
+]]></content>
+      <tags>
+        <tag>-MyBatis -Spring</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SpringBoot08：整合Druid</title>
     <url>/2020/04/03/SpringBoot08%EF%BC%9A%E6%95%B4%E5%90%88Druid/</url>
     <content><![CDATA[<h1 id="集成Druid"><a href="#集成Druid" class="headerlink" title="集成Druid"></a>集成Druid</h1><h2 id="Druid简介"><a href="#Druid简介" class="headerlink" title="Druid简介"></a>Druid简介</h2><p>Java程序很大一部分要操作数据库，为了提高性能操作数据库的时候，又不得不使用数据库连接池。</p>

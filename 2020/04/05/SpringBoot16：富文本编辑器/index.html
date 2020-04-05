@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    SpringBoot16：富文本编辑器 |  犬来八荒
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-SpringBoot16：富文本编辑器" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  SpringBoot16：富文本编辑器
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/05/SpringBoot16%EF%BC%9A%E5%AF%8C%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/" class="article-date">
+  <time datetime="2020-04-05T07:48:08.000Z" itemprop="datePublished">2020-04-05</time>
+</a>
+      
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.7k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">13分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="富文本编辑器"><a href="#富文本编辑器" class="headerlink" title="富文本编辑器"></a>富文本编辑器</h1><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>思考：我们平时在博客园，或者CSDN等平台进行写作的时候，有同学思考过他们的编辑器是怎么实现的吗？</p>
+<p>在博客园后台的选项设置中，可以看到一个文本编辑器的选项：</p>
+<p><img src="/images/innerimage/qinzidong/image-20200405161248699.png" alt="image-20200405161248699"></p>
+<p>其实这个就是富文本编辑器，市面上有许多非常成熟的富文本编辑器，比如：</p>
+<ul>
+<li><p><strong>Editor.md</strong>——功能非常丰富的编辑器，左端编辑，右端预览，非常方便，完全免费</p>
+</li>
+<li><ul>
+<li>官网：<a href="https://pandao.github.io/editor.md/" target="_blank" rel="noopener">https://pandao.github.io/editor.md/</a></li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>
+
+<ul>
+<li><p><strong>wangEditor</strong>——基于javascript和css开发的 Web富文本编辑器， 轻量、简洁、界面美观、易用、开源免费。</p>
+</li>
+<li><ul>
+<li>官网：<a href="http://www.wangeditor.com/" target="_blank" rel="noopener">http://www.wangeditor.com/</a></li>
+</ul>
+</li>
+<li><p><strong>TinyMCE</strong>——TinyMCE是一个轻量级的基于浏览器的所见即所得编辑器，由JavaScript写成。它对IE6+和Firefox1.5+都有着非常良好的支持。功能齐全，界面美观，就是文档是英文的，对开发人员英文水平有一定要求。</p>
+</li>
+<li><ul>
+<li>官网：<a href="https://www.tiny.cloud/docs/demo/full-featured/" target="_blank" rel="noopener">https://www.tiny.cloud/docs/demo/full-featured/</a></li>
+<li>博客园</li>
+</ul>
+</li>
+<li><p><strong>百度ueditor</strong>——UEditor是由百度web前端研发部开发所见即所得富文本web编辑器，具有轻量，功能齐全，可定制，注重用户体验等特点，开源基于MIT协议，允许自由使用和修改代码，缺点是已经没有更新了</p>
+</li>
+<li><ul>
+<li>官网：<a href="https://ueditor.baidu.com/website/onlinedemo.html" target="_blank" rel="noopener">https://ueditor.baidu.com/website/onlinedemo.html</a></li>
+</ul>
+</li>
+<li><p><strong>kindeditor</strong>——界面经典。</p>
+</li>
+<li><ul>
+<li>官网：<a href="http://kindeditor.net/demo.php" target="_blank" rel="noopener">http://kindeditor.net/demo.php</a></li>
+</ul>
+</li>
+<li><p><strong>Textbox</strong>——Textbox是一款极简但功能强大的在线文本编辑器，支持桌面设备和移动设备。主要功能包含内置的图像处理和存储、文件拖放、拼写检查和自动更正。此外，该工具还实现了屏幕阅读器等辅助技术，并符合WAI-ARIA可访问性标准。</p>
+</li>
+<li><ul>
+<li>官网：<a href="https://textbox.io/" target="_blank" rel="noopener">https://textbox.io/</a></li>
+</ul>
+</li>
+<li><p><strong>CKEditor</strong>——国外的，界面美观。</p>
+</li>
+<li><ul>
+<li>官网：<a href="https://ckeditor.com/ckeditor-5/demo/" target="_blank" rel="noopener">https://ckeditor.com/ckeditor-5/demo/</a></li>
+</ul>
+</li>
+<li><p><strong>quill</strong>——功能强大，还可以编辑公式等</p>
+</li>
+<li><ul>
+<li>官网：<a href="https://quilljs.com/" target="_blank" rel="noopener">https://quilljs.com/</a></li>
+</ul>
+</li>
+<li><p><strong>simditor</strong>——界面美观，功能较全。</p>
+</li>
+<li><ul>
+<li>官网：<a href="https://simditor.tower.im/" target="_blank" rel="noopener">https://simditor.tower.im/</a></li>
+</ul>
+</li>
+<li><p><strong>summernote</strong>——UI好看，精美</p>
+</li>
+<li><ul>
+<li>官网：<a href="https://summernote.org/" target="_blank" rel="noopener">https://summernote.org/</a></li>
+</ul>
+</li>
+<li><p><strong>jodit</strong>——功能齐全</p>
+</li>
+<li><ul>
+<li>官网：<a href="https://xdsoft.net/jodit/" target="_blank" rel="noopener">https://xdsoft.net/jodit/</a></li>
+</ul>
+</li>
+<li><p><strong>froala Editor</strong>——界面非常好看，功能非常强大，非常好用（非免费）</p>
+</li>
+<li><ul>
+<li>官网：<a href="https://www.froala.com/wysiwyg-editor" target="_blank" rel="noopener">https://www.froala.com/wysiwyg-editor</a></li>
+</ul>
+</li>
+</ul>
+<p>总之，目前可用的富文本编辑器有很多……这只是其中的一部分</p>
+<h3 id="Editor-md"><a href="#Editor-md" class="headerlink" title="Editor.md"></a>Editor.md</h3><p>我这里使用的就是Editor.md，作为一个资深码农，Mardown必然是我们程序猿最喜欢的格式，看下面，就爱上了！</p>
+<p><img src="/images/innerimage/qinzidong/image-20200405161407747.png" alt="image-20200405161407747"></p>
+<p>我们可以在官网下载它：<a href="https://pandao.github.io/editor.md/" target="_blank" rel="noopener">https://pandao.github.io/editor.md/</a> ， 得到它的压缩包！</p>
+<p>解压以后，在examples目录下面，可以看到他的很多案例使用！学习，其实就是看人家怎么写的，然后进行模仿就好了！</p>
+<p>我们可以将整个解压的文件倒入我们的项目，将一些无用的测试和案例删掉即可！</p>
+<h3 id="基础工程搭建"><a href="#基础工程搭建" class="headerlink" title="基础工程搭建"></a>基础工程搭建</h3><blockquote>
+<p>  数据库设计</p>
+</blockquote>
+<p>article：文章表</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th></th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>int</td>
+<td>文章的唯一ID</td>
+</tr>
+<tr>
+<td>author</td>
+<td>varchar</td>
+<td>作者</td>
+</tr>
+<tr>
+<td>title</td>
+<td>varchar</td>
+<td>标题</td>
+</tr>
+<tr>
+<td>content</td>
+<td>longtext</td>
+<td>文章的内容</td>
+</tr>
+</tbody></table>
+<p>建表SQL：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`article`</span> (</span><br><span class="line"><span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">10</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT <span class="keyword">COMMENT</span> <span class="string">'int文章的唯一ID'</span>,</span><br><span class="line"><span class="string">`author`</span> <span class="built_in">varchar</span>(<span class="number">50</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'作者'</span>,</span><br><span class="line"><span class="string">`title`</span> <span class="built_in">varchar</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'标题'</span>,</span><br><span class="line"><span class="string">`content`</span> longtext <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'文章的内容'</span>,</span><br><span class="line">PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>  基础项目搭建</p>
+</blockquote>
+<p>1、建一个SpringBoot项目配置</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">datasource:</span></span><br><span class="line">  <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">  <span class="attr">password:</span> <span class="number">123456</span></span><br><span class="line">  <span class="comment">#?serverTimezone=UTC解决时区的报错</span></span><br><span class="line">  <span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/springboot?serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=utf-8</span></span><br><span class="line">  <span class="attr">driver-class-name:</span> <span class="string">com.mysql.cj.jdbc.Driver</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resources</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">resource</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">directory</span>&gt;</span>src/main/java<span class="tag">&lt;/<span class="name">directory</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">includes</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">include</span>&gt;</span>**/*.xml<span class="tag">&lt;/<span class="name">include</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">includes</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">filtering</span>&gt;</span>true<span class="tag">&lt;/<span class="name">filtering</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">resource</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resources</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>2、实体类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//文章类</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Article</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">int</span> id; <span class="comment">//文章的唯一ID</span></span><br><span class="line">   <span class="keyword">private</span> String author; <span class="comment">//作者名</span></span><br><span class="line">   <span class="keyword">private</span> String title; <span class="comment">//标题</span></span><br><span class="line">   <span class="keyword">private</span> String content; <span class="comment">//文章的内容</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3、mapper接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Mapper</span></span><br><span class="line"><span class="meta">@Repository</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ArticleMapper</span> </span>&#123;</span><br><span class="line">   <span class="comment">//查询所有的文章</span></span><br><span class="line">   <span class="function">List&lt;Article&gt; <span class="title">queryArticles</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">   <span class="comment">//新增一个文章</span></span><br><span class="line">   <span class="function"><span class="keyword">int</span> <span class="title">addArticle</span><span class="params">(Article article)</span></span>;</span><br><span class="line"></span><br><span class="line">   <span class="comment">//根据文章id查询文章</span></span><br><span class="line">   <span class="function">Article <span class="title">getArticleById</span><span class="params">(<span class="keyword">int</span> id)</span></span>;</span><br><span class="line"></span><br><span class="line">   <span class="comment">//根据文章id删除文章</span></span><br><span class="line">   <span class="function"><span class="keyword">int</span> <span class="title">deleteArticleById</span><span class="params">(<span class="keyword">int</span> id)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span>?&gt;</span><br><span class="line">&lt;!DOCTYPE mapper PUBLIC <span class="string">"-//mybatis.org//DTD Mapper 3.0//EN"</span></span><br><span class="line">       <span class="string">"http://mybatis.org/dtd/mybatis-3-mapper.dtd"</span>&gt;</span><br><span class="line"></span><br><span class="line">&lt;mapper namespace=<span class="string">"com.kuang.mapper.ArticleMapper"</span>&gt;</span><br><span class="line"></span><br><span class="line">   &lt;select id=<span class="string">"queryArticles"</span> resultType=<span class="string">"Article"</span>&gt;</span><br><span class="line">      select * from article</span><br><span class="line">   &lt;/select&gt;</span><br><span class="line">   </span><br><span class="line">   &lt;select id=<span class="string">"getArticleById"</span> resultType=<span class="string">"Article"</span>&gt;</span><br><span class="line">      select * from article where id = #&#123;id&#125;</span><br><span class="line">   &lt;/select&gt;</span><br><span class="line">   </span><br><span class="line">   &lt;insert id=<span class="string">"addArticle"</span> parameterType=<span class="string">"Article"</span>&gt;</span><br><span class="line">      <span class="function">insert into <span class="title">article</span> <span class="params">(author,title,content)</span> <span class="title">values</span> <span class="params">(#&#123;author&#125;,#&#123;title&#125;,#&#123;content&#125;)</span></span>;</span><br><span class="line">   &lt;/insert&gt;</span><br><span class="line">   </span><br><span class="line">   &lt;delete id=<span class="string">"deleteArticleById"</span> parameterType=<span class="string">"int"</span>&gt;</span><br><span class="line">      delete from article where id = #&#123;id&#125;</span><br><span class="line">   &lt;/delete&gt;</span><br><span class="line">   </span><br><span class="line">&lt;/mapper&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>既然已经提供了 myBatis 的映射配置文件，自然要告诉 spring boot 这些文件的位置</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mybatis:</span></span><br><span class="line"><span class="attr">mapper-locations:</span> <span class="string">classpath:com/li/mapper/*.xml</span></span><br><span class="line"><span class="attr">type-aliases-package:</span> <span class="string">com.li.pojo</span></span><br></pre></td></tr></table></figure>
+
+<p>编写一个Controller测试下，是否ok；</p>
+<h3 id="文章编辑整合（重点）"><a href="#文章编辑整合（重点）" class="headerlink" title="文章编辑整合（重点）"></a>文章编辑整合（重点）</h3><p>1、导入 editor.md 资源 ，删除多余文件</p>
+<p>2、编辑文章页面 editor.html、需要引入 jQuery；</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">class</span>=<span class="string">"x-admin-sm"</span> <span class="attr">lang</span>=<span class="string">"zh"</span> <span class="attr">xmlns:th</span>=<span class="string">"http://www.thymeleaf.org"</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">title</span>&gt;</span>秦疆'Blog<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"renderer"</span> <span class="attr">content</span>=<span class="string">"webkit"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"X-UA-Compatible"</span> <span class="attr">content</span>=<span class="string">"IE=edge,chrome=1"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"</span> /&gt;</span></span><br><span class="line">   <span class="comment">&lt;!--Editor.md--&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">th:href</span>=<span class="string">"@&#123;/editormd/css/editormd.css&#125;"</span>/&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"shortcut icon"</span> <span class="attr">href</span>=<span class="string">"https://pandao.github.io/editor.md/favicon.ico"</span> <span class="attr">type</span>=<span class="string">"image/x-icon"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"layui-fluid"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"layui-row layui-col-space15"</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"layui-col-md12"</span>&gt;</span></span><br><span class="line">           <span class="comment">&lt;!--博客表单--&gt;</span></span><br><span class="line">           <span class="tag">&lt;<span class="name">form</span> <span class="attr">name</span>=<span class="string">"mdEditorForm"</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">                  标题：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"title"</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">                  作者：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"author"</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"article-content"</span>&gt;</span></span><br><span class="line">                   <span class="tag">&lt;<span class="name">textarea</span> <span class="attr">name</span>=<span class="string">"content"</span> <span class="attr">id</span>=<span class="string">"content"</span> <span class="attr">style</span>=<span class="string">"display:none;"</span>&gt;</span> <span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br><span class="line">               <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">           <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"></span><br><span class="line">       <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--editormd--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">th:src</span>=<span class="string">"@&#123;/editormd/lib/jquery.min.js&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">th:src</span>=<span class="string">"@&#123;/editormd/editormd.js&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="actionscript">   <span class="keyword">var</span> testEditor;</span></span><br><span class="line"></span><br><span class="line"><span class="actionscript">   <span class="comment">//window.onload = function()&#123; &#125;</span></span></span><br><span class="line"><span class="javascript">   $(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="actionscript">       testEditor = editormd(<span class="string">"article-content"</span>, &#123;</span></span><br><span class="line"><span class="actionscript">           width : <span class="string">"95%"</span>,</span></span><br><span class="line">           height : 400,</span><br><span class="line"><span class="actionscript">           syncScrolling : <span class="string">"single"</span>,</span></span><br><span class="line"><span class="actionscript">           path : <span class="string">"/editormd/lib/"</span>,</span></span><br><span class="line"><span class="actionscript">           saveHTMLToTextarea : <span class="literal">true</span>,    <span class="comment">// 保存 HTML 到 Textarea</span></span></span><br><span class="line"><span class="actionscript">           emoji: <span class="literal">true</span>,</span></span><br><span class="line"><span class="actionscript">           theme: <span class="string">"dark"</span>,<span class="comment">//工具栏主题</span></span></span><br><span class="line"><span class="actionscript">           previewTheme: <span class="string">"dark"</span>,<span class="comment">//预览主题</span></span></span><br><span class="line"><span class="actionscript">           editorTheme: <span class="string">"pastel-on-dark"</span>,<span class="comment">//编辑主题</span></span></span><br><span class="line"><span class="actionscript">           tex : <span class="literal">true</span>,                   <span class="comment">// 开启科学公式TeX语言支持，默认关闭</span></span></span><br><span class="line"><span class="actionscript">           flowChart : <span class="literal">true</span>,             <span class="comment">// 开启流程图支持，默认关闭</span></span></span><br><span class="line"><span class="actionscript">           sequenceDiagram : <span class="literal">true</span>,       <span class="comment">// 开启时序/序列图支持，默认关闭,</span></span></span><br><span class="line"><span class="actionscript">           <span class="comment">//图片上传</span></span></span><br><span class="line"><span class="actionscript">           imageUpload : <span class="literal">true</span>,</span></span><br><span class="line"><span class="actionscript">           imageFormats : [<span class="string">"jpg"</span>, <span class="string">"jpeg"</span>, <span class="string">"gif"</span>, <span class="string">"png"</span>, <span class="string">"bmp"</span>, <span class="string">"webp"</span>],</span></span><br><span class="line"><span class="actionscript">           imageUploadURL : <span class="string">"/article/file/upload"</span>,</span></span><br><span class="line"><span class="actionscript">           onload : <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;</span></span><br><span class="line"><span class="javascript">               <span class="built_in">console</span>.log(<span class="string">'onload'</span>, <span class="keyword">this</span>);</span></span><br><span class="line">          &#125;,</span><br><span class="line"><span class="actionscript">           <span class="comment">/*指定需要显示的功能按钮*/</span></span></span><br><span class="line"><span class="actionscript">           toolbarIcons : <span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;</span></span><br><span class="line"><span class="actionscript">               <span class="keyword">return</span> [<span class="string">"undo"</span>,<span class="string">"redo"</span>,<span class="string">"|"</span>,</span></span><br><span class="line"><span class="actionscript">                   <span class="string">"bold"</span>,<span class="string">"del"</span>,<span class="string">"italic"</span>,<span class="string">"quote"</span>,<span class="string">"ucwords"</span>,<span class="string">"uppercase"</span>,<span class="string">"lowercase"</span>,<span class="string">"|"</span>,</span></span><br><span class="line"><span class="actionscript">                   <span class="string">"h1"</span>,<span class="string">"h2"</span>,<span class="string">"h3"</span>,<span class="string">"h4"</span>,<span class="string">"h5"</span>,<span class="string">"h6"</span>,<span class="string">"|"</span>,</span></span><br><span class="line"><span class="actionscript">                   <span class="string">"list-ul"</span>,<span class="string">"list-ol"</span>,<span class="string">"hr"</span>,<span class="string">"|"</span>,</span></span><br><span class="line"><span class="actionscript">                   <span class="string">"link"</span>,<span class="string">"reference-link"</span>,<span class="string">"image"</span>,<span class="string">"code"</span>,<span class="string">"preformatted-text"</span>,</span></span><br><span class="line"><span class="actionscript">                   <span class="string">"code-block"</span>,<span class="string">"table"</span>,<span class="string">"datetime"</span>,<span class="string">"emoji"</span>,<span class="string">"html-entities"</span>,<span class="string">"pagebreak"</span>,<span class="string">"|"</span>,</span></span><br><span class="line"><span class="actionscript">                   <span class="string">"goto-line"</span>,<span class="string">"watch"</span>,<span class="string">"preview"</span>,<span class="string">"fullscreen"</span>,<span class="string">"clear"</span>,<span class="string">"search"</span>,<span class="string">"|"</span>,</span></span><br><span class="line"><span class="actionscript">                   <span class="string">"help"</span>,<span class="string">"info"</span>,<span class="string">"releaseIcon"</span>, <span class="string">"index"</span>]</span></span><br><span class="line">          &#125;,</span><br><span class="line"></span><br><span class="line"><span class="actionscript">           <span class="comment">/*自定义功能按钮，下面我自定义了2个，一个是发布，一个是返回首页*/</span></span></span><br><span class="line">           toolbarIconTexts : &#123;</span><br><span class="line"><span class="handlebars"><span class="xml">               releaseIcon : "<span class="tag">&lt;<span class="name">span</span> <span class="attr">bgcolor</span>=<span class="string">\</span>"<span class="attr">gray</span>\"&gt;</span>发布<span class="tag">&lt;/<span class="name">span</span>&gt;</span>",</span></span></span><br><span class="line"><span class="handlebars"><span class="xml">               index : "<span class="tag">&lt;<span class="name">span</span> <span class="attr">bgcolor</span>=<span class="string">\</span>"<span class="attr">red</span>\"&gt;</span>返回首页<span class="tag">&lt;/<span class="name">span</span>&gt;</span>",</span></span></span><br><span class="line">          &#125;,</span><br><span class="line"></span><br><span class="line"><span class="actionscript">           <span class="comment">/*给自定义按钮指定回调函数*/</span></span></span><br><span class="line">           toolbarHandlers:&#123;</span><br><span class="line"><span class="actionscript">               releaseIcon : <span class="function"><span class="keyword">function</span><span class="params">(cm, icon, cursor, selection)</span> </span>&#123;</span></span><br><span class="line"><span class="actionscript">                   <span class="comment">//表单提交</span></span></span><br><span class="line"><span class="actionscript">                   mdEditorForm.method = <span class="string">"post"</span>;</span></span><br><span class="line"><span class="actionscript">                   mdEditorForm.action = <span class="string">"/article/addArticle"</span>;<span class="comment">//提交至服务器的路径</span></span></span><br><span class="line">                   mdEditorForm.submit();</span><br><span class="line">              &#125;,</span><br><span class="line"><span class="actionscript">               index : <span class="function"><span class="keyword">function</span><span class="params">()</span></span>&#123;</span></span><br><span class="line"><span class="javascript">                   <span class="built_in">window</span>.location.href = <span class="string">'/'</span>;</span></span><br><span class="line">              &#125;,</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>3、编写Controller，进行跳转，以及保存文章</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/article"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArticleController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@GetMapping</span>(<span class="string">"/toEditor"</span>)</span><br><span class="line">   <span class="function"><span class="keyword">public</span> String <span class="title">toEditor</span><span class="params">()</span></span>&#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="string">"editor"</span>;</span><br><span class="line">  &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="meta">@PostMapping</span>(<span class="string">"/addArticle"</span>)</span><br><span class="line">   <span class="function"><span class="keyword">public</span> String <span class="title">addArticle</span><span class="params">(Article article)</span></span>&#123;</span><br><span class="line">       articleMapper.addArticle(article);</span><br><span class="line">       <span class="keyword">return</span> <span class="string">"editor"</span>;</span><br><span class="line">  &#125;</span><br><span class="line">   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>  图片上传问题</p>
+</blockquote>
+<p>1、前端js中添加配置</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//图片上传</span></span><br><span class="line">imageUpload : <span class="literal">true</span>,</span><br><span class="line">imageFormats : [<span class="string">"jpg"</span>, <span class="string">"jpeg"</span>, <span class="string">"gif"</span>, <span class="string">"png"</span>, <span class="string">"bmp"</span>, <span class="string">"webp"</span>],</span><br><span class="line">imageUploadURL : <span class="string">"/article/file/upload"</span>, <span class="comment">// //这个是上传图片时的访问地址</span></span><br></pre></td></tr></table></figure>
+
+<p>2、后端请求，接收保存这个图片, 需要导入 FastJson 的依赖！</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//博客图片上传问题</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/file/upload"</span>)</span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JSONObject <span class="title">fileUpload</span><span class="params">(@RequestParam(value = <span class="string">"editormd-image-file"</span>, required = <span class="keyword">true</span>)</span> MultipartFile file, HttpServletRequest request) <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">   <span class="comment">//上传路径保存设置</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">//获得SpringBoot当前项目的路径：System.getProperty("user.dir")</span></span><br><span class="line">   String path = System.getProperty(<span class="string">"user.dir"</span>)+<span class="string">"/upload/"</span>;</span><br><span class="line"></span><br><span class="line">   <span class="comment">//按照月份进行分类：</span></span><br><span class="line">   Calendar instance = Calendar.getInstance();</span><br><span class="line">   String month = (instance.get(Calendar.MONTH) + <span class="number">1</span>)+<span class="string">"月"</span>;</span><br><span class="line">   path = path+month;</span><br><span class="line"></span><br><span class="line">   File realPath = <span class="keyword">new</span> File(path);</span><br><span class="line">   <span class="keyword">if</span> (!realPath.exists())&#123;</span><br><span class="line">       realPath.mkdir();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">//上传文件地址</span></span><br><span class="line">   System.out.println(<span class="string">"上传文件保存地址："</span>+realPath);</span><br><span class="line"></span><br><span class="line">   <span class="comment">//解决文件名字问题：我们使用uuid;</span></span><br><span class="line">   String filename = <span class="string">"ks-"</span>+UUID.randomUUID().toString().replaceAll(<span class="string">"-"</span>, <span class="string">""</span>);</span><br><span class="line">   <span class="comment">//通过CommonsMultipartFile的方法直接写文件（注意这个时候）</span></span><br><span class="line">   file.transferTo(<span class="keyword">new</span> File(realPath +<span class="string">"/"</span>+ filename));</span><br><span class="line"></span><br><span class="line">   <span class="comment">//给editormd进行回调</span></span><br><span class="line">   JSONObject res = <span class="keyword">new</span> JSONObject();</span><br><span class="line">   res.put(<span class="string">"url"</span>,<span class="string">"/upload/"</span>+month+<span class="string">"/"</span>+ filename);</span><br><span class="line">   res.put(<span class="string">"success"</span>, <span class="number">1</span>);</span><br><span class="line">   res.put(<span class="string">"message"</span>, <span class="string">"upload success!"</span>);</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3、解决文件回显显示的问题，设置虚拟目录映射！在我们自己拓展的MvcConfig中进行配置即可！</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyMvcConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 文件保存在真实目录/upload/下，</span></span><br><span class="line">   <span class="comment">// 访问的时候使用虚路径/upload，比如文件名为1.png，就直接/upload/1.png就ok了。</span></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addResourceHandlers</span><span class="params">(ResourceHandlerRegistry registry)</span> </span>&#123;</span><br><span class="line">       registry.addResourceHandler(<span class="string">"/upload/**"</span>)</span><br><span class="line">          .addResourceLocations(<span class="string">"file:"</span>+System.getProperty(<span class="string">"user.dir"</span>)+<span class="string">"/upload/"</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>  表情包问题</p>
+</blockquote>
+<p>自己手动下载，emoji 表情包，放到图片路径下：</p>
+<p>修改editormd.js文件</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Emoji graphics files url path</span></span><br><span class="line">editormd.emoji     = &#123;</span><br><span class="line">   path : <span class="string">"/editormd/plugins/emoji-dialog/emoji/"</span>,</span><br><span class="line">   ext   : <span class="string">".png"</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="文章展示"><a href="#文章展示" class="headerlink" title="文章展示"></a>文章展示</h3><p>1、Controller 中增加方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">show</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> <span class="keyword">int</span> id,Model model)</span>&#123;</span><br><span class="line">   Article article = articleMapper.getArticleById(id);</span><br><span class="line">   model.addAttribute(<span class="string">"article"</span>,article);</span><br><span class="line">   <span class="keyword">return</span> <span class="string">"article"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2、编写页面 article.html</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"en"</span> <span class="attr">xmlns:th</span>=<span class="string">"http://www.thymeleaf.org"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"width=device-width, initial-scale=1, maximum-scale=1"</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">title</span> <span class="attr">th:text</span>=<span class="string">"$&#123;article.title&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">   <span class="comment">&lt;!--文章头部信息：标题，作者，最后更新日期，导航--&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">h2</span> <span class="attr">style</span>=<span class="string">"margin: auto 0"</span> <span class="attr">th:text</span>=<span class="string">"$&#123;article.title&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line">  作者：<span class="tag">&lt;<span class="name">span</span> <span class="attr">style</span>=<span class="string">"float: left"</span> <span class="attr">th:text</span>=<span class="string">"$&#123;article.author&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">   <span class="comment">&lt;!--文章主体内容--&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"doc-content"</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">textarea</span> <span class="attr">style</span>=<span class="string">"display:none;"</span> <span class="attr">placeholder</span>=<span class="string">"markdown"</span> <span class="attr">th:text</span>=<span class="string">"$&#123;article.content&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">th:href</span>=<span class="string">"@&#123;/editormd/css/editormd.preview.css&#125;"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">th:src</span>=<span class="string">"@&#123;/editormd/lib/jquery.min.js&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">th:src</span>=<span class="string">"@&#123;/editormd/lib/marked.min.js&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">th:src</span>=<span class="string">"@&#123;/editormd/lib/prettify.min.js&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">th:src</span>=<span class="string">"@&#123;/editormd/lib/raphael.min.js&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">th:src</span>=<span class="string">"@&#123;/editormd/lib/underscore.min.js&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">th:src</span>=<span class="string">"@&#123;/editormd/lib/sequence-diagram.min.js&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">th:src</span>=<span class="string">"@&#123;/editormd/lib/flowchart.min.js&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">th:src</span>=<span class="string">"@&#123;/editormd/lib/jquery.flowchart.min.js&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">th:src</span>=<span class="string">"@&#123;/editormd/editormd.js&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="actionscript">   <span class="keyword">var</span> testEditor;</span></span><br><span class="line"><span class="javascript">   $(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="actionscript">       testEditor = editormd.markdownToHTML(<span class="string">"doc-content"</span>, &#123;<span class="comment">//注意：这里是上面DIV的id</span></span></span><br><span class="line"><span class="actionscript">           htmlDecode: <span class="string">"style,script,iframe"</span>,</span></span><br><span class="line"><span class="actionscript">           emoji: <span class="literal">true</span>,</span></span><br><span class="line"><span class="actionscript">           taskList: <span class="literal">true</span>,</span></span><br><span class="line"><span class="actionscript">           tocm: <span class="literal">true</span>,</span></span><br><span class="line"><span class="actionscript">           tex: <span class="literal">true</span>, <span class="comment">// 默认不解析</span></span></span><br><span class="line"><span class="actionscript">           flowChart: <span class="literal">true</span>, <span class="comment">// 默认不解析</span></span></span><br><span class="line"><span class="actionscript">           sequenceDiagram: <span class="literal">true</span>, <span class="comment">// 默认不解析</span></span></span><br><span class="line"><span class="actionscript">           codeFold: <span class="literal">true</span></span></span><br><span class="line">      &#125;);&#125;);</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>重启项目，访问进行测试。</p>
+<p>小结：</p>
+<p>有了富文本编辑器，我们网站的功能就会又多一项，大家到了这里完全可以有时间写一个属于自己的博客网站了，根据所学的知识是完全没有任何问题的。</p>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E8%BE%91%E5%99%A8/" rel="tag">-编辑器</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/2020/04/05/SpringBoot17%EF%BC%9ADubbo%E5%92%8CZookeeper%E9%9B%86%E6%88%90/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            SpringBoot17：Dubbo和Zookeeper集成
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/04/05/SpringBoot15%EF%BC%9A%E5%BC%82%E6%AD%A5%E3%80%81%E5%AE%9A%E6%97%B6%E3%80%81%E9%82%AE%E4%BB%B6%E4%BB%BB%E5%8A%A1/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">SpringBoot15：异步、定时、邮件任务</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: '1qio8bDzfD0zIHgwuD84E3ff-gzGzoHsz',
+        app_key: '4qfVrr8y0w3o33NPw2hQONdg',
+        path: window.location.pathname,
+        notify: 'false',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2020
+        花重锦官城
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <kbd>访问量:<span id="busuanzi_value_page_pv"></span></kbd>
+  <kbd>访客数:<span id="busuanzi_value_site_uv"></span></kbd>
+</span>
+        
+      </li>
+      
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+    <aside class="sidebar">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="犬来八荒"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">目录</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://chengguolaogongya.lofter.com/" target="_blank" rel="noopener">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+    strings: ['浮生有梦三千场 穷尽千里诗酒荒','徒把理想倾倒','不如早还乡'],
+    startDelay: 0,
+    typeSpeed: 100,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+  } catch (err) {
+  }
+  
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1321020935&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

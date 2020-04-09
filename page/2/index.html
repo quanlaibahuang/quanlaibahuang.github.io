@@ -65,6 +65,83 @@
     
     
     
+    <article id="post-SpringMVC02：第一个MVC程序" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/07/SpringMVC02%EF%BC%9A%E7%AC%AC%E4%B8%80%E4%B8%AAMVC%E7%A8%8B%E5%BA%8F/"
+    >SpringMVC02：第一个MVC程序</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/07/SpringMVC02%EF%BC%9A%E7%AC%AC%E4%B8%80%E4%B8%AAMVC%E7%A8%8B%E5%BA%8F/" class="article-date">
+  <time datetime="2020-04-07T00:20:41.000Z" itemprop="datePublished">2020-04-07</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>#Hello，SpringMVC</p>
+<p>在上一节中，我们讲解了 什么是SpringMVC以及它的执行原理！</p>
+<p><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NTAzMTExNg==&mid=2247483970&idx=1&sn=352e571ee88957ce391e972344e2a3d7&chksm=ce6104e1f9168df7f98eea39bd8478bb5082853ec8727c9da58c894625c43d44ebd64d36e2a8&scene=21#wechat_redirect" target="_blank" rel="noopener">狂神说SpringMVC01：什么是SpringMVC</a></p>
+<p>现在我们来看看如何快速使用SpringMVC编写我们的程序吧！</p>
+<h3 id="配置版"><a href="#配置版" class="headerlink" title="配置版"></a>配置版</h3><p>1、新建一个Moudle ， springmvc-02-hello ， 添加web的支持！</p>
+<p>2、确定导入了SpringMVC 的依赖！</p>
+<p>3、配置web.xml  ， 注册DispatcherServlet</p>
+      
+      <a class="article-more-link" href="/2020/04/07/SpringMVC02%EF%BC%9A%E7%AC%AC%E4%B8%80%E4%B8%AAMVC%E7%A8%8B%E5%BA%8F/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringMVC-Spring/" rel="tag">-SpringMVC -Spring</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
     <article id="post-SpringMVC01：什么是SpringMVC" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -737,97 +814,13 @@
 
 </article>
     
-    <article id="post-SpringBoot10：Web开发静态资源处理" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/04/SpringBoot10%EF%BC%9AWeb%E5%BC%80%E5%8F%91%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E5%A4%84%E7%90%86/"
-    >SpringBoot10：Web开发静态资源处理</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/04/SpringBoot10%EF%BC%9AWeb%E5%BC%80%E5%8F%91%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E5%A4%84%E7%90%86/" class="article-date">
-  <time datetime="2020-04-04T09:03:28.000Z" itemprop="datePublished">2020-04-04</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="Web开发探究"><a href="#Web开发探究" class="headerlink" title="Web开发探究"></a>Web开发探究</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>好的，同学们，那么接下来呢，我们开始学习SpringBoot与Web开发，从这一章往后，就属于我们实战部分的内容了；</p>
-<p>其实SpringBoot的东西用起来非常简单，因为SpringBoot最大的特点就是自动装配。</p>
-<p><strong>使用SpringBoot的步骤：</strong></p>
-<p>1、创建一个SpringBoot应用，选择我们需要的模块，SpringBoot就会默认将我们的需要的模块自动配置好</p>
-<p>2、手动在配置文件中配置部分配置项目就可以运行起来了</p>
-<p>3、专注编写业务代码，不需要考虑以前那样一大堆的配置了。</p>
-<p>要熟悉掌握开发，之前学习的自动配置的原理一定要搞明白！</p>
-<p>比如SpringBoot到底帮我们配置了什么？我们能不能修改？我们能修改哪些配置？我们能不能扩展？</p>
-<ul>
-<li>向容器中自动配置组件 ：*** Autoconfiguration</li>
-<li>自动配置类，封装配置文件的内容：***Properties</li>
-</ul>
-<p>没事就找找类，看看自动装配原理！</p>
-<p>我们之后来进行一个单体项目的小项目测试，让大家能够快速上手开发！</p>
-      
-      <a class="article-more-link" href="/2020/04/04/SpringBoot10%EF%BC%9AWeb%E5%BC%80%E5%8F%91%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E5%A4%84%E7%90%86/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Web/" rel="tag">-Spring -Web</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
   </article>
   
 
   
   <nav class="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
+    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
   </nav>
   
 </section>

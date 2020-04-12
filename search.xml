@@ -289,14 +289,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Spring3xml注解javaConfig</title>
-    <url>/2020/04/12/Config%E9%80%89%E5%93%AA%E4%B8%AA/</url>
-    <content><![CDATA[]]></content>
-      <tags>
-        <tag>-Spring -配置 -小说</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Spring3--xml,注解,javaConfig</title>
     <url>/2020/04/12/Spring3xml%E6%B3%A8%E8%A7%A3JavaConfig/</url>
     <content><![CDATA[<h1 id="xml、注解和Java-Config到底选哪个"><a href="#xml、注解和Java-Config到底选哪个" class="headerlink" title="xml、注解和Java Config到底选哪个"></a>xml、注解和Java Config到底选哪个</h1><p>本集概要：</p>
@@ -510,159 +502,6 @@
       <tags>
         <tag>-Spring -配置 -小说</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Spring(2)--注入方式哪家强</title>
-    <url>/2020/04/12/%E7%94%A8Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/</url>
-    <content><![CDATA[<p>本集概要：</p>
-<ul>
-<li>构造器注入有什么缺点？</li>
-<li>如何使用setter注入？</li>
-<li>setter注入为什么会导致空指针异常？</li>
-</ul>
-<p>前情回顾：<a href="https://zhuanlan.zhihu.com/p/29426019" target="_blank" rel="noopener">用小说的形式讲解Spring（1） —— 为什么需要依赖注入</a></p>
-<hr>
-<p>大雄给项目引入了Spring框架，解决了代码过度耦合的问题，当然，这只是Spring强大功力的冰山一角，菜鸟大雄还仍然是菜鸟大雄……</p>
-<h2 id="越来越庞大的构造函数"><a href="#越来越庞大的构造函数" class="headerlink" title="越来越庞大的构造函数"></a>越来越庞大的构造函数</h2><p>一天，晨会过后，哆啦对大雄说，“大雄，我们的订单接口和支付接口都已经非常完善了，现在需要<strong>在支付完成时更新一下订单的状态</strong>，你看看这个需求如何实现。”</p>
-<p>“这个好办，只需要给支付接口添加一个新的依赖IOrderDao，然后把OrderDao注入进去就可以了。”</p>
-<p>“好小子，张嘴一个‘依赖’，闭嘴一个‘注入’，术语说的挺溜的呀”</p>
-<p>“那是，你等着，马上搞定这个需求”，说完，大雄就火急火燎地写代码去了。</p>
-<p>大雄给PaymentAction加了一个成员变量orderDao，然后新建了一个构造函数，把orderDao注入到PaymentAction里面去，接着写了一个updateOrderAfterPayment方法，调用orderDao的方法更新订单（<strong>本文使用的代码，可以到 <a href="https://link.zhihu.com/?target=https%3A//github.com/hzy38324/SpringNovel">SpringNovel</a> 下载</strong>）：</p>
-<a id="more"></a>
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentAction</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ILogger logger;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// new proprety !!!</span></span><br><span class="line">    <span class="keyword">private</span> IOrderDao orderDao;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PaymentAction</span><span class="params">(ILogger logger)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.logger = logger;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// new constructor !!!</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PaymentAction</span><span class="params">(ILogger logger, IOrderDao orderDao)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.logger = logger;</span><br><span class="line">        <span class="keyword">this</span>.orderDao = orderDao;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pay</span><span class="params">(BigDecimal payValue)</span> </span>&#123;</span><br><span class="line">        logger.log(<span class="string">"pay begin, payValue is "</span> + payValue);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// do otherthing</span></span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">        logger.log(<span class="string">"pay end"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// new method !!!</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateOrderAfterPayment</span><span class="params">(String orderId)</span> </span>&#123;</span><br><span class="line">        orderDao.updateOrderAfterPayment(orderId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>最后大雄修改了一下payment.xml，注入orderDao：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"paymentAction"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.payment.springxml.PaymentAction"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">"serverLogger"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">"orderDao"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"serverLogger"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.perfectlogger.ServerLogger"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"orderDao"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.dao.OrderDao"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>就这样，大雄很快实现了往支付接口添加订单更新功能的需求，兴冲冲地给哆啦提交了代码Review的请求…</p>
-<p>很快，Review结果回来了：</p>
-<ul>
-<li>如果后面PaymentAction需要依赖更多的接口，比如短信发送接口、支付宝接口、微信支付接口等等，你还是往构造函数里面加吗？假如<strong>依赖了20个接口，那你的构造函数就会有20个参数</strong>，就像下面这段代码，你觉得这样的代码优雅吗？</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PaymentAction</span><span class="params">(ILogger logger, IOrderDao orderDao, ISMSUtil smsUtil, IPaybal paybal, IWechatPay wechatPay, ...)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>();</span><br><span class="line">    <span class="keyword">this</span>.logger = logger;</span><br><span class="line">    <span class="keyword">this</span>.orderDao = orderDao;</span><br><span class="line">    <span class="keyword">this</span>.smsUtil = smsUtil;</span><br><span class="line">    <span class="keyword">this</span>.paybal = paybal;</span><br><span class="line">    <span class="keyword">this</span>.wechatPay = wechatPay;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>哆啦的话再一次给大雄浇了一盘冷水，“为啥每次review都不能一次过……”</p>
-<h2 id="Setter注入"><a href="#Setter注入" class="headerlink" title="Setter注入"></a>Setter注入</h2><p>怎样解决构造函数越来越庞大的问题呢？大雄忽然想到之前在《Effective Java》的第一章看到的一个叫做<a href="https://link.zhihu.com/?target=http%3A//blog.csdn.net/hzy38324/article/details/72793035%23t1">Builder模式</a>的例子，Builder模式把一个原本很庞大的构造函数，简化成一个小的的构造函数外加很多个set函数。</p>
-<p>“啊，不一定要用构造器注入！还有setter注入！”，大雄这才想起来之前学习Spring时看到的另一种注入方式 —— setter注入。</p>
-<p>接下来，就是用setter注入改造PaymentAction了，大雄把之前含有两个参数的构造函数去掉，然后加上了一个setOrderDao方法：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentAction_SetInjection</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ILogger logger;</span><br><span class="line">    <span class="keyword">private</span> IOrderDao orderDao;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PaymentAction_SetInjection</span><span class="params">(ILogger logger)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.logger = logger;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// setter injection !!!</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOrderDao</span><span class="params">(IOrderDao orderDao)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.orderDao = orderDao;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pay</span><span class="params">(BigDecimal payValue)</span> </span>&#123;</span><br><span class="line">        logger.log(<span class="string">"pay begin, payValue is "</span> + payValue);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// do otherthing</span></span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">        logger.log(<span class="string">"pay end"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateOrderAfterPayment</span><span class="params">(String orderId)</span> </span>&#123;</span><br><span class="line">        orderDao.updateOrderAfterPayment(orderId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>接着再修改一下payment.xml，使用<property>标签，注入orderDao：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"paymentAction_setInjection"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.payment.springxml.PaymentAction_SetInjection"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">"serverLogger"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"orderDao"</span> <span class="attr">ref</span>=<span class="string">"orderDao"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>测试一下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test_PaymentAction_UpdateOrder_XML_SetInjection</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	ApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">"payment.xml"</span>);</span><br><span class="line">	PaymentAction_SetInjection paymentAction = (PaymentAction_SetInjection) context.getBean(<span class="string">"paymentAction_setInjection"</span>);</span><br><span class="line">	paymentAction.updateOrderAfterPayment(<span class="string">"123456"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Output:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">real update order after payment, orderId is 123456</span><br></pre></td></tr></table></figure>
-
-<p>“完美！setter注入其实也没什么嘛！”，大雄大叫道，偷偷瞄了哆啦一眼，哆啦此时正专注地看着自己的屏幕，似乎没有觉察到这边厢亢奋的大雄。</p>
-<h2 id="空指针异常！"><a href="#空指针异常！" class="headerlink" title="空指针异常！"></a>空指针异常！</h2><p>大雄再一次准备给哆啦提交review请求，在食指即将按下回车的那一刹那，他仿佛拥有了窥视未来的能力，他看到哆啦拿着装满冷水的脸盆，朝他洒过来….<br>“啊，不对劲，那这样构造器注入岂不是完败于setter注入了？不科学呀。。。setter注入肯定有什么局限是我还没发现的…..”</p>
-<p>“Spring容器初始化对象时，会去调用对象的构造函数，此时如果采用构造器注入，并且xml里没有配置对应的<constructor>标签，那么由于没有与之匹配的构造函数，注入应该会失败”</p>
-<p>“而setter注入，如果没有配置<property>，是会提示初始化失败呢，还是压根就不注入呢？”，大雄的脑袋飞快地翻转着。</p>
-<p>“修改一下代码，验证一下不就知道了！”<br>于是大雄首先把<constructor>标签注释掉：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"paymentAction_setInjection"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.payment.springxml.PaymentAction_SetInjection"</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--&lt;constructor-arg ref="serverLogger"&gt;--&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--&lt;/constructor-arg&gt;--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"orderDao"</span> <span class="attr">ref</span>=<span class="string">"orderDao"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>执行测试用例，果然报错了：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">org.springframework.beans.factory.BeanCreationException: </span><br><span class="line">...</span><br><span class="line">No default constructor found;</span><br></pre></td></tr></table></figure>
-
-<p>提示“没有默认的构造函数”，可见由于没有配置<constructor>标签，Spring容器调用了空参数的构造函数，而PaymentAction类并没有空参的构造函数，因此报错了，<strong>这种错误会导致容器初始化失败，因此很容易发现</strong>。</p>
-<p>接着大雄撤销了操作，然后把<property>标签注释掉：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"paymentAction_setInjection"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.payment.springxml.PaymentAction_SetInjection"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">"serverLogger"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--&lt;property name="orderDao" ref="orderDao"&gt;&lt;/property&gt;--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>重新执行测试用例，啊，报错了！ 空指针异常！：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">java.lang.NullPointerException</span><br><span class="line">	at com.springnovel.payment.springxml.PaymentAction_SetInjection.updateOrderAfterPayment(PaymentAction_SetInjection.java:34)</span><br><span class="line">	at com.springnovel.test.PaymentTest.test_PaymentAction_UpdateOrder_XML_SetInjection(PaymentTest.java:46)</span><br></pre></td></tr></table></figure>
-
-<p>看来如果没有在xml里面指定要注入的对象，那么set注入不会失败，所依赖的对象没有被注入任何对象，因此默认为null。<br>“这可不太好，<strong>万一真的粗心大意忘了在xml里面指定要注入的对象呢，容器是可以成功启动，但是运行时可就挂了。。。</strong>”</p>
-<p>“有没有办法让setter注入的属性成为必填项呢？”</p>
-<p>大雄决定上网搜索一下资料，打开Google，输入“spring setter bitian…”</p>
-<p>“啊不。。什么鬼。。。必填英文怎么说来着。。。”</p>
-<p>“噢噢，required嘛，HTML5的一个必填校验属性就叫Required”</p>
-<p>噼里啪啦，大雄输入了“spring setter required”</p>
-<p>很快，他发现Spring2.0提供了一个@Required注解……</p>
-<h2 id="Reuqired注解"><a href="#Reuqired注解" class="headerlink" title="Reuqired注解"></a>Reuqired注解</h2><p>“这就好办了！”，大雄对照着教程，修改起了代码。<br>首先要开启Spring注解的功能，给payment.xml加入这些配置：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span></span></span><br><span class="line"><span class="tag">       <span class="attr">...</span>    </span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:context</span>=<span class="string">"http://www.springframework.org/schema/context"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">"</span></span></span><br><span class="line"><span class="tag"><span class="string">        ...</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/context</span></span></span><br><span class="line"><span class="tag"><span class="string">	    http://www.springframework.org/schema/context/spring-context-2.5.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:annotation-config</span>/&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>接着再给PaymentAction的setOrderDao方法加入@Required注解：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Required</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOrderDao</span><span class="params">(IOrderDao orderDao)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">this</span>.orderDao = orderDao;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>再次执行测试用例，结果当然还是报错，不过这次是在容器初始化就提示错误了:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">org.springframework.beans.factory.BeanCreationException: </span><br><span class="line">...</span><br><span class="line">Property &#39;orderDao&#39; is required for bean &#39;paymentAction_setInjection&#39;</span><br></pre></td></tr></table></figure>
-
-<p>“这下好了，在Spring容器创建对象时就报错了，不会等到执行代码时再来抛个空指针异常，简直是粗心大意的程序员的救星啊！”</p>
-<p>大雄仔细地对代码做了检查，最后敲了回车，给哆啦提交了Review请求。</p>
-<p>“叮，pass!”，大概过了半个小时，屏幕弹出通知，大雄的代码终于通过了哆啦和小组成员的检视，成功提交到代码库了！</p>
-<h2 id="大雄的笔记"><a href="#大雄的笔记" class="headerlink" title="大雄的笔记"></a>大雄的笔记</h2><p>今天大雄学到了构造器注入之外的另外一种注入方式——setter注入，临睡前，大雄习惯性地对今天所学到的知识做了总结：</p>
-<ul>
-<li><p>Constructor注入 vs Setter注入</p>
-</li>
-<li><ul>
-<li>Constructor注入能够强制要求调用者注入构造函数中的所有参数，否则在容器初始化时就会失败；但是如果要注入的对象过多，就会导致<strong>构造函数过于庞大</strong>。</li>
-<li>Setter注入，类似于Builder模式，将原本庞大的构造函数，拆解为了<strong>一个小的构造函数</strong>和<strong>许多个set方法</strong>。setter注入不能保证对象一定会被注入，但是可以使用<strong>@Required</strong>注解，强制要求使用者注入对象，否则在容器初始化时就会报错。</li>
-</ul>
-</li>
-</ul>
-<p>总结完，大雄一跃而起，啪的一下蹦到了席梦思上，整个人成“大”字状，眼睛一闭，嘴巴一张，很快进入了梦乡……</p>
-<h2 id="大雄的梦"><a href="#大雄的梦" class="headerlink" title="大雄的梦"></a>大雄的梦</h2><p>睡梦中，大雄看到了一只非常奇怪的“三眼乌鸦”，“三眼乌鸦”静静的木在树枝上，等大雄一靠近，就很快地飞到另一颗树上，大雄就这样追了好久….<br>突然，大雄看到一座桥，桥头立着一块牌子，上面写着“Bridge for You”<br>“桥为我？桥给我？？”</p>
-<p>一旁的“三眼乌鸦”实在看不下去了，骂道，“是给你准备的桥！笨蛋！”</p>
-<p>“给我准备的？那我得走过去看看！”，说完，大雄走进了那座桥 – <a href="https://link.zhihu.com/?target=http%3A//bridgeforyou.cn/">Bridge for You</a> ……</p>
-<p>桥的对面有一间茅草屋，门没关，大雄看了看，好像没人，走了进去，发现里屋有个少年，正在敲着键盘。大雄凑过去偷看，那少年好像在写小说，小说标题是“用小说的形式讲解Spring…”，大雄心想怎么会有人起这么挫的标题。那少年一边敲着键盘，一边还叨叨道，“大雄啊大雄，哥最近换了新部门，忙得很，一周只能过来看你一次啦……”</p>
-<h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2><p>第二天一大早，手机突然响了，睡梦中的大雄迷迷糊糊地接了电话…</p>
-<p>“喂！大雄啊，还在睡觉啊？？快起来，有个需求要改一下！”，原来是那个讨厌的项目经理胖虎…</p>
-<p>“改..改需求？！”</p>
-<p>“之前不是让你们把日志打印到日志服务器了吗？刚刚客户说了，要换，要打到控制台！今天早上就要改完！”</p>
-<p>“哇靠….”大雄脱口而出，不过他很快就暗暗高兴，因为他知道由于采用了依赖注入，现在他只需要改一处配置，“哎呀，这客户咋那么多事，你等着啊，我现在改，要改的地方多着呢，改完你得请我吃饭”</p>
-<p>“小兔崽子，项目上线了你要吃多少都行！”</p>
-<p>大雄马上起身，打开便携，把payment.xml的ServerLogger改为了ConsoleLogger：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"serverLogger"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.perfectlogger.CosoleLogger"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>“要测试一下吗？哎，算了，测啥测，肯定没问题”，说完大雄提交了代码给胖虎，然后给胖虎发了条信息，让他审核一下。<br>胖虎很快将大雄的代码提交到代码库…</p>
-<p>“真是的，搞得我觉都没睡好…”，大雄正准备睡个回笼觉….手机又响了…</p>
-<p>“大雄，你怎么搞得！改了你的代码，现在服务器连启动都失败了！”</p>
-<p>“啊？？？怎么可能…”，大雄一脸懵逼……</p>
-<h2 id="参考内容"><a href="#参考内容" class="headerlink" title="参考内容"></a>参考内容</h2><ul>
-<li>《Spring in Action》</li>
-<li><a href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/21218868/explain-why-constructor-inject-is-better-than-other-options">Explain why constructor inject is better than other options</a></li>
-<li><a href="https://link.zhihu.com/?target=https%3A//spring.io/blog/2007/07/11/setter-injection-versus-constructor-injection-and-the-use-of-required/">Setter injection versus constructor injection and the use of @Required</a></li>
-<li><a href="https://link.zhihu.com/?target=https%3A//www.mkyong.com/spring/spring-dependency-checking-with-required-annotation/">Spring dependency checking with @Required Annotation</a></li>
-</ul>
-]]></content>
-      <tags>
-        <tag>-Spring -配置 -小说</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>为什么需要依赖注入</title>
-    <url>/2020/04/12/%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</url>
-    <content><![CDATA[<p>本集概要：</p>
-<ul>
-<li>使用依赖注入前，代码是什么样子，有什么缺点？</li>
-<li>依赖注入是什么？为什么要使用依赖注入？</li>
-<li>Spring如何使用xml配置的方式进行依赖注入？</li>
-</ul>
-<hr>
-<p>大雄是一个刚踏入社会的95后，热爱编程的他，在毕业之后进入了一家互联网公司，负责公司内一个电商项目的开发工作。<br>为了让大雄更快的成长，公司安排了哆啦作为大雄的导师。</p>
-<h2 id="春风得意"><a href="#春风得意" class="headerlink" title="春风得意"></a>春风得意</h2><p>在哆啦的指导下，大雄很快对这个项目的代码有了大致的了解，于是哆啦准备给大雄安排点任务。</p>
-<p>“大雄，我们这项目现在缺少<strong>日志打印</strong>，万一到时上线后发现bug了，很难定位。你看看有什么办法可以把一些必要的信息<strong>打印到日志文件</strong>中。”<br>“没问题！”大雄爽快地答应了。</p>
-<p>大雄以前在学校时，经常上网找各种资源，于是很快就锁定了一个叫PerfectLogger的工具。“资料很完善，很多大神都推荐它，嗯，就用它了”。</p>
-<p>大雄看了一下PerfectLogger的官方文档，发现里面提供了很多种日志打印功能，有打印到文件的，有打印到控制台的，还有打印到远程服务器上的，这些类都实现了一个叫ILogger的接口：</p>
-<ul>
-<li><p>ILogger</p>
-</li>
-<li><ul>
-<li>FileLogger</li>
-<li>ConsoleLogger</li>
-<li>ServerLogger</li>
-<li>…</li>
-</ul>
-</li>
-</ul>
-<p>“哆啦说要打印到文件，那就用FileLogger吧！”<br>于是，大雄先在支付接口的代码中，加入了日志打印（<strong>本文使用的代码，可以到</strong> <strong><a href="https://link.zhihu.com/?target=https%3A//github.com/hzy38324/SpringNovel">SpringNovel</a></strong> <strong>下载</strong>）：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentAction</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> ILogger logger = <span class="keyword">new</span> FileLogger();</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pay</span><span class="params">(BigDecimal payValue)</span> </span>&#123;</span><br><span class="line">		logger.log(<span class="string">"pay begin, payValue is "</span> + payValue);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// do otherthing</span></span><br><span class="line">		<span class="comment">// ...</span></span><br><span class="line">		</span><br><span class="line">		logger.log(<span class="string">"pay end"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>接着，大雄又在登录、鉴权、退款、退货等接口，都加上和支付接口类似的日志功能，要加的地方还真不少，大雄加了两天两夜，终于加完了，大功告成！想到自己第一个任务就顺利完成了，大雄不禁有点小得意…</p>
-]]></content>
   </entry>
   <entry>
     <title>Spring为什么需要依赖注入</title>
@@ -4722,17 +4561,6 @@ hello表示控制器
 </li>
 <li><p>同理可证其他的主体其他的样式</p>
 </li>
-</ol>
-]]></content>
-  </entry>
-  <entry>
-    <title>怎样优雅的自定义Typora</title>
-    <url>/2020/03/28/%E6%80%8E%E6%A0%B7%E4%BC%98%E9%9B%85%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89Typora%E5%91%A2/</url>
-    <content><![CDATA[<h1 id="更改所有文本字体"><a href="#更改所有文本字体" class="headerlink" title="更改所有文本字体"></a>更改所有文本字体</h1><ol>
-<li>找到你的主题路径，例如我的：C:\Users\17159\AppData\Roaming\Typora\themes</li>
-<li>找到你想重置的主题css文件，例如我的：solarized.css</li>
-<li>ctrl+f 替换所有的 <strong>font-family</strong> 为 <strong>font-family: ‘新字体’,</strong> 例如我的<strong>‘Open Sans’</strong>,所以我把全局的 <strong>font-family</strong> 替换为 <strong>font-family: ‘Open Sans’,</strong></li>
-<li>同理可证其他的主体其他的样式</li>
 </ol>
 ]]></content>
   </entry>

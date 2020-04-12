@@ -65,6 +65,609 @@
     
     
     
+    <article id="post-SpringMVC02：第一个MVC程序" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/07/SpringMVC02%EF%BC%9A%E7%AC%AC%E4%B8%80%E4%B8%AAMVC%E7%A8%8B%E5%BA%8F/"
+    >SpringMVC02：第一个MVC程序</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/07/SpringMVC02%EF%BC%9A%E7%AC%AC%E4%B8%80%E4%B8%AAMVC%E7%A8%8B%E5%BA%8F/" class="article-date">
+  <time datetime="2020-04-07T00:20:41.000Z" itemprop="datePublished">2020-04-07</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>#Hello，SpringMVC</p>
+<p>在上一节中，我们讲解了 什么是SpringMVC以及它的执行原理！</p>
+<p><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NTAzMTExNg==&mid=2247483970&idx=1&sn=352e571ee88957ce391e972344e2a3d7&chksm=ce6104e1f9168df7f98eea39bd8478bb5082853ec8727c9da58c894625c43d44ebd64d36e2a8&scene=21#wechat_redirect" target="_blank" rel="noopener">狂神说SpringMVC01：什么是SpringMVC</a></p>
+<p>现在我们来看看如何快速使用SpringMVC编写我们的程序吧！</p>
+<h3 id="配置版"><a href="#配置版" class="headerlink" title="配置版"></a>配置版</h3><p>1、新建一个Moudle ， springmvc-02-hello ， 添加web的支持！</p>
+<p>2、确定导入了SpringMVC 的依赖！</p>
+<p>3、配置web.xml  ， 注册DispatcherServlet</p>
+      
+      <a class="article-more-link" href="/2020/04/07/SpringMVC02%EF%BC%9A%E7%AC%AC%E4%B8%80%E4%B8%AAMVC%E7%A8%8B%E5%BA%8F/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringMVC-Spring/" rel="tag">-SpringMVC -Spring</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-SpringMVC01：什么是SpringMVC" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/06/SpringMVC01%EF%BC%9A%E4%BB%80%E4%B9%88%E6%98%AFSpringMVC/"
+    >SpringMVC01：什么是SpringMVC</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/06/SpringMVC01%EF%BC%9A%E4%BB%80%E4%B9%88%E6%98%AFSpringMVC/" class="article-date">
+  <time datetime="2020-04-06T11:47:01.000Z" itemprop="datePublished">2020-04-06</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="1、回顾MVC"><a href="#1、回顾MVC" class="headerlink" title="1、回顾MVC"></a>1、回顾MVC</h1><h3 id="1-1、什么是MVC"><a href="#1-1、什么是MVC" class="headerlink" title="1.1、什么是MVC"></a>1.1、什么是MVC</h3><ul>
+<li>MVC是模型(Model)、视图(View)、控制器(Controller)的简写，是一种软件设计规范。</li>
+<li>是将业务逻辑、数据、显示分离的方法来组织代码。</li>
+<li>MVC主要作用是<strong>降低了视图与业务逻辑间的双向偶合</strong>。</li>
+<li>MVC不是一种设计模式，<strong>MVC是一种架构模式</strong>。当然不同的MVC存在差异。</li>
+</ul>
+<p><strong>Model（模型）：</strong>数据模型，提供要展示的数据，因此包含数据和行为，可以认为是领域模型或JavaBean组件（包含数据和行为），不过现在一般都分离开来：Value Object（数据Dao） 和 服务层（行为Service）。也就是模型提供了模型数据查询和模型数据的状态更新等功能，包括数据和业务。</p>
+<p><strong>View（视图）：</strong>负责进行模型的展示，一般就是我们见到的用户界面，客户想看到的东西。</p>
+<p><strong>Controller（控制器）：</strong>接收用户请求，委托给模型进行处理（状态改变），处理完毕后把返回的模型数据返回给视图，由视图负责展示。也就是说控制器做了个调度员的工作。</p>
+<p><strong>最典型的MVC就是JSP + servlet + javabean的模式。</strong></p>
+      
+      <a class="article-more-link" href="/2020/04/06/SpringMVC01%EF%BC%9A%E4%BB%80%E4%B9%88%E6%98%AFSpringMVC/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-SpringMVC/" rel="tag">-Spring -SpringMVC</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-SpringBoot18：集成SpringSecurity" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/06/SpringBoot18%EF%BC%9A%E9%9B%86%E6%88%90SpringSecurity/"
+    >SpringBoot18：集成SpringSecurity</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/06/SpringBoot18%EF%BC%9A%E9%9B%86%E6%88%90SpringSecurity/" class="article-date">
+  <time datetime="2020-04-06T09:31:06.000Z" itemprop="datePublished">2020-04-06</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="SpringSecurity"><a href="#SpringSecurity" class="headerlink" title="SpringSecurity"></a>SpringSecurity</h1><h2 id="安全简介"><a href="#安全简介" class="headerlink" title="安全简介"></a>安全简介</h2><p>在 Web 开发中，安全一直是非常重要的一个方面。安全虽然属于应用的非功能性需求，但是应该在应用开发的初期就考虑进来。如果在应用开发的后期才考虑安全的问题，就可能陷入一个两难的境地：一方面，应用存在严重的安全漏洞，无法满足用户的要求，并可能造成用户的隐私数据被攻击者窃取；另一方面，应用的基本架构已经确定，要修复安全漏洞，可能需要对系统的架构做出比较重大的调整，因而需要更多的开发时间，影响应用的发布进程。因此，从应用开发的第一天就应该把安全相关的因素考虑进来，并在整个应用的开发过程中。</p>
+<p>市面上存在比较有名的：Shiro，Spring Security ！</p>
+<p>这里需要阐述一下的是，每一个框架的出现都是为了解决某一问题而产生了，那么Spring Security框架的出现是为了解决什么问题呢？</p>
+      
+      <a class="article-more-link" href="/2020/04/06/SpringBoot18%EF%BC%9A%E9%9B%86%E6%88%90SpringSecurity/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Security-%E5%AE%89%E5%85%A8/" rel="tag">-Spring -Security -安全</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-SpringBoot17：Dubbo和Zookeeper集成" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/05/SpringBoot17%EF%BC%9ADubbo%E5%92%8CZookeeper%E9%9B%86%E6%88%90/"
+    >SpringBoot17：Dubbo和Zookeeper集成</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/05/SpringBoot17%EF%BC%9ADubbo%E5%92%8CZookeeper%E9%9B%86%E6%88%90/" class="article-date">
+  <time datetime="2020-04-05T08:23:39.000Z" itemprop="datePublished">2020-04-05</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="分布式理论"><a href="#分布式理论" class="headerlink" title="分布式理论"></a>分布式理论</h1><h2 id="什么是分布式系统？"><a href="#什么是分布式系统？" class="headerlink" title="什么是分布式系统？"></a><strong>什么是分布式系统？</strong></h2><p>在《分布式系统原理与范型》一书中有如下定义：“分布式系统是若干独立计算机的集合，这些计算机对于用户来说就像单个相关系统”；</p>
+<p>分布式系统是由一组通过网络进行通信、为了完成共同的任务而协调工作的计算机节点组成的系统。分布式系统的出现是为了用廉价的、普通的机器完成单个计算机无法完成的计算、存储任务。其目的是<strong>利用更多的机器，处理更多的数据</strong>。</p>
+<p>分布式系统（distributed system）是建立在网络之上的软件系统。</p>
+<p>首先需要明确的是，只有当单个节点的处理能力无法满足日益增长的计算、存储任务的时候，且硬件的提升（加内存、加磁盘、使用更好的CPU）高昂到得不偿失的时候，应用程序也不能进一步优化的时候，我们才需要考虑分布式系统。因为，分布式系统要解决的问题本身就是和单机系统一样的，而由于分布式系统多节点、通过网络通信的拓扑结构，会引入很多单机系统没有的问题，为了解决这些问题又会引入更多的机制、协议，带来更多的问题。</p>
+      
+      <a class="article-more-link" href="/2020/04/05/SpringBoot17%EF%BC%9ADubbo%E5%92%8CZookeeper%E9%9B%86%E6%88%90/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dubbo-Zookeeper-SpringBoot-%E5%88%86%E5%B8%83%E5%BC%8F-%E9%9A%BE%E7%82%B9/" rel="tag">-Dubbo -Zookeeper -SpringBoot -分布式 -难点</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-SpringBoot16：富文本编辑器" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/05/SpringBoot16%EF%BC%9A%E5%AF%8C%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/"
+    >SpringBoot16：富文本编辑器</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/05/SpringBoot16%EF%BC%9A%E5%AF%8C%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/" class="article-date">
+  <time datetime="2020-04-05T07:48:08.000Z" itemprop="datePublished">2020-04-05</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="富文本编辑器"><a href="#富文本编辑器" class="headerlink" title="富文本编辑器"></a>富文本编辑器</h1><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>思考：我们平时在博客园，或者CSDN等平台进行写作的时候，有同学思考过他们的编辑器是怎么实现的吗？</p>
+<p>在博客园后台的选项设置中，可以看到一个文本编辑器的选项：</p>
+<p><img src="/images/innerimage/qinzidong/image-20200405161248699.png" alt="image-20200405161248699"></p>
+<p>其实这个就是富文本编辑器，市面上有许多非常成熟的富文本编辑器，比如：</p>
+<ul>
+<li><p><strong>Editor.md</strong>——功能非常丰富的编辑器，左端编辑，右端预览，非常方便，完全免费</p>
+</li>
+<li><ul>
+<li>官网：<a href="https://pandao.github.io/editor.md/" target="_blank" rel="noopener">https://pandao.github.io/editor.md/</a></li>
+</ul>
+</li>
+</ul>
+      
+      <a class="article-more-link" href="/2020/04/05/SpringBoot16%EF%BC%9A%E5%AF%8C%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E8%BE%91%E5%99%A8/" rel="tag">-编辑器</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-SpringBoot15：异步、定时、邮件任务" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/05/SpringBoot15%EF%BC%9A%E5%BC%82%E6%AD%A5%E3%80%81%E5%AE%9A%E6%97%B6%E3%80%81%E9%82%AE%E4%BB%B6%E4%BB%BB%E5%8A%A1/"
+    >SpringBoot15：异步、定时、邮件任务</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/05/SpringBoot15%EF%BC%9A%E5%BC%82%E6%AD%A5%E3%80%81%E5%AE%9A%E6%97%B6%E3%80%81%E9%82%AE%E4%BB%B6%E4%BB%BB%E5%8A%A1/" class="article-date">
+  <time datetime="2020-04-05T07:13:47.000Z" itemprop="datePublished">2020-04-05</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在我们的工作中，常常会用到异步处理任务，比如我们在网站上发送邮件，后台会去发送邮件，此时前台会造成响应不动，直到邮件发送完毕，响应才会成功，所以我们一般会采用多线程的方式去处理这些任务。还有一些定时任务，比如需要在每天凌晨的时候，分析一次前一天的日志信息。还有就是邮件的发送，微信的前身也是邮件服务呢，这些东西都是怎么实现的呢？其实SpringBoot都给我们提供了对应的支持，我们上手使用十分的简单，只需要开启一些注解支持，配置一些配置文件即可！那我们来看看吧~  </p>
+      
+      <a class="article-more-link" href="/2020/04/05/SpringBoot15%EF%BC%9A%E5%BC%82%E6%AD%A5%E3%80%81%E5%AE%9A%E6%97%B6%E3%80%81%E9%82%AE%E4%BB%B6%E4%BB%BB%E5%8A%A1/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BC%82%E6%AD%A5-%E5%AE%9A%E6%97%B6-%E9%82%AE%E4%BB%B6-SpringBoot/" rel="tag">-异步 -定时 -邮件 -SpringBoot</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-SpringBoot14：集成Swagger终极版" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/05/SpringBoot14%EF%BC%9A%E9%9B%86%E6%88%90Swagger%E7%BB%88%E6%9E%81%E7%89%88/"
+    >SpringBoot14：集成Swagger终极版</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/05/SpringBoot14%EF%BC%9A%E9%9B%86%E6%88%90Swagger%E7%BB%88%E6%9E%81%E7%89%88/" class="article-date">
+  <time datetime="2020-04-05T00:59:33.000Z" itemprop="datePublished">2020-04-05</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="项目集成Swagger"><a href="#项目集成Swagger" class="headerlink" title="项目集成Swagger"></a>项目集成Swagger</h1><p><img src="/images/innerimage/qinzidong/image-20200405102718257.png" alt="image-20200405102718257"></p>
+<p>定义：就是把相关的信息存储在它定义的描述文件里面(yml或json格式)，再通过维护这个描述文件可以去更新接口文档，以及生成各端代码。而Springfox-swagger,则可以通过扫描代码去生成这个描述文件，连描述文件都不需要再去维护了。所有的信息，都在代码里面了。代码即接口文档，接口文档即代码。</p>
+      
+      <a class="article-more-link" href="/2020/04/05/SpringBoot14%EF%BC%9A%E9%9B%86%E6%88%90Swagger%E7%BB%88%E6%9E%81%E7%89%88/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Swagger-SpringBoot-%E6%8E%A5%E5%8F%A3/" rel="tag">-Swagger -SpringBoot -接口</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-SpringBoot13：页面国际化" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/05/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96/"
+    >SpringBoot13：页面国际化</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/05/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96/" class="article-date">
+  <time datetime="2020-04-04T23:42:44.000Z" itemprop="datePublished">2020-04-05</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="页面国际化"><a href="#页面国际化" class="headerlink" title="页面国际化"></a>页面国际化</h1><p>有的时候，我们的网站会去涉及中英文甚至多语言的切换，这时候我们就需要学习国际化了！</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>先在IDEA中统一设置properties的编码问题！</p>
+<p><img src="/images/innerimage/qinzidong/image-20200405074640872.png" alt="image-20200405074640872"></p>
+<p>编写国际化配置文件，抽取页面需要显示的国际化页面消息。我们可以去登录页面查看一下，哪些内容我们需要编写国际化的配置！</p>
+      
+      <a class="article-more-link" href="/2020/04/05/SpringBoot13%EF%BC%9A%E9%A1%B5%E9%9D%A2%E5%9B%BD%E9%99%85%E5%8C%96/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringBoot-%E5%9B%BD%E9%99%85%E5%8C%96-%E4%B8%AD%E8%8B%B1%E6%96%87/" rel="tag">-SpringBoot -国际化 -中英文</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
     <article id="post-SpringBoot12：MVC自动配置原理" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -211,622 +814,13 @@
 
 </article>
     
-    <article id="post-SpringBoot10：Web开发静态资源处理" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/04/SpringBoot10%EF%BC%9AWeb%E5%BC%80%E5%8F%91%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E5%A4%84%E7%90%86/"
-    >SpringBoot10：Web开发静态资源处理</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/04/SpringBoot10%EF%BC%9AWeb%E5%BC%80%E5%8F%91%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E5%A4%84%E7%90%86/" class="article-date">
-  <time datetime="2020-04-04T09:03:28.000Z" itemprop="datePublished">2020-04-04</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="Web开发探究"><a href="#Web开发探究" class="headerlink" title="Web开发探究"></a>Web开发探究</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>好的，同学们，那么接下来呢，我们开始学习SpringBoot与Web开发，从这一章往后，就属于我们实战部分的内容了；</p>
-<p>其实SpringBoot的东西用起来非常简单，因为SpringBoot最大的特点就是自动装配。</p>
-<p><strong>使用SpringBoot的步骤：</strong></p>
-<p>1、创建一个SpringBoot应用，选择我们需要的模块，SpringBoot就会默认将我们的需要的模块自动配置好</p>
-<p>2、手动在配置文件中配置部分配置项目就可以运行起来了</p>
-<p>3、专注编写业务代码，不需要考虑以前那样一大堆的配置了。</p>
-<p>要熟悉掌握开发，之前学习的自动配置的原理一定要搞明白！</p>
-<p>比如SpringBoot到底帮我们配置了什么？我们能不能修改？我们能修改哪些配置？我们能不能扩展？</p>
-<ul>
-<li>向容器中自动配置组件 ：*** Autoconfiguration</li>
-<li>自动配置类，封装配置文件的内容：***Properties</li>
-</ul>
-<p>没事就找找类，看看自动装配原理！</p>
-<p>我们之后来进行一个单体项目的小项目测试，让大家能够快速上手开发！</p>
-      
-      <a class="article-more-link" href="/2020/04/04/SpringBoot10%EF%BC%9AWeb%E5%BC%80%E5%8F%91%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E5%A4%84%E7%90%86/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Web/" rel="tag">-Spring -Web</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringBoot09：整合MyBatis" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/04/SpringBoot09%EF%BC%9A%E6%95%B4%E5%90%88MyBatis/"
-    >SpringBoot09：整合MyBatis</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/04/SpringBoot09%EF%BC%9A%E6%95%B4%E5%90%88MyBatis/" class="article-date">
-  <time datetime="2020-04-04T00:29:09.000Z" itemprop="datePublished">2020-04-04</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>#整合MyBatis</p>
-<p>官方文档：<a href="http://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/" target="_blank" rel="noopener">http://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/</a></p>
-<p>Maven仓库地址：<a href="https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter/2.1.1" target="_blank" rel="noopener">https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter/2.1.1</a></p>
-<p><img src="/images/innerimage/qinzidong/image-20200404083128894.png" alt="image-20200404083128894"></p>
-<h2 id="整合测试"><a href="#整合测试" class="headerlink" title="整合测试"></a>整合测试</h2><p>1、导入 MyBatis 所需要的依赖</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mybatis.spring.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.1.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-      
-      <a class="article-more-link" href="/2020/04/04/SpringBoot09%EF%BC%9A%E6%95%B4%E5%90%88MyBatis/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MyBatis-Spring/" rel="tag">-MyBatis -Spring</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringBoot08：整合Druid" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/03/SpringBoot08%EF%BC%9A%E6%95%B4%E5%90%88Druid/"
-    >SpringBoot08：整合Druid</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/03/SpringBoot08%EF%BC%9A%E6%95%B4%E5%90%88Druid/" class="article-date">
-  <time datetime="2020-04-03T12:34:13.000Z" itemprop="datePublished">2020-04-03</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="集成Druid"><a href="#集成Druid" class="headerlink" title="集成Druid"></a>集成Druid</h1><h2 id="Druid简介"><a href="#Druid简介" class="headerlink" title="Druid简介"></a>Druid简介</h2><p>Java程序很大一部分要操作数据库，为了提高性能操作数据库的时候，又不得不使用数据库连接池。</p>
-<p>Druid 是阿里巴巴开源平台上一个数据库连接池实现，结合了 C3P0、DBCP 等 DB 池的优点，同时加入了日志监控。</p>
-<p>Druid 可以很好的监控 DB 池连接和 SQL 的执行情况，天生就是针对监控而生的 DB 连接池。</p>
-<p>Druid已经在阿里巴巴部署了超过600个应用，经过一年多生产环境大规模部署的严苛考验。</p>
-<p>Spring Boot 2.0 以上默认使用 Hikari 数据源，可以说 Hikari 与 Driud 都是当前 Java Web 上最优秀的数据源，我们来重点介绍 Spring Boot 如何集成 Druid 数据源，如何实现数据库监控。</p>
-      
-      <a class="article-more-link" href="/2020/04/03/SpringBoot08%EF%BC%9A%E6%95%B4%E5%90%88Druid/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E6%BA%90-dataSource-Druid-Spring/" rel="tag">-数据源 -dataSource -Druid -Spring</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringBoot07：整合JDBC" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/03/SpringBoot07%EF%BC%9A%E6%95%B4%E5%90%88JDBC/"
-    >SpringBoot07：整合JDBC</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/03/SpringBoot07%EF%BC%9A%E6%95%B4%E5%90%88JDBC/" class="article-date">
-  <time datetime="2020-04-03T10:59:53.000Z" itemprop="datePublished">2020-04-03</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="SpringData简介"><a href="#SpringData简介" class="headerlink" title="SpringData简介"></a>SpringData简介</h1><p>对于数据访问层，无论是 SQL(关系型数据库) 还是 NOSQL(非关系型数据库)，Spring Boot 底层都是采用 Spring Data 的方式进行统一处理。</p>
-<p>Spring Boot 底层都是采用 Spring Data 的方式进行统一处理各种数据库，Spring Data 也是 Spring 中与 Spring Boot、Spring Cloud 等齐名的知名项目。</p>
-<p>Sping Data 官网：<a href="https://spring.io/projects/spring-data" target="_blank" rel="noopener">https://spring.io/projects/spring-data</a></p>
-<p>数据库相关的启动器 ：可以参考官方文档：</p>
-<p><a href="https://docs.spring.io/spring-boot/docs/2.2.5.RELEASE/reference/htmlsingle/#using-boot-starter" target="_blank" rel="noopener">https://docs.spring.io/spring-boot/docs/2.2.5.RELEASE/reference/htmlsingle/#using-boot-starter</a></p>
-      
-      <a class="article-more-link" href="/2020/04/03/SpringBoot07%EF%BC%9A%E6%95%B4%E5%90%88JDBC/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-jdbc-SpringData/" rel="tag">-Spring -jdbc -SpringData</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringBoot06：自定义starter" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/03/SpringBoot06%EF%BC%9A%E8%87%AA%E5%AE%9A%E4%B9%89starter/"
-    >SpringBoot06：自定义starter</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/03/SpringBoot06%EF%BC%9A%E8%87%AA%E5%AE%9A%E4%B9%89starter/" class="article-date">
-  <time datetime="2020-04-03T02:14:45.000Z" itemprop="datePublished">2020-04-03</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="自定义Starter"><a href="#自定义Starter" class="headerlink" title="自定义Starter"></a>自定义Starter</h1><p>我们分析完毕了源码以及自动装配的过程，我们可以尝试自定义一个启动器来玩玩！</p>
-<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>启动器模块是一个 空 jar 文件，仅提供辅助性依赖管理，这些依赖可能用于自动装配或者其他类库；</p>
-<p><strong>命名归约：</strong></p>
-<p>官方命名：</p>
-<ul>
-<li>前缀：spring-boot-starter-xxx</li>
-<li>比如：spring-boot-starter-web</li>
-</ul>
-<p>自定义命名：</p>
-<ul>
-<li>xxx-spring-boot-starter</li>
-<li>比如：mybatis-spring-boot-starter</li>
-</ul>
-      
-      <a class="article-more-link" href="/2020/04/03/SpringBoot06%EF%BC%9A%E8%87%AA%E5%AE%9A%E4%B9%89starter/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-starter/" rel="tag">-Spring -starter</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringBoot05：自动配置原理" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/03/SpringBoot05%EF%BC%9A%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86/"
-    >SpringBoot05：自动配置原理</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/03/SpringBoot05%EF%BC%9A%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86/" class="article-date">
-  <time datetime="2020-04-03T00:11:05.000Z" itemprop="datePublished">2020-04-03</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="自动配置原理"><a href="#自动配置原理" class="headerlink" title="自动配置原理"></a>自动配置原理</h1><p>配置文件到底能写什么？怎么写？</p>
-<p>SpringBoot官方文档中有大量的配置，我们无法全部记住</p>
-<p><img src="/images/innerimage/qin/25.png" alt=""></p>
-      
-      <a class="article-more-link" href="/2020/04/03/SpringBoot05%EF%BC%9A%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Config/" rel="tag">-Spring -Config</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringBoot04：JSR303数据校验及多环境切换" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/02/SpringBoot04%EF%BC%9AJSR303%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C%E5%8F%8A%E5%A4%9A%E7%8E%AF%E5%A2%83%E5%88%87%E6%8D%A2/"
-    >SpringBoot04：JSR303数据校验及多环境切换</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/02/SpringBoot04%EF%BC%9AJSR303%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C%E5%8F%8A%E5%A4%9A%E7%8E%AF%E5%A2%83%E5%88%87%E6%8D%A2/" class="article-date">
-  <time datetime="2020-04-02T01:00:42.000Z" itemprop="datePublished">2020-04-02</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="JSR303数据校验"><a href="#JSR303数据校验" class="headerlink" title="JSR303数据校验"></a>JSR303数据校验</h1><h2 id="先看看如何使用"><a href="#先看看如何使用" class="headerlink" title="先看看如何使用"></a>先看看如何使用</h2><p>Springboot中可以用@validated来校验数据，如果数据异常则会统一抛出异常，方便异常中心统一处理。我们这里来写个注解让我们的name只能支持Email格式；</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span> <span class="comment">//注册bean</span></span><br><span class="line"><span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"person"</span>)</span><br><span class="line"><span class="meta">@Validated</span>  <span class="comment">//数据校验</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Email</span>(message=<span class="string">"邮箱格式错误"</span>) <span class="comment">//name必须是邮箱格式</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>运行结果 ：default message [不是一个合法的电子邮件地址];</p>
-      
-      <a class="article-more-link" href="/2020/04/02/SpringBoot04%EF%BC%9AJSR303%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C%E5%8F%8A%E5%A4%9A%E7%8E%AF%E5%A2%83%E5%88%87%E6%8D%A2/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE/" rel="tag">-Spring -配置</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-Spring经典报错-Autowired报错" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/01/Spring%E7%BB%8F%E5%85%B8%E6%8A%A5%E9%94%99-Autowired%E6%8A%A5%E9%94%99/"
-    >Spring经典报错@Autowired报错</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/01/Spring%E7%BB%8F%E5%85%B8%E6%8A%A5%E9%94%99-Autowired%E6%8A%A5%E9%94%99/" class="article-date">
-  <time datetime="2020-04-01T13:08:36.000Z" itemprop="datePublished">2020-04-01</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="【Spring】-Autowired报错Could-not-autowire-No-beans-of-xxx"><a href="#【Spring】-Autowired报错Could-not-autowire-No-beans-of-xxx" class="headerlink" title="【Spring】@Autowired报错Could not autowire. No beans of xxx"></a>【Spring】@Autowired报错Could not autowire. No beans of xxx</h1><p>在使用springboot main方法启动项目时遇到[@Autowdired]注解无法注入</p>
-<h4 id="SpringBoot项目的Bean装配默认规则是根据Application类所在的包位置从上往下扫描！“Application类”是指SpringBoot项目入口类。这个类的位置很关键：如果Application类所在的包为：com-boot-app，则只会扫描com-boot-app包及其所有子包，如果service或dao所在包不在com-boot-app及其子包下，则不会被扫描！即-把Application类放到dao、service所在包的上级，com-boot-Application知道这一点非常关键"><a href="#SpringBoot项目的Bean装配默认规则是根据Application类所在的包位置从上往下扫描！“Application类”是指SpringBoot项目入口类。这个类的位置很关键：如果Application类所在的包为：com-boot-app，则只会扫描com-boot-app包及其所有子包，如果service或dao所在包不在com-boot-app及其子包下，则不会被扫描！即-把Application类放到dao、service所在包的上级，com-boot-Application知道这一点非常关键" class="headerlink" title="SpringBoot项目的Bean装配默认规则是根据Application类所在的包位置从上往下扫描！“Application类”是指SpringBoot项目入口类。这个类的位置很关键：如果Application类所在的包为：com.boot.app，则只会扫描com.boot.app包及其所有子包，如果service或dao所在包不在com.boot.app及其子包下，则不会被扫描！即, 把Application类放到dao、service所在包的上级，com.boot.Application知道这一点非常关键"></a>SpringBoot项目的Bean装配默认规则是根据Application类所在的包位置从上往下扫描！“Application类”是指SpringBoot项目入口类。这个类的位置很关键：如果Application类所在的包为：com.boot.app，则只会扫描com.boot.app包及其所有子包，如果service或dao所在包不在com.boot.app及其子包下，则不会被扫描！即, 把Application类放到dao、service所在包的上级，com.boot.Application知道这一点非常关键</h4>
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/error/" rel="tag">error</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
   </article>
   
 
   
   <nav class="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/2/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/">下一页</a>
+    <a class="extend prev" rel="prev" href="/page/2/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/4/">下一页</a>
   </nav>
   
 </section>

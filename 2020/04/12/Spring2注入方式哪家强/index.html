@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Spring2--注入方式哪家强 |  犬来八荒
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-Spring2注入方式哪家强" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Spring2--注入方式哪家强
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/" class="article-date">
+  <time datetime="2020-04-12T04:46:00.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.9k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">11分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>本集概要：</p>
+<ul>
+<li>构造器注入有什么缺点？</li>
+<li>如何使用setter注入？</li>
+<li>setter注入为什么会导致空指针异常？</li>
+</ul>
+<p>前情回顾：<a href="https://zhuanlan.zhihu.com/p/29426019" target="_blank" rel="noopener">用小说的形式讲解Spring（1） —— 为什么需要依赖注入</a></p>
+<hr>
+<p>大雄给项目引入了Spring框架，解决了代码过度耦合的问题，当然，这只是Spring强大功力的冰山一角，菜鸟大雄还仍然是菜鸟大雄……</p>
+<h2 id="越来越庞大的构造函数"><a href="#越来越庞大的构造函数" class="headerlink" title="越来越庞大的构造函数"></a>越来越庞大的构造函数</h2><p>一天，晨会过后，哆啦对大雄说，“大雄，我们的订单接口和支付接口都已经非常完善了，现在需要<strong>在支付完成时更新一下订单的状态</strong>，你看看这个需求如何实现。”</p>
+<p>“这个好办，只需要给支付接口添加一个新的依赖IOrderDao，然后把OrderDao注入进去就可以了。”</p>
+<p>“好小子，张嘴一个‘依赖’，闭嘴一个‘注入’，术语说的挺溜的呀”</p>
+<p>“那是，你等着，马上搞定这个需求”，说完，大雄就火急火燎地写代码去了。</p>
+<p>大雄给PaymentAction加了一个成员变量orderDao，然后新建了一个构造函数，把orderDao注入到PaymentAction里面去，接着写了一个updateOrderAfterPayment方法，调用orderDao的方法更新订单（<strong>本文使用的代码，可以到 <a href="https://link.zhihu.com/?target=https%3A//github.com/hzy38324/SpringNovel">SpringNovel</a> 下载</strong>）：</p>
+<a id="more"></a>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentAction</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ILogger logger;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// new proprety !!!</span></span><br><span class="line">    <span class="keyword">private</span> IOrderDao orderDao;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PaymentAction</span><span class="params">(ILogger logger)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.logger = logger;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// new constructor !!!</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PaymentAction</span><span class="params">(ILogger logger, IOrderDao orderDao)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.logger = logger;</span><br><span class="line">        <span class="keyword">this</span>.orderDao = orderDao;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pay</span><span class="params">(BigDecimal payValue)</span> </span>&#123;</span><br><span class="line">        logger.log(<span class="string">"pay begin, payValue is "</span> + payValue);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// do otherthing</span></span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">        logger.log(<span class="string">"pay end"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// new method !!!</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateOrderAfterPayment</span><span class="params">(String orderId)</span> </span>&#123;</span><br><span class="line">        orderDao.updateOrderAfterPayment(orderId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后大雄修改了一下payment.xml，注入orderDao：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"paymentAction"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.payment.springxml.PaymentAction"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">"serverLogger"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">"orderDao"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"serverLogger"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.perfectlogger.ServerLogger"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"orderDao"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.dao.OrderDao"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>就这样，大雄很快实现了往支付接口添加订单更新功能的需求，兴冲冲地给哆啦提交了代码Review的请求…</p>
+<p>很快，Review结果回来了：</p>
+<ul>
+<li>如果后面PaymentAction需要依赖更多的接口，比如短信发送接口、支付宝接口、微信支付接口等等，你还是往构造函数里面加吗？假如<strong>依赖了20个接口，那你的构造函数就会有20个参数</strong>，就像下面这段代码，你觉得这样的代码优雅吗？</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PaymentAction</span><span class="params">(ILogger logger, IOrderDao orderDao, ISMSUtil smsUtil, IPaybal paybal, IWechatPay wechatPay, ...)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>();</span><br><span class="line">    <span class="keyword">this</span>.logger = logger;</span><br><span class="line">    <span class="keyword">this</span>.orderDao = orderDao;</span><br><span class="line">    <span class="keyword">this</span>.smsUtil = smsUtil;</span><br><span class="line">    <span class="keyword">this</span>.paybal = paybal;</span><br><span class="line">    <span class="keyword">this</span>.wechatPay = wechatPay;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>哆啦的话再一次给大雄浇了一盘冷水，“为啥每次review都不能一次过……”</p>
+<h2 id="Setter注入"><a href="#Setter注入" class="headerlink" title="Setter注入"></a>Setter注入</h2><p>怎样解决构造函数越来越庞大的问题呢？大雄忽然想到之前在《Effective Java》的第一章看到的一个叫做<a href="https://link.zhihu.com/?target=http%3A//blog.csdn.net/hzy38324/article/details/72793035%23t1">Builder模式</a>的例子，Builder模式把一个原本很庞大的构造函数，简化成一个小的的构造函数外加很多个set函数。</p>
+<p>“啊，不一定要用构造器注入！还有setter注入！”，大雄这才想起来之前学习Spring时看到的另一种注入方式 —— setter注入。</p>
+<p>接下来，就是用setter注入改造PaymentAction了，大雄把之前含有两个参数的构造函数去掉，然后加上了一个setOrderDao方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentAction_SetInjection</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ILogger logger;</span><br><span class="line">    <span class="keyword">private</span> IOrderDao orderDao;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PaymentAction_SetInjection</span><span class="params">(ILogger logger)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.logger = logger;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// setter injection !!!</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOrderDao</span><span class="params">(IOrderDao orderDao)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.orderDao = orderDao;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pay</span><span class="params">(BigDecimal payValue)</span> </span>&#123;</span><br><span class="line">        logger.log(<span class="string">"pay begin, payValue is "</span> + payValue);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// do otherthing</span></span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">        logger.log(<span class="string">"pay end"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateOrderAfterPayment</span><span class="params">(String orderId)</span> </span>&#123;</span><br><span class="line">        orderDao.updateOrderAfterPayment(orderId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着再修改一下payment.xml，使用<property>标签，注入orderDao：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"paymentAction_setInjection"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.payment.springxml.PaymentAction_SetInjection"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">"serverLogger"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"orderDao"</span> <span class="attr">ref</span>=<span class="string">"orderDao"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>测试一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test_PaymentAction_UpdateOrder_XML_SetInjection</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	ApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">"payment.xml"</span>);</span><br><span class="line">	PaymentAction_SetInjection paymentAction = (PaymentAction_SetInjection) context.getBean(<span class="string">"paymentAction_setInjection"</span>);</span><br><span class="line">	paymentAction.updateOrderAfterPayment(<span class="string">"123456"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Output:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">real update order after payment, orderId is 123456</span><br></pre></td></tr></table></figure>
+
+<p>“完美！setter注入其实也没什么嘛！”，大雄大叫道，偷偷瞄了哆啦一眼，哆啦此时正专注地看着自己的屏幕，似乎没有觉察到这边厢亢奋的大雄。</p>
+<h2 id="空指针异常！"><a href="#空指针异常！" class="headerlink" title="空指针异常！"></a>空指针异常！</h2><p>大雄再一次准备给哆啦提交review请求，在食指即将按下回车的那一刹那，他仿佛拥有了窥视未来的能力，他看到哆啦拿着装满冷水的脸盆，朝他洒过来….<br>“啊，不对劲，那这样构造器注入岂不是完败于setter注入了？不科学呀。。。setter注入肯定有什么局限是我还没发现的…..”</p>
+<p>“Spring容器初始化对象时，会去调用对象的构造函数，此时如果采用构造器注入，并且xml里没有配置对应的<constructor>标签，那么由于没有与之匹配的构造函数，注入应该会失败”</p>
+<p>“而setter注入，如果没有配置<property>，是会提示初始化失败呢，还是压根就不注入呢？”，大雄的脑袋飞快地翻转着。</p>
+<p>“修改一下代码，验证一下不就知道了！”<br>于是大雄首先把<constructor>标签注释掉：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"paymentAction_setInjection"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.payment.springxml.PaymentAction_SetInjection"</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--&lt;constructor-arg ref="serverLogger"&gt;--&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--&lt;/constructor-arg&gt;--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"orderDao"</span> <span class="attr">ref</span>=<span class="string">"orderDao"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>执行测试用例，果然报错了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">org.springframework.beans.factory.BeanCreationException: </span><br><span class="line">...</span><br><span class="line">No default constructor found;</span><br></pre></td></tr></table></figure>
+
+<p>提示“没有默认的构造函数”，可见由于没有配置<constructor>标签，Spring容器调用了空参数的构造函数，而PaymentAction类并没有空参的构造函数，因此报错了，<strong>这种错误会导致容器初始化失败，因此很容易发现</strong>。</p>
+<p>接着大雄撤销了操作，然后把<property>标签注释掉：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"paymentAction_setInjection"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.payment.springxml.PaymentAction_SetInjection"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">"serverLogger"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--&lt;property name="orderDao" ref="orderDao"&gt;&lt;/property&gt;--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>重新执行测试用例，啊，报错了！ 空指针异常！：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java.lang.NullPointerException</span><br><span class="line">	at com.springnovel.payment.springxml.PaymentAction_SetInjection.updateOrderAfterPayment(PaymentAction_SetInjection.java:34)</span><br><span class="line">	at com.springnovel.test.PaymentTest.test_PaymentAction_UpdateOrder_XML_SetInjection(PaymentTest.java:46)</span><br></pre></td></tr></table></figure>
+
+<p>看来如果没有在xml里面指定要注入的对象，那么set注入不会失败，所依赖的对象没有被注入任何对象，因此默认为null。<br>“这可不太好，<strong>万一真的粗心大意忘了在xml里面指定要注入的对象呢，容器是可以成功启动，但是运行时可就挂了。。。</strong>”</p>
+<p>“有没有办法让setter注入的属性成为必填项呢？”</p>
+<p>大雄决定上网搜索一下资料，打开Google，输入“spring setter bitian…”</p>
+<p>“啊不。。什么鬼。。。必填英文怎么说来着。。。”</p>
+<p>“噢噢，required嘛，HTML5的一个必填校验属性就叫Required”</p>
+<p>噼里啪啦，大雄输入了“spring setter required”</p>
+<p>很快，他发现Spring2.0提供了一个@Required注解……</p>
+<h2 id="Reuqired注解"><a href="#Reuqired注解" class="headerlink" title="Reuqired注解"></a>Reuqired注解</h2><p>“这就好办了！”，大雄对照着教程，修改起了代码。<br>首先要开启Spring注解的功能，给payment.xml加入这些配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span></span></span><br><span class="line"><span class="tag">       <span class="attr">...</span>    </span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:context</span>=<span class="string">"http://www.springframework.org/schema/context"</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">"</span></span></span><br><span class="line"><span class="tag"><span class="string">        ...</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/context</span></span></span><br><span class="line"><span class="tag"><span class="string">	    http://www.springframework.org/schema/context/spring-context-2.5.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:annotation-config</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>接着再给PaymentAction的setOrderDao方法加入@Required注解：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Required</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOrderDao</span><span class="params">(IOrderDao orderDao)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">this</span>.orderDao = orderDao;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再次执行测试用例，结果当然还是报错，不过这次是在容器初始化就提示错误了:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">org.springframework.beans.factory.BeanCreationException: </span><br><span class="line">...</span><br><span class="line">Property &#39;orderDao&#39; is required for bean &#39;paymentAction_setInjection&#39;</span><br></pre></td></tr></table></figure>
+
+<p>“这下好了，在Spring容器创建对象时就报错了，不会等到执行代码时再来抛个空指针异常，简直是粗心大意的程序员的救星啊！”</p>
+<p>大雄仔细地对代码做了检查，最后敲了回车，给哆啦提交了Review请求。</p>
+<p>“叮，pass!”，大概过了半个小时，屏幕弹出通知，大雄的代码终于通过了哆啦和小组成员的检视，成功提交到代码库了！</p>
+<h2 id="大雄的笔记"><a href="#大雄的笔记" class="headerlink" title="大雄的笔记"></a>大雄的笔记</h2><p>今天大雄学到了构造器注入之外的另外一种注入方式——setter注入，临睡前，大雄习惯性地对今天所学到的知识做了总结：</p>
+<ul>
+<li><p>Constructor注入 vs Setter注入</p>
+</li>
+<li><ul>
+<li>Constructor注入能够强制要求调用者注入构造函数中的所有参数，否则在容器初始化时就会失败；但是如果要注入的对象过多，就会导致<strong>构造函数过于庞大</strong>。</li>
+<li>Setter注入，类似于Builder模式，将原本庞大的构造函数，拆解为了<strong>一个小的构造函数</strong>和<strong>许多个set方法</strong>。setter注入不能保证对象一定会被注入，但是可以使用<strong>@Required</strong>注解，强制要求使用者注入对象，否则在容器初始化时就会报错。</li>
+</ul>
+</li>
+</ul>
+<p>总结完，大雄一跃而起，啪的一下蹦到了席梦思上，整个人成“大”字状，眼睛一闭，嘴巴一张，很快进入了梦乡……</p>
+<h2 id="大雄的梦"><a href="#大雄的梦" class="headerlink" title="大雄的梦"></a>大雄的梦</h2><p>睡梦中，大雄看到了一只非常奇怪的“三眼乌鸦”，“三眼乌鸦”静静的木在树枝上，等大雄一靠近，就很快地飞到另一颗树上，大雄就这样追了好久….<br>突然，大雄看到一座桥，桥头立着一块牌子，上面写着“Bridge for You”<br>“桥为我？桥给我？？”</p>
+<p>一旁的“三眼乌鸦”实在看不下去了，骂道，“是给你准备的桥！笨蛋！”</p>
+<p>“给我准备的？那我得走过去看看！”，说完，大雄走进了那座桥 – <a href="https://link.zhihu.com/?target=http%3A//bridgeforyou.cn/">Bridge for You</a> ……</p>
+<p>桥的对面有一间茅草屋，门没关，大雄看了看，好像没人，走了进去，发现里屋有个少年，正在敲着键盘。大雄凑过去偷看，那少年好像在写小说，小说标题是“用小说的形式讲解Spring…”，大雄心想怎么会有人起这么挫的标题。那少年一边敲着键盘，一边还叨叨道，“大雄啊大雄，哥最近换了新部门，忙得很，一周只能过来看你一次啦……”</p>
+<h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2><p>第二天一大早，手机突然响了，睡梦中的大雄迷迷糊糊地接了电话…</p>
+<p>“喂！大雄啊，还在睡觉啊？？快起来，有个需求要改一下！”，原来是那个讨厌的项目经理胖虎…</p>
+<p>“改..改需求？！”</p>
+<p>“之前不是让你们把日志打印到日志服务器了吗？刚刚客户说了，要换，要打到控制台！今天早上就要改完！”</p>
+<p>“哇靠….”大雄脱口而出，不过他很快就暗暗高兴，因为他知道由于采用了依赖注入，现在他只需要改一处配置，“哎呀，这客户咋那么多事，你等着啊，我现在改，要改的地方多着呢，改完你得请我吃饭”</p>
+<p>“小兔崽子，项目上线了你要吃多少都行！”</p>
+<p>大雄马上起身，打开便携，把payment.xml的ServerLogger改为了ConsoleLogger：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"serverLogger"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.perfectlogger.CosoleLogger"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>“要测试一下吗？哎，算了，测啥测，肯定没问题”，说完大雄提交了代码给胖虎，然后给胖虎发了条信息，让他审核一下。<br>胖虎很快将大雄的代码提交到代码库…</p>
+<p>“真是的，搞得我觉都没睡好…”，大雄正准备睡个回笼觉….手机又响了…</p>
+<p>“大雄，你怎么搞得！改了你的代码，现在服务器连启动都失败了！”</p>
+<p>“啊？？？怎么可能…”，大雄一脸懵逼……</p>
+<h2 id="参考内容"><a href="#参考内容" class="headerlink" title="参考内容"></a>参考内容</h2><ul>
+<li>《Spring in Action》</li>
+<li><a href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/21218868/explain-why-constructor-inject-is-better-than-other-options">Explain why constructor inject is better than other options</a></li>
+<li><a href="https://link.zhihu.com/?target=https%3A//spring.io/blog/2007/07/11/setter-injection-versus-constructor-injection-and-the-use-of-required/">Setter injection versus constructor injection and the use of @Required</a></li>
+<li><a href="https://link.zhihu.com/?target=https%3A//www.mkyong.com/spring/spring-dependency-checking-with-required-annotation/">Spring dependency checking with @Required Annotation</a></li>
+</ul>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -配置 -小说</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/2020/04/12/Spring3xml%E6%B3%A8%E8%A7%A3JavaConfig/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Spring3--xml,注解,javaConfig
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/04/12/%E7%94%A8Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Spring(2)--注入方式哪家强</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: '1qio8bDzfD0zIHgwuD84E3ff-gzGzoHsz',
+        app_key: '4qfVrr8y0w3o33NPw2hQONdg',
+        path: window.location.pathname,
+        notify: 'false',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2020
+        花重锦官城
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <kbd>访问量:<span id="busuanzi_value_page_pv"></span></kbd>
+  <kbd>访客数:<span id="busuanzi_value_site_uv"></span></kbd>
+</span>
+        
+      </li>
+      
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+    <aside class="sidebar">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="犬来八荒"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">目录</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://chengguolaogongya.lofter.com/" target="_blank" rel="noopener">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+    strings: ['浮生有梦三千场 穷尽千里诗酒荒','徒把理想倾倒','不如早还乡'],
+    startDelay: 0,
+    typeSpeed: 100,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+  } catch (err) {
+  }
+  
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1321020935&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

@@ -65,6 +65,566 @@
     
     
     
+    <article id="post-Redis实现分布式锁2" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%812/"
+    >Redis实现分布式锁2</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%812/" class="article-date">
+  <time datetime="2020-04-12T05:19:52.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="如何用Redis实现分布式锁（2）——-集群版"><a href="#如何用Redis实现分布式锁（2）——-集群版" class="headerlink" title="如何用Redis实现分布式锁（2）—— 集群版"></a>如何用Redis实现分布式锁（2）—— 集群版</h1><h2 id="单机版实现的局限性"><a href="#单机版实现的局限性" class="headerlink" title="单机版实现的局限性"></a>单机版实现的局限性</h2><p>在上一篇文章中，我们讨论了Redis分布式锁的实现，简单回顾下。</p>
+<p>获取锁：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set file:9527 $&#123;random_value&#125; NX EX $&#123;timeout&#125;</span><br></pre></td></tr></table></figure>
+
+<p>释放锁，调用lua脚本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if redis.call(&quot;get&quot;,KEYS[1]) &#x3D;&#x3D; ARGV[1] then</span><br><span class="line">    return redis.call(&quot;del&quot;,KEYS[1])</span><br><span class="line">else</span><br><span class="line">    return 0</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p>这套实现机制，在只有一个Redis实例的情况下，确实很完美。</p>
+      
+      <a class="article-more-link" href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%812/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-Redis实现分布式锁1" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%811/"
+    >Redis实现分布式锁1</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%811/" class="article-date">
+  <time datetime="2020-04-12T05:19:25.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="如何用Redis实现分布式锁（1）——-单机版"><a href="#如何用Redis实现分布式锁（1）——-单机版" class="headerlink" title="如何用Redis实现分布式锁（1）—— 单机版"></a>如何用Redis实现分布式锁（1）—— 单机版</h1><h2 id="为什么要使用分布式锁"><a href="#为什么要使用分布式锁" class="headerlink" title="为什么要使用分布式锁"></a>为什么要使用分布式锁</h2><p>这个问题，可以分为两个问题来回答：</p>
+<ol>
+<li>为什么要使用锁？</li>
+<li>分布式锁和本地锁的区别是什么？</li>
+</ol>
+<p><strong>1、为什么要使用锁？</strong><br><em>Martin Kleppmann</em>在他的文章<a href="https://link.zhihu.com/?target=https%3A//martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html">How to do distributed locking</a>里，把使用锁的目的，总结为两个。</p>
+<p>第一个是<strong>正确性</strong>，这个众人皆知。就像Java里的synchronize，就是用来保证多线程并发场景下，程序的正确性。</p>
+<p>JVM里需要保证并发访问的正确性，在分布式系统里面，也同样需要，只不过<strong>并发访问的单位，不再是线程，而是进程。</strong></p>
+      
+      <a class="article-more-link" href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%811/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-Spring4" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/Spring4/"
+    >Spring4</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Spring4/" class="article-date">
+  <time datetime="2020-04-12T04:58:31.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="使用Spring-Boot创建NoXml的Web应用"><a href="#使用Spring-Boot创建NoXml的Web应用" class="headerlink" title="使用Spring Boot创建NoXml的Web应用"></a>使用Spring Boot创建NoXml的Web应用</h1><p>本集概要：</p>
+<ul>
+<li>怎样用Spring Boot搭建Web应用？</li>
+<li>Spring Boot和Spring相比，有什么优势？</li>
+<li>Spring Boot的起步依赖和自动配置是什么东西？</li>
+<li>为什么不需要配置Servlet容器也可以启动Web应用？</li>
+</ul>
+<hr>
+<p>经过了国庆七天长假的休息，回到公司的大雄已经打满了鸡血，准备在新的项目 —— tiny facebook，大干一场。第一次被委以重任，大雄心里还是有点小紧张的…</p>
+<p>“从目前社区的反馈来看，Spring Boot相比于Spring而言，可以大大提高开发的效率，我们这个tiny facebook，就用Spring Boot开发吧！”，哆啦对大雄说。<br>“啊，那我岂不是又得重新学习啦，好不容易才学完了Spring的基础…”<br>“学是肯定还要学的，但是其实Spring Boot只是将原先Spring一些比较繁琐的配置简化了而已，进一步提高了Java开发的效率，而你之前学的Spring控制反转，对你理解Spring Boot是有很大作用的。”<br>“Soga！那就是说原理是一样的罗，那好办！哆啦你有没有写过什么总结文档，让我参考一下嘛”<br>“自己到Spring官网上找去，你小子整天就想不劳而获…”，哆啦心里暗自说道，其实我就没写过总结文档。</p>
+      
+      <a class="article-more-link" href="/2020/04/12/Spring4/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -配置 -小说</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-Config选哪个" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/Config%E9%80%89%E5%93%AA%E4%B8%AA/"
+    >Spring3xml注解javaConfig</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Config%E9%80%89%E5%93%AA%E4%B8%AA/" class="article-date">
+  <time datetime="2020-04-12T04:50:30.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -配置 -小说</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-Spring3xml注解JavaConfig" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/Spring3xml%E6%B3%A8%E8%A7%A3JavaConfig/"
+    >Spring3--xml,注解,javaConfig</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Spring3xml%E6%B3%A8%E8%A7%A3JavaConfig/" class="article-date">
+  <time datetime="2020-04-12T04:50:30.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="xml、注解和Java-Config到底选哪个"><a href="#xml、注解和Java-Config到底选哪个" class="headerlink" title="xml、注解和Java Config到底选哪个"></a>xml、注解和Java Config到底选哪个</h1><p>本集概要：</p>
+<ul>
+<li>为什么说xml配置是类型不安全的配置方式？</li>
+<li>如何使用注解进行配置？</li>
+<li>注解配置是万能的吗？</li>
+<li>如何使用Java Config进行配置？</li>
+<li>xml、注解、Java Config，到底该如何选择？</li>
+</ul>
+<hr>
+<p>大雄一脸懵逼，心想，“我不就改了一处地方，怎么就把服务器给整挂了呢”，他仔细地看了一下自己改的代码：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"serverLogger"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.perfectlogger.CosoleLogger"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>“啊！！原来是CosoleLogger拼错了…”</p>
+<h2 id="类型不安全的xml配置"><a href="#类型不安全的xml配置" class="headerlink" title="类型不安全的xml配置"></a>类型不安全的xml配置</h2><p>到了公司，大雄跟哆啦讲了自己干的这件蠢事。</p>
+<p>“小伙子，早上没睡醒吧，哈哈哈”</p>
+<p>“额，你还笑得出来”</p>
+<p>“其实吧，我有办法让你在没睡醒的时候也不会犯这种错误”</p>
+<p>“啥办法，该不会是让我喝咖啡吧…”</p>
+<p>“喝咖啡也没我这个办法管用，你小子之前学Spring的时候，不会只知道用xml这种<strong>类型不安全</strong>的方式来配置吧？”</p>
+<p>“噢，好像还有其他配置方式…注解？还有Java Config…啊！我明白你的意思了，使用注解和Java Config，这样在我拼写错的时候，由于找不到这类，编译都不会通过，我也就知道我拼写错了！”</p>
+<p>“就是罗，而且这只是其他配置方式优于xml配置的一点，你用过之后就会发现他们有更多的优点了”</p>
+<p>“好，我这就试试用注解方式改造一下我们的代码！”</p>
+      
+      <a class="article-more-link" href="/2020/04/12/Spring3xml%E6%B3%A8%E8%A7%A3JavaConfig/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -配置 -小说</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-Spring2注入方式哪家强" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/"
+    >Spring2--注入方式哪家强</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/" class="article-date">
+  <time datetime="2020-04-12T04:46:00.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>本集概要：</p>
+<ul>
+<li>构造器注入有什么缺点？</li>
+<li>如何使用setter注入？</li>
+<li>setter注入为什么会导致空指针异常？</li>
+</ul>
+<p>前情回顾：<a href="https://zhuanlan.zhihu.com/p/29426019" target="_blank" rel="noopener">用小说的形式讲解Spring（1） —— 为什么需要依赖注入</a></p>
+<hr>
+<p>大雄给项目引入了Spring框架，解决了代码过度耦合的问题，当然，这只是Spring强大功力的冰山一角，菜鸟大雄还仍然是菜鸟大雄……</p>
+<h2 id="越来越庞大的构造函数"><a href="#越来越庞大的构造函数" class="headerlink" title="越来越庞大的构造函数"></a>越来越庞大的构造函数</h2><p>一天，晨会过后，哆啦对大雄说，“大雄，我们的订单接口和支付接口都已经非常完善了，现在需要<strong>在支付完成时更新一下订单的状态</strong>，你看看这个需求如何实现。”</p>
+<p>“这个好办，只需要给支付接口添加一个新的依赖IOrderDao，然后把OrderDao注入进去就可以了。”</p>
+<p>“好小子，张嘴一个‘依赖’，闭嘴一个‘注入’，术语说的挺溜的呀”</p>
+<p>“那是，你等着，马上搞定这个需求”，说完，大雄就火急火燎地写代码去了。</p>
+<p>大雄给PaymentAction加了一个成员变量orderDao，然后新建了一个构造函数，把orderDao注入到PaymentAction里面去，接着写了一个updateOrderAfterPayment方法，调用orderDao的方法更新订单（<strong>本文使用的代码，可以到 <a href="https://link.zhihu.com/?target=https%3A//github.com/hzy38324/SpringNovel">SpringNovel</a> 下载</strong>）：</p>
+      
+      <a class="article-more-link" href="/2020/04/12/Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -配置 -小说</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-用Spring2注入方式哪家强" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/%E7%94%A8Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/"
+    >Spring(2)--注入方式哪家强</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/%E7%94%A8Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/" class="article-date">
+  <time datetime="2020-04-12T04:46:00.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>本集概要：</p>
+<ul>
+<li>构造器注入有什么缺点？</li>
+<li>如何使用setter注入？</li>
+<li>setter注入为什么会导致空指针异常？</li>
+</ul>
+<p>前情回顾：<a href="https://zhuanlan.zhihu.com/p/29426019" target="_blank" rel="noopener">用小说的形式讲解Spring（1） —— 为什么需要依赖注入</a></p>
+<hr>
+<p>大雄给项目引入了Spring框架，解决了代码过度耦合的问题，当然，这只是Spring强大功力的冰山一角，菜鸟大雄还仍然是菜鸟大雄……</p>
+<h2 id="越来越庞大的构造函数"><a href="#越来越庞大的构造函数" class="headerlink" title="越来越庞大的构造函数"></a>越来越庞大的构造函数</h2><p>一天，晨会过后，哆啦对大雄说，“大雄，我们的订单接口和支付接口都已经非常完善了，现在需要<strong>在支付完成时更新一下订单的状态</strong>，你看看这个需求如何实现。”</p>
+<p>“这个好办，只需要给支付接口添加一个新的依赖IOrderDao，然后把OrderDao注入进去就可以了。”</p>
+<p>“好小子，张嘴一个‘依赖’，闭嘴一个‘注入’，术语说的挺溜的呀”</p>
+<p>“那是，你等着，马上搞定这个需求”，说完，大雄就火急火燎地写代码去了。</p>
+<p>大雄给PaymentAction加了一个成员变量orderDao，然后新建了一个构造函数，把orderDao注入到PaymentAction里面去，接着写了一个updateOrderAfterPayment方法，调用orderDao的方法更新订单（<strong>本文使用的代码，可以到 <a href="https://link.zhihu.com/?target=https%3A//github.com/hzy38324/SpringNovel">SpringNovel</a> 下载</strong>）：</p>
+      
+      <a class="article-more-link" href="/2020/04/12/%E7%94%A8Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -配置 -小说</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
     <article id="用小说的形式讲解spring（1）-为什么需要依赖注入" class="article article-type-用小说的形式讲解spring（1）" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -143,6 +703,170 @@
     <footer class="article-footer">
       
       
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-Spring1为什么需要依赖注入" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/Spring1%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/"
+    >Spring为什么需要依赖注入</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Spring1%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/" class="article-date">
+  <time datetime="2020-04-12T04:24:49.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>本集概要：</p>
+<ul>
+<li>使用依赖注入前，代码是什么样子，有什么缺点？</li>
+<li>依赖注入是什么？为什么要使用依赖注入？</li>
+<li>Spring如何使用xml配置的方式进行依赖注入？</li>
+</ul>
+<hr>
+<p>大雄是一个刚踏入社会的95后，热爱编程的他，在毕业之后进入了一家互联网公司，负责公司内一个电商项目的开发工作。<br>为了让大雄更快的成长，公司安排了哆啦作为大雄的导师。</p>
+<h2 id="春风得意"><a href="#春风得意" class="headerlink" title="春风得意"></a>春风得意</h2><p>在哆啦的指导下，大雄很快对这个项目的代码有了大致的了解，于是哆啦准备给大雄安排点任务。</p>
+<p>“大雄，我们这项目现在缺少<strong>日志打印</strong>，万一到时上线后发现bug了，很难定位。你看看有什么办法可以把一些必要的信息<strong>打印到日志文件</strong>中。”<br>“没问题！”大雄爽快地答应了。</p>
+<p>大雄以前在学校时，经常上网找各种资源，于是很快就锁定了一个叫PerfectLogger的工具。“资料很完善，很多大神都推荐它，嗯，就用它了”。</p>
+<p>大雄看了一下PerfectLogger的官方文档，发现里面提供了很多种日志打印功能，有打印到文件的，有打印到控制台的，还有打印到远程服务器上的，这些类都实现了一个叫ILogger的接口：</p>
+<ul>
+<li><p>ILogger</p>
+</li>
+<li><ul>
+<li>FileLogger</li>
+<li>ConsoleLogger</li>
+<li>ServerLogger</li>
+<li>…</li>
+</ul>
+</li>
+</ul>
+<p>“哆啦说要打印到文件，那就用FileLogger吧！”<br>于是，大雄先在支付接口的代码中，加入了日志打印（<strong>本文使用的代码，可以到</strong> <strong><a href="https://link.zhihu.com/?target=https%3A//github.com/hzy38324/SpringNovel">SpringNovel</a></strong> <strong>下载</strong>）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentAction</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> ILogger logger = <span class="keyword">new</span> FileLogger();</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pay</span><span class="params">(BigDecimal payValue)</span> </span>&#123;</span><br><span class="line">		logger.log(<span class="string">"pay begin, payValue is "</span> + payValue);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// do otherthing</span></span><br><span class="line">		<span class="comment">// ...</span></span><br><span class="line">		</span><br><span class="line">		logger.log(<span class="string">"pay end"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着，大雄又在登录、鉴权、退款、退货等接口，都加上和支付接口类似的日志功能，要加的地方还真不少，大雄加了两天两夜，终于加完了，大功告成！想到自己第一个任务就顺利完成了，大雄不禁有点小得意…</p>
+<h2 id="改需求了"><a href="#改需求了" class="headerlink" title="改需求了"></a>改需求了</h2><p>很快公司升级了系统，大雄做的日志功能也将第一次迎来生产环境的考验。</p>
+<p>两天后，哆啦找到了大雄。 “大雄，测试那边说，日志文件太多了，不能都打印到本地的目录下，要我们把日志打印到一台<strong>日志服务器上</strong>，你看看改动大不大。”<br>“这个简单，我只需要做个<strong>全局替换</strong>，把FileLogger都替换成ServerLogger就完事了。”<br>哆啦听完，皱了皱眉头，问道，“那要是下次公司让我们把日志打印到控制台，或者又突然想让我们打印到本地文件呢，你还是继续全局替换吗？”<br>大雄听完，觉得是有点不妥……</p>
+<h2 id="代码如何解耦"><a href="#代码如何解耦" class="headerlink" title="代码如何解耦"></a>代码如何解耦</h2><p>“我看了一下你现在的代码，每个Action中的logger都是由Action自己创造的，所以如果要修改logger的实现类，就要改很多地方。有没有想过可以<strong>把logger对象的创建交给外部去做呢</strong>？”<br>大雄听完，觉得这好像是某种自己以前学过的设计模式，“工厂模式！”大雄恍然大悟。</p>
+<p>很快，大雄对代码做了重构：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentAction</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> ILogger logger = LoggerFactory.createLogger();</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pay</span><span class="params">(BigDecimal payValue)</span> </span>&#123;</span><br><span class="line">		logger.log(<span class="string">"pay begin, payValue is "</span> + payValue);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// do otherthing</span></span><br><span class="line">		<span class="comment">// ...</span></span><br><span class="line">		</span><br><span class="line">		logger.log(<span class="string">"pay end"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoggerFactory</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ILogger <span class="title">createLogger</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> ServerLogger();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有了这个LoggerFactory，以后要是要换日志打印的方式，只需要修改这个工厂类就好了。</p>
+<h2 id="啪！一盘冷水"><a href="#啪！一盘冷水" class="headerlink" title="啪！一盘冷水"></a>啪！一盘冷水</h2><p>大雄高兴地给哆啦提了代码检视的请求，但是，很快，一盘冷水就泼了过来，哆啦的回复是这样的：</p>
+<ul>
+<li>工厂类每次都new一个新对象，是不是很浪费，能不能做成<strong>单例</strong>的，甚至是做成单例和多例是<strong>可以配置</strong>；</li>
+<li>如果有这种需求：支付信息比较多而且比较敏感，日志要打印到远程服务器，其他信息都打印到本地，怎么实现；</li>
+<li>…</li>
+</ul>
+<p>大雄看完，顿时感觉自己2young2simple了，准备今晚留下来好好加班……</p>
+<h2 id="Spring-Spring"><a href="#Spring-Spring" class="headerlink" title="Spring! Spring!"></a>Spring! Spring!</h2><p>正当大雄郁闷着的时候，屏幕右下角哆啦的头像突然蹦了出来。</p>
+<p>“其实这种<strong>将对象交给外部去创建</strong>的机制，不仅仅是工厂模式，它还被称为<strong>控制反转</strong>（Inverse of Control），它还有另一个更常用的名称，<strong>依赖注入</strong>（Dependency Injection）。这种机制，业界已经有很成熟的实现了，它就是<strong>Spring Framework</strong>，晚上早点回去，有空可以看看Spring，明天再过来改。”</p>
+<p>那天晚上，大雄在网上找了下Spring的资料，他似乎发现了另一个世界…</p>
+<h2 id="使用Spring改造代码"><a href="#使用Spring改造代码" class="headerlink" title="使用Spring改造代码"></a>使用Spring改造代码</h2><p>第二天大雄早早地就来到了公司，他迫不及待地想把原来的代码使用Spring的方式改造一遍。</p>
+<p>在使用<a href="https://link.zhihu.com/?target=https%3A//gradle.org/">gradle</a>引入了必要的jar包后，大雄对原来的PaymentAction做了修改，不再在类内部创建logger对象，同时给PaymentAction添加了一个构造函数，方便Spring进行注入：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentAction</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> ILogger logger;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">PaymentAction</span><span class="params">(ILogger logger)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">		<span class="keyword">this</span>.logger = logger;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pay</span><span class="params">(BigDecimal payValue)</span> </span>&#123;</span><br><span class="line">		logger.log(<span class="string">"pay begin, payValue is "</span> + payValue);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// do otherthing</span></span><br><span class="line">		<span class="comment">// ...</span></span><br><span class="line">		</span><br><span class="line">		logger.log(<span class="string">"pay end"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着创建了一个以<beans>为根节点的xml文件，引入必要的XSD文件，并且配置了两个bean对象，使用了<constructor-arg>标签，指定了ServerLogger作为PaymentAction构造函数的入参：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"paymentAction"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.paymentwithspringxml.PaymentAction"</span>&gt;</span></span><br><span class="line">  	<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">"serverLogger"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">        </span><br><span class="line">  <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"serverLogger"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.perfectlogger.ServerLogger"</span> /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>差不多了，现在测试一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">"payment.xml"</span>);</span><br><span class="line">PaymentAction paymentAction = (PaymentAction) context.getBean(<span class="string">"paymentAction"</span>);</span><br><span class="line">paymentAction.pay(<span class="keyword">new</span> BigDecimal(<span class="number">2</span>));</span><br></pre></td></tr></table></figure>
+
+<p>Output:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ServerLogger: pay begin, payValue is 2</span><br><span class="line">ServerLogger: pay end</span><br></pre></td></tr></table></figure>
+
+<p>很棒！ServerLogger对象已经被注入到PaymentAction中了。<br>就这样，大雄很快就使用Spring实现了自己昨天写的工厂类的功能，修复了之前代码耦合性过高的问题。</p>
+<h2 id="学以致用"><a href="#学以致用" class="headerlink" title="学以致用"></a>学以致用</h2><p>这边大雄正高兴呢，突然发现旁边的测试妹妹静香眉头紧锁，于是过去关心了一番。<br>原来静香正在测试一个删除订单的功能，但是现在测试用的数据库突然挂了，导致静香不能进行测试。</p>
+<p>大雄看了看订单删除接口的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderAction</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteOrder</span><span class="params">(String orderId)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 鉴权</span></span><br><span class="line">		<span class="comment">// 此处略去一万字...</span></span><br><span class="line">		</span><br><span class="line">		IOrderDao orderDao = <span class="keyword">new</span> OrderDao();</span><br><span class="line">		orderDao.deleteOrder(orderId);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>“这又是一个<strong>代码耦合过紧</strong>的问题！”大雄脱口而出。<br>“这个删除订单的接口有几个逻辑：鉴权、删除、回滚等，但是这里把删除的数据库操作和OrderDao绑定死了，<strong>这样就要求测试这个接口时必须要连接到数据库中</strong>，但是作为单元测试，我们只是想测删除订单的逻辑是否合理，而订单是否真的删除，应该属于另一个单元测试了” 大雄很是激动，嘴里唾沫横飞。<br>“我来帮你改一下。”</p>
+<p>“控制反转”后的OrderAction:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderAction</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> IOrderDao orderDao;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">OrderAction</span><span class="params">(IOrderDao orderDao)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">		<span class="keyword">this</span>.orderDao = orderDao;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteOrder</span><span class="params">(String orderId)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 鉴权</span></span><br><span class="line">		<span class="comment">// 此处略去一万字...</span></span><br><span class="line">		</span><br><span class="line">		orderDao.deleteOrder(orderId);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>改造后的OrderAction，不再和OrderDao这个实现类耦合在一起，做单元测试的时候，可以写一个“Mock”测试，就像这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">mockDeleteOrderTest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	IOrderDao orderDao = <span class="keyword">new</span> MockOrderDao();</span><br><span class="line">	OrderAction orderAction = <span class="keyword">new</span> OrderAction(orderDao);</span><br><span class="line">	orderAction.deleteOrder(<span class="string">"1234567@#%^$"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而这个MockOrderDao是不需要连接数据库的，因此即便数据库挂了，也同样可以进行单元测试。</p>
+<p>一旁的哆啦一直在静静地看着，然后拍了拍大雄的肩膀，“晚上请你和静香去撸串啊”，说完，鬼魅的朝大雄挑了挑眉毛。</p>
+<h2 id="大雄的笔记"><a href="#大雄的笔记" class="headerlink" title="大雄的笔记"></a>大雄的笔记</h2><p>这两天大雄可谓是收获颇丰，见识了依赖注入的必要性，还了解了如何使用Spring实现依赖注入。撸完串后，回到家，大雄在记事本上写下了心得：</p>
+<ul>
+<li><p>为什么要使用依赖注入</p>
+</li>
+<li><ul>
+<li>传统的代码，每个对象负责管理与自己需要依赖的对象，导致如果需要切换依赖对象的实现类时，需要修改多处地方。同时，过度耦合也使得对象难以进行单元测试。</li>
+<li>依赖注入把对象的创造交给外部去管理,很好的解决了代码<strong>紧耦合</strong>（tight couple）的问题，是一种让代码实现<strong>松耦合</strong>（loose couple）的机制。</li>
+<li>松耦合让代码更具灵活性，能更好地<strong>应对需求变动</strong>，以及<strong>方便单元测试</strong>。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>为什么要使用Spring</p>
+</li>
+<li><ul>
+<li>使用Spring框架主要是为了<strong>简化Java开发</strong>（大多数框架都是为了简化开发），它帮我们封装好了很多完善的功能，而且Spring的生态圈也非常庞大。</li>
+<li>基于XML的配置是Spring提供的<strong>最原始的依赖注入配置方式</strong>，从Spring诞生之时就有了，功能也是最完善的（但是貌似有更好的配置方法，明天看看！）。</li>
+</ul>
+</li>
+</ul>
+<h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2><p>写完笔记，大雄继续看之前只看了一小部分的Spring指南，他发现除了构造器注入，还有一种注入叫set注入；除了xml配置，还可以使用注解、甚至是Java进行配置。Spring真是强大啊，给了用户那么多选择，可<strong>具体什么情况下该使用哪种注入方式和哪种配置方式呢</strong>，大雄陷入了沉思……</p>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E5%8E%9F%E7%90%86-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -原理 -小说</a></li></ul>
+
 
     </footer>
 
@@ -355,688 +1079,13 @@
 
 </article>
     
-    <article id="post-MyBatis03：ResultMap及分页" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/09/MyBatis03%EF%BC%9AResultMap%E5%8F%8A%E5%88%86%E9%A1%B5/"
-    >MyBatis03：ResultMap及分页</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/09/MyBatis03%EF%BC%9AResultMap%E5%8F%8A%E5%88%86%E9%A1%B5/" class="article-date">
-  <time datetime="2020-04-09T08:03:31.000Z" itemprop="datePublished">2020-04-09</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="ResultMap"><a href="#ResultMap" class="headerlink" title="ResultMap"></a>ResultMap</h1><p><strong>要解决的问题：属性名和字段名不一致</strong></p>
-<p>环境：新建一个项目，将之前的项目拷贝过来</p>
-<p>1、查看之前的数据库的字段名</p>
-<p><img src="/images/innerimage/qinzidong/image-20200409160557374.png" alt="image-20200409160557374"></p>
-      
-      <a class="article-more-link" href="/2020/04/09/MyBatis03%EF%BC%9AResultMap%E5%8F%8A%E5%88%86%E9%A1%B5/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ResultMap-%E5%88%86%E9%A1%B5/" rel="tag">-ResultMap -分页</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-MyBatis02：CRUD操作及配置解析" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/09/MyBatis02%EF%BC%9ACRUD%E6%93%8D%E4%BD%9C%E5%8F%8A%E9%85%8D%E7%BD%AE%E8%A7%A3%E6%9E%90/"
-    >MyBatis02：CRUD操作及配置解析</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/09/MyBatis02%EF%BC%9ACRUD%E6%93%8D%E4%BD%9C%E5%8F%8A%E9%85%8D%E7%BD%AE%E8%A7%A3%E6%9E%90/" class="article-date">
-  <time datetime="2020-04-09T00:22:30.000Z" itemprop="datePublished">2020-04-09</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>#CRUD操作</p>
-<blockquote>
-<p>  namespace</p>
-</blockquote>
-<ol>
-<li>将上面案例中的UserMapper接口改名为 UserDao；</li>
-<li>将UserMapper.xml中的namespace改为为UserDao的路径 .</li>
-<li>再次测试</li>
-</ol>
-<p><strong>结论：</strong></p>
-<p>配置文件中namespace中的名称为对应Mapper接口或者Dao接口的完整包名,必须一致！</p>
-<blockquote>
-<p>  select</p>
-</blockquote>
-<ul>
-<li><p>select标签是mybatis中最常用的标签之一</p>
-</li>
-<li><p>select语句有很多属性可以详细配置每一条SQL语句</p>
-</li>
-<li><ul>
-<li>SQL语句返回值类型。【完整的类名或者别名】</li>
-<li>传入SQL语句的参数类型 。【万能的Map，可以多尝试使用】</li>
-<li>命名空间中唯一的标识符</li>
-<li>接口中的方法名与映射文件中的SQL语句ID 一一对应</li>
-<li>id</li>
-<li>parameterType</li>
-<li>resultType</li>
-</ul>
-</li>
-<li>
-      
-      <a class="article-more-link" href="/2020/04/09/MyBatis02%EF%BC%9ACRUD%E6%93%8D%E4%BD%9C%E5%8F%8A%E9%85%8D%E7%BD%AE%E8%A7%A3%E6%9E%90/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mybatis-CRUD-%E9%85%8D%E7%BD%AE/" rel="tag">-Mybatis -CRUD -配置</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringMVC009-文件上传和下载" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/08/SpringMVC009-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%92%8C%E4%B8%8B%E8%BD%BD/"
-    >SpringMVC009:文件上传和下载</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/08/SpringMVC009-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%92%8C%E4%B8%8B%E8%BD%BD/" class="article-date">
-  <time datetime="2020-04-08T12:15:33.000Z" itemprop="datePublished">2020-04-08</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="文件上传和下载"><a href="#文件上传和下载" class="headerlink" title="文件上传和下载"></a>文件上传和下载</h1><blockquote>
-<p>  准备工作</p>
-</blockquote>
-<p>文件上传是项目开发中最常见的功能之一 ,springMVC 可以很好的支持文件上传，但是SpringMVC上下文中默认没有装配MultipartResolver，因此默认情况下其不能处理文件上传工作。如果想使用Spring的文件上传功能，则需要在上下文中配置MultipartResolver。</p>
-<p>前端表单要求：为了能上传文件，必须将表单的method设置为POST，并将enctype设置为multipart/form-data。只有在这样的情况下，浏览器才会把用户选择的文件以二进制数据发送给服务器；</p>
-      
-      <a class="article-more-link" href="/2020/04/08/SpringMVC009-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%92%8C%E4%B8%8B%E8%BD%BD/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD/" rel="tag">-文件上传 -文件下载</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-JDBC连接报错500" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/07/JDBC%E8%BF%9E%E6%8E%A5%E6%8A%A5%E9%94%99500/"
-    >JDBC连接报错500</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/07/JDBC%E8%BF%9E%E6%8E%A5%E6%8A%A5%E9%94%99500/" class="article-date">
-  <time datetime="2020-04-07T14:13:17.000Z" itemprop="datePublished">2020-04-07</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>##报错截图：</p>
-<p><img src="../images/innerimage/qinzidong/image-20200407221435165.png" alt="image-20200407221435165"></p>
-<p>###详细错误提示：</p>
-<p><img src="../images/innerimage/qinzidong/image-20200407221454228.png" alt="image-20200407221454228"></p>
-      
-      <a class="article-more-link" href="/2020/04/07/JDBC%E8%BF%9E%E6%8E%A5%E6%8A%A5%E9%94%99500/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%A5%E9%94%99-500/" rel="tag">-报错 -500</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringMVC08：拦截器" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/07/SpringMVC08%EF%BC%9A%E6%8B%A6%E6%88%AA%E5%99%A8/"
-    >SpringMVC08：拦截器</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/07/SpringMVC08%EF%BC%9A%E6%8B%A6%E6%88%AA%E5%99%A8/" class="article-date">
-  <time datetime="2020-04-07T00:23:06.000Z" itemprop="datePublished">2020-04-07</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h1><blockquote>
-<p>  概述</p>
-</blockquote>
-<p>SpringMVC的处理器拦截器类似于Servlet开发中的过滤器Filter,用于对处理器进行预处理和后处理。开发者可以自己定义一些拦截器来实现特定的功能。</p>
-<p><strong>过滤器与拦截器的区别：</strong>拦截器是AOP思想的具体应用。</p>
-<p><strong>过滤器</strong></p>
-<ul>
-<li>servlet规范中的一部分，任何java web工程都可以使用</li>
-<li>在url-pattern中配置了/*之后，可以对所有要访问的资源进行拦截</li>
-</ul>
-<p><strong>拦截器</strong> </p>
-<ul>
-<li>拦截器是SpringMVC框架自己的，只有使用了SpringMVC框架的工程才能使用</li>
-<li>拦截器只会拦截访问的控制器方法， 如果访问的是jsp/html/css/image/js是不会进行拦截的</li>
-</ul>
-      
-      <a class="article-more-link" href="/2020/04/07/SpringMVC08%EF%BC%9A%E6%8B%A6%E6%88%AA%E5%99%A8/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8B%A6%E6%88%AA%E5%99%A8-Interceptor/" rel="tag">-拦截器 -Interceptor</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringMVC07：Ajax研究" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/07/SpringMVC07%EF%BC%9AAjax%E7%A0%94%E7%A9%B6/"
-    >SpringMVC07：Ajax研究</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/07/SpringMVC07%EF%BC%9AAjax%E7%A0%94%E7%A9%B6/" class="article-date">
-  <time datetime="2020-04-07T00:22:46.000Z" itemprop="datePublished">2020-04-07</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="Ajax"><a href="#Ajax" class="headerlink" title="Ajax"></a>Ajax</h1><blockquote>
-<p>  简介</p>
-</blockquote>
-<ul>
-<li><p><strong>AJAX = Asynchronous JavaScript and XML（异步的 JavaScript 和 XML）。</strong></p>
-</li>
-<li><p>AJAX 是一种在无需重新加载整个网页的情况下，能够更新部分网页的技术。</p>
-</li>
-<li><p><strong>Ajax 不是一种新的编程语言，而是一种用于创建更好更快以及交互性更强的Web应用程序的技术。</strong></p>
-</li>
-<li><p>在 2005 年，Google 通过其 Google Suggest 使 AJAX 变得流行起来。Google Suggest能够自动帮你完成搜索单词。</p>
-</li>
-<li><p>Google Suggest 使用 AJAX 创造出动态性极强的 web 界面：当您在谷歌的搜索框输入关键字时，JavaScript 会把这些字符发送到服务器，然后服务器会返回一个搜索建议的列表。</p>
-</li>
-<li><p>就和国内百度的搜索框一样!</p>
-</li>
-<li><p>传统的网页(即不用ajax技术的网页)，想要更新内容或者提交一个表单，都需要重新加载整个网页。</p>
-</li>
-<li><p>使用ajax技术的网页，通过在后台服务器进行少量的数据交换，就可以实现异步局部更新。</p>
-</li>
-<li><p>使用Ajax，用户可以创建接近本地桌面应用的直接、高可用、更丰富、更动态的Web用户界面。</p>
-</li>
-</ul>
-      
-      <a class="article-more-link" href="/2020/04/07/SpringMVC07%EF%BC%9AAjax%E7%A0%94%E7%A9%B6/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Ajax-Asynchronous-Asynchronous-JavaScript-and-XML-%E5%BC%82%E6%AD%A5/" rel="tag">-Ajax -Asynchronous -Asynchronous JavaScript and XML -异步</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringMVC06：Json交互处理" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/07/SpringMVC06%EF%BC%9AJson%E4%BA%A4%E4%BA%92%E5%A4%84%E7%90%86/"
-    >SpringMVC06：Json交互处理</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/07/SpringMVC06%EF%BC%9AJson%E4%BA%A4%E4%BA%92%E5%A4%84%E7%90%86/" class="article-date">
-  <time datetime="2020-04-07T00:22:26.000Z" itemprop="datePublished">2020-04-07</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="Json"><a href="#Json" class="headerlink" title="Json"></a>Json</h1><blockquote>
-<p>  什么是JSON？</p>
-</blockquote>
-<ul>
-<li>JSON(JavaScript Object Notation, JS 对象标记) 是一种轻量级的数据交换格式，目前使用特别广泛。</li>
-<li>采用完全独立于编程语言的<strong>文本格式</strong>来存储和表示数据。</li>
-<li>简洁和清晰的层次结构使得 JSON 成为理想的数据交换语言。</li>
-<li>易于人阅读和编写，同时也易于机器解析和生成，并有效地提升网络传输效率。</li>
-</ul>
-<p>在 JavaScript 语言中，一切都是对象。因此，任何JavaScript 支持的类型都可以通过 JSON 来表示，例如字符串、数字、对象、数组等。看看他的要求和语法格式：</p>
-<ul>
-<li>对象表示为键值对，数据由逗号分隔</li>
-<li>花括号保存对象</li>
-<li>方括号保存数组</li>
-</ul>
-      
-      <a class="article-more-link" href="/2020/04/07/SpringMVC06%EF%BC%9AJson%E4%BA%A4%E4%BA%92%E5%A4%84%E7%90%86/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/json-jackson-%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/" rel="tag">-json -jackson -数据处理</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringMVC05：整合SSM框架" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/07/SpringMVC05%EF%BC%9A%E6%95%B4%E5%90%88SSM%E6%A1%86%E6%9E%B6/"
-    >SpringMVC05：整合SSM框架</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/07/SpringMVC05%EF%BC%9A%E6%95%B4%E5%90%88SSM%E6%A1%86%E6%9E%B6/" class="article-date">
-  <time datetime="2020-04-07T00:22:08.000Z" itemprop="datePublished">2020-04-07</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>在上一节中，我们了解了SpringMVC参数接收处理和结果跳转处理！</p>
-<p>现在我们来看看，如何集成SSM框架！完整项目的整合！</p>
-<h2 id="整合SSM"><a href="#整合SSM" class="headerlink" title="整合SSM"></a>整合SSM</h2><blockquote>
-<p>  环境要求</p>
-</blockquote>
-<p>环境：</p>
-<ul>
-<li><p>IDEA</p>
-</li>
-<li><p>MySQL 5.7.19</p>
-</li>
-<li><p>Tomcat 9</p>
-</li>
-<li><p>Maven 3.6</p>
-<p>要求：</p>
-</li>
-<li><p>需要熟练掌握MySQL数据库，Spring，JavaWeb及MyBatis知识，简单的前端知识；</p>
-</li>
-</ul>
-      
-      <a class="article-more-link" href="/2020/04/07/SpringMVC05%EF%BC%9A%E6%95%B4%E5%90%88SSM%E6%A1%86%E6%9E%B6/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringMVC-Spring-Mybatis-%E6%95%B4%E5%90%88-%E6%A1%86%E6%9E%B6-SSM/" rel="tag">-SpringMVC -Spring -Mybatis -整合 -框架 -SSM</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
   </article>
   
 
   
   <nav class="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
   </nav>
   
 </section>

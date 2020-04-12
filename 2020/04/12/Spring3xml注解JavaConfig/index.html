@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Spring3--xml,注解,javaConfig |  犬来八荒
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-Spring3xml注解JavaConfig" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Spring3--xml,注解,javaConfig
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Spring3xml%E6%B3%A8%E8%A7%A3JavaConfig/" class="article-date">
+  <time datetime="2020-04-12T04:50:30.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.2k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">7分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="xml、注解和Java-Config到底选哪个"><a href="#xml、注解和Java-Config到底选哪个" class="headerlink" title="xml、注解和Java Config到底选哪个"></a>xml、注解和Java Config到底选哪个</h1><p>本集概要：</p>
+<ul>
+<li>为什么说xml配置是类型不安全的配置方式？</li>
+<li>如何使用注解进行配置？</li>
+<li>注解配置是万能的吗？</li>
+<li>如何使用Java Config进行配置？</li>
+<li>xml、注解、Java Config，到底该如何选择？</li>
+</ul>
+<hr>
+<p>大雄一脸懵逼，心想，“我不就改了一处地方，怎么就把服务器给整挂了呢”，他仔细地看了一下自己改的代码：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"serverLogger"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.perfectlogger.CosoleLogger"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>“啊！！原来是CosoleLogger拼错了…”</p>
+<h2 id="类型不安全的xml配置"><a href="#类型不安全的xml配置" class="headerlink" title="类型不安全的xml配置"></a>类型不安全的xml配置</h2><p>到了公司，大雄跟哆啦讲了自己干的这件蠢事。</p>
+<p>“小伙子，早上没睡醒吧，哈哈哈”</p>
+<p>“额，你还笑得出来”</p>
+<p>“其实吧，我有办法让你在没睡醒的时候也不会犯这种错误”</p>
+<p>“啥办法，该不会是让我喝咖啡吧…”</p>
+<p>“喝咖啡也没我这个办法管用，你小子之前学Spring的时候，不会只知道用xml这种<strong>类型不安全</strong>的方式来配置吧？”</p>
+<p>“噢，好像还有其他配置方式…注解？还有Java Config…啊！我明白你的意思了，使用注解和Java Config，这样在我拼写错的时候，由于找不到这类，编译都不会通过，我也就知道我拼写错了！”</p>
+<p>“就是罗，而且这只是其他配置方式优于xml配置的一点，你用过之后就会发现他们有更多的优点了”</p>
+<p>“好，我这就试试用注解方式改造一下我们的代码！”</p>
+<a id="more"></a>
+
+<h2 id="通过注解进行自动化装配"><a href="#通过注解进行自动化装配" class="headerlink" title="通过注解进行自动化装配"></a>通过注解进行自动化装配</h2><p>大雄决定先把原来PaymentAction中，使用xml配置的OrderDao，改为通过注解进行配置。</p>
+<p>首先，大雄给OrderDao加上@Component注解,表明这个类是一个组件类，告诉Spring要为这个class创建bean，并注入给IOrderDao（<strong>本文使用的代码，可以到 <a href="https://link.zhihu.com/?target=https%3A//github.com/hzy38324/SpringNovel">SpringNovel</a> 下载，欢迎加星</strong>）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderDao</span> <span class="keyword">implements</span> <span class="title">IOrderDao</span></span>&#123;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着需要告诉Spring哪些包是需要进行扫描并自动装配，因此，大雄新建了一个配置类，然后使用@ComponentScan指明哪些包需要扫描：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan</span>(basePackageClasses=&#123;IOrderDao<span class="class">.<span class="keyword">class</span>,<span class="title">PaymentActionMixed</span>.<span class="title">class</span>&#125;)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">PaymentConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的basePackageClasses是类型安全的，它的值是一个class数组，表明Spring将会扫描这些class所在的包。</p>
+<p>最后需要使用@Autowired，把扫描到的OrderDao通过构造器注入的方式，注入到PaymentAction中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentActionMixed</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">    ......</span><br><span class="line">	<span class="keyword">private</span> IOrderDao orderDao;</span><br><span class="line">	</span><br><span class="line">	......</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">PaymentActionMixed</span><span class="params">(IOrderDao orderDao)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">		<span class="keyword">this</span>.orderDao = orderDao;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    ......</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addOrder</span><span class="params">(String orderType)</span> </span>&#123;</span><br><span class="line">		orderDao.addOrder(orderType);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试一下，这里使用了SpringJUnit4ClassRunner以便于在测试开始的时候自动创建Spring的上下文，使用@ContextConfiguration告诉Spring要加载什么配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(SpringJUnit4ClassRunner<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">ContextConfiguration</span>(<span class="title">classes</span></span>=PaymentConfig<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">PaymentMixedTest</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> PaymentActionMixed paymentActionMixed;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Test</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testPaymentMixedAddOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		paymentActionMixed.addOrder(<span class="string">"create_sub"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Output:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">real add order, order type is create_sub</span><br></pre></td></tr></table></figure>
+
+<p>“仅仅用了几个注解，就成功地将OrderDao注入到PaymentAction里面了！比起xml啰里啰嗦的配置，简直是太方便了！”大雄像发现了宝藏一样，赞叹着注解这项伟大的发明。</p>
+<h2 id="注解配置不是万能的"><a href="#注解配置不是万能的" class="headerlink" title="注解配置不是万能的"></a>注解配置不是万能的</h2><p>“注解好方便啊，而且<strong>注解的同时还能起到注释的作用</strong>，看到@Component注解就知道这个对象是组件，看到@Autowire就知道这里会进行注入，哆啦，我们项目以后都用注解进行配置吧！” </p>
+<p>“哈哈，你小子对注解的理解还挺深入的嘛。你说都用注解进行配置？那你试试把早上害惨你的ConsoleLogger改成注解注入试试？”</p>
+<p>“这还不简单哦，不就加几个注解的事儿吗……”大雄说完，准备找地方加上@Component注解。</p>
+<p>“啊，不对，这个类又不是我们写的，这是我们引用的第三方的jar包……我们改不了它的源码啊……” </p>
+<p>“哈哈哈，你才发现啊？你刚刚不是还说以后都用注解吗？”</p>
+<p>“啊，那看来这里还是得有类型不安全的、啰里啰嗦的xml进行配置了……”</p>
+<p>“是咩？小伙子记性不行啊！”</p>
+<p>“啊对，还有一种配置方式……Java Config！”</p>
+<h2 id="使用Java代码进行注入"><a href="#使用Java代码进行注入" class="headerlink" title="使用Java代码进行注入"></a>使用Java代码进行注入</h2><p>“啊啊，我有种预感，这种配置方式是<strong>自由度最高</strong>的，因为他叫Java Config，顾名思义，就是通过Java代码的方式进行注入，终于可以自己写代码进行注入了，xml和注解都感觉好没劲！”大雄兴奋的说道，摩拳擦掌。</p>
+<p>“哈哈，看来你骨子里面还是特别热爱编码的嘛！” </p>
+<p>“那是！”</p>
+<p>唠完嗑，大雄开始着手使用Java Config的配置方式来注入第三方jar包里的ConsoleLogger。</p>
+<p>使用Java Config，只需要创建一个配置类，在配置类中编写方法，返回要注入的对象，并给方法加上@Bean注解，告诉Spring为返回的对象创建实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentJavaConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ILogger <span class="title">getIlogger</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ConsoleLogger();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> PaymentActionMixed <span class="title">getPaymentActionMixed</span><span class="params">(ILogger logger)</span>     </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> PaymentActionMixed(logger);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着就可以进行测试了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(SpringJUnit4ClassRunner<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">ContextConfiguration</span>(<span class="title">classes</span> </span>= PaymentJavaConfig<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">PaymentJavaConfigTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> PaymentActionMixed paymentActionMixed;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testPaymentMixedAddOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        paymentActionMixed.pay(<span class="keyword">new</span> BigDecimal(<span class="number">100</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Output:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ConsoleLogger: pay begin, payValue is 100</span><br><span class="line">ConsoleLogger: pay end</span><br></pre></td></tr></table></figure>
+
+<p>“Java Config也是非常方便，虽然要写的代码比注解多了不少，但是一方面,相比于注解配置，Java Config<strong>对代码没有侵入</strong>，可以注入代码不是自己维护的类；另一方面，Java Config是使用Java代码进行注入的，相比于xml来说，又<strong>更为自由</strong>”</p>
+<p>“嗯嗯，总结的不错。”哆啦拍拍大雄的肩膀，继续说道，“不知不觉你已经在项目开发的过程中，把Spring的两大特性其中的一个，也就是控制反转的使用方式给用了个遍了，对这三种方式的优劣，相信你也有一个大致的认识，晚上回去总结一下，当然，你也可以上网找找资料，看看别人是怎么在这三种配置方式中进行取舍的……”哆啦滔滔不绝，开启了导师模式…….</p>
+<p>“哎呀呀，明白了，我晚上跟静香……哦不，我晚上吃完饭回去就写写总结……”</p>
+<h2 id="大雄的笔记"><a href="#大雄的笔记" class="headerlink" title="大雄的笔记"></a>大雄的笔记</h2><p>今天大雄又掌握了Spring依赖注入的另外两种配置方式——注解和Java Config，是时候把这三种方式做个总结了：</p>
+<p><img src="/images/innerimage/qinzidong/v2-18515e584368359cfd00f2899740c77a_720w.jpg" alt="img"></p>
+<p>（知乎不能插入表格，只能放图了，文字版的表格可以看我<a href="https://link.zhihu.com/?target=http%3A//bridgeforyou.cn/2017/10/03/Spring-Novel-3-Annotaion-Based-Configuration-and-Java-Based-Configuration/">个人博客</a>）</p>
+<p>这么总结下来一看，这三种配置方式，真可谓是各有千秋，不过在选择上还是有一定的规律的：</p>
+<ul>
+<li>xml配置相对于其他两种方式来说，几乎没什么优势，唯一的优势就是<strong>修改后不需要重新编译</strong>，因此<strong>对于一些经常切换实现类的对象，可以采用xml的方式进行配置</strong>。还有就是由于xml是Spring一开始就提供的配置方式，因此很多旧代码还是采用xml，所以在维护旧代码时会免不了用到xml。</li>
+<li><strong>注解用起来非常地简洁，代码量十分少，因此是项目的第一选择</strong>。只有当需要注入代码不是自己维护的第三方jar包中的类时，或者需要更为灵活地注入，比如说需要调用某个接口，查询数据，然后把这个数据赋值给要注入的对象，那么这时候就需要用到Java Config。</li>
+</ul>
+<h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2><p>整合了Spring IOC功能的商城项目在国庆前一天顺利上线，胖虎十分高兴，请大家伙去他家吃大餐。</p>
+<p>好多同事都听说了大雄的“丰功伟绩”，纷纷过来敬酒，不会挡酒的大雄很快喝的醉醺醺的，迷迷糊糊中，他似乎看到了胖虎站了起来，说道，“商城项目终于上线了，国庆回来后，我们有一个更重要的项目，经过这次商城项目的经验，公司决定从一开始就采用SpringMVC进行开发，哆啦担任项目经理，大雄是开发组长……”</p>
+<p>“啊…..”，大雄朦朦胧胧的双眼似乎看到了静香向他投来崇拜的目光，大雄痴痴地笑着，突然，他眼里出现了穿着比基尼的静香，“啊，静香，你这件比基尼…真…真好看…”</p>
+<p><img src="/images/innerimage/qinzidong/v2-cdc67fa407b9f80f054b731435dc5443_720w.jpg" alt="img"></p>
+<h2 id="参考内容"><a href="#参考内容" class="headerlink" title="参考内容"></a>参考内容</h2><ul>
+<li>《Spring in Action》</li>
+<li><a href="https://link.zhihu.com/?target=https%3A//blog.codecentric.de/en/2012/07/spring-dependency-injection-styles-why-i-love-java-based-configuration/l-or-annotations">Spring Dependency Injection Styles - Why I love Java based configuration - codecentric AG Blog</a></li>
+<li><a href="https://link.zhihu.com/?target=https%3A//dzone.com/articles/spring-framework-xml-vs-annotations">Spring Framework – XML vs. Annotations - DZone Java</a></li>
+<li><a href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/182393/xml-configuration-versus-annotation-based-configuration">xml configuration versus Annotation based configuration</a></li>
+<li><a href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/8428439/spring-annotation-based-di-vs-xml-configuration">Spring annotation-based DI vs xml configuration?</a></li>
+<li><a href="https://link.zhihu.com/?target=https%3A//stackoverflow.com/questions/4995170/java-dependency-injection-xml-or-annotations">Java Dependency injection: XML or annotations</a></li>
+</ul>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -配置 -小说</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/2020/04/12/Config%E9%80%89%E5%93%AA%E4%B8%AA/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Spring3xml注解javaConfig
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/04/12/Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Spring2--注入方式哪家强</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: '1qio8bDzfD0zIHgwuD84E3ff-gzGzoHsz',
+        app_key: '4qfVrr8y0w3o33NPw2hQONdg',
+        path: window.location.pathname,
+        notify: 'false',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2020
+        花重锦官城
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <kbd>访问量:<span id="busuanzi_value_page_pv"></span></kbd>
+  <kbd>访客数:<span id="busuanzi_value_site_uv"></span></kbd>
+</span>
+        
+      </li>
+      
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+    <aside class="sidebar">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="犬来八荒"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">目录</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://chengguolaogongya.lofter.com/" target="_blank" rel="noopener">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+    strings: ['浮生有梦三千场 穷尽千里诗酒荒','徒把理想倾倒','不如早还乡'],
+    startDelay: 0,
+    typeSpeed: 100,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+  } catch (err) {
+  }
+  
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1321020935&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

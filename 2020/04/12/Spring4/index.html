@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Spring4 |  犬来八荒
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-Spring4" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Spring4
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Spring4/" class="article-date">
+  <time datetime="2020-04-12T04:58:31.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.6k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">10分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="使用Spring-Boot创建NoXml的Web应用"><a href="#使用Spring-Boot创建NoXml的Web应用" class="headerlink" title="使用Spring Boot创建NoXml的Web应用"></a>使用Spring Boot创建NoXml的Web应用</h1><p>本集概要：</p>
+<ul>
+<li>怎样用Spring Boot搭建Web应用？</li>
+<li>Spring Boot和Spring相比，有什么优势？</li>
+<li>Spring Boot的起步依赖和自动配置是什么东西？</li>
+<li>为什么不需要配置Servlet容器也可以启动Web应用？</li>
+</ul>
+<hr>
+<p>经过了国庆七天长假的休息，回到公司的大雄已经打满了鸡血，准备在新的项目 —— tiny facebook，大干一场。第一次被委以重任，大雄心里还是有点小紧张的…</p>
+<p>“从目前社区的反馈来看，Spring Boot相比于Spring而言，可以大大提高开发的效率，我们这个tiny facebook，就用Spring Boot开发吧！”，哆啦对大雄说。<br>“啊，那我岂不是又得重新学习啦，好不容易才学完了Spring的基础…”<br>“学是肯定还要学的，但是其实Spring Boot只是将原先Spring一些比较繁琐的配置简化了而已，进一步提高了Java开发的效率，而你之前学的Spring控制反转，对你理解Spring Boot是有很大作用的。”<br>“Soga！那就是说原理是一样的罗，那好办！哆啦你有没有写过什么总结文档，让我参考一下嘛”<br>“自己到Spring官网上找去，你小子整天就想不劳而获…”，哆啦心里暗自说道，其实我就没写过总结文档。</p>
+<a id="more"></a>
+
+<h2 id="原料"><a href="#原料" class="headerlink" title="原料"></a>原料</h2><p>“哎，我最讨厌看英文文档了”，打开<a href="https://link.zhihu.com/?target=https%3A//spring.io/">Spring官网</a>，看到一堆密密麻麻的英文时，大雄的头顶仿佛有很多只乌鸦飞过。<br>跟随着链接，大雄找到了一个Spring Boot的<a href="https://link.zhihu.com/?target=https%3A//spring.io/guides/gs/spring-boot/">Get Started</a>教程，“来吧，可恶的英文，我要hello world了！”<br>大雄在机子上准备好了JDK1.8和Gradle4.1，开始按照教程搭建他的Spring Boot。</p>
+<h2 id="初始化Gradle工程"><a href="#初始化Gradle工程" class="headerlink" title="初始化Gradle工程"></a>初始化Gradle工程</h2><p>首先要搭建Gradle项目的框架，非常简单，<a href="https://link.zhihu.com/?target=https%3A//spring.io/guides/gs/spring-boot/">Get Started</a>里面的Build With Gradle部分有简略教程，详细教程可以看<a href="https://link.zhihu.com/?target=https%3A//spring.io/guides/gs/gradle/">Building Java Projects with Gradle</a>。<br>在项目根目录下创建src\main\java文件夹，接着在和src同级的目录下创建build.gradle：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        mavenCentral()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath(&quot;org.springframework.boot:spring-boot-gradle-plugin:1.5.7.RELEASE&quot;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply plugin: &#39;java&#39;</span><br><span class="line">apply plugin: &#39;eclipse&#39;</span><br><span class="line">apply plugin: &#39;idea&#39;</span><br><span class="line">apply plugin: &#39;org.springframework.boot&#39;</span><br><span class="line"></span><br><span class="line">jar &#123;</span><br><span class="line">    baseName &#x3D; &#39;tiny-facebook&#39;</span><br><span class="line">    version &#x3D;  &#39;0.1.0&#39;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">repositories &#123;</span><br><span class="line">    mavenCentral()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sourceCompatibility &#x3D; 1.8</span><br><span class="line">targetCompatibility &#x3D; 1.8</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    &#x2F;&#x2F; There&#39;s tomcat embedded in it</span><br><span class="line">    compile(&quot;org.springframework.boot:spring-boot-starter-web&quot;)</span><br><span class="line">    &#x2F;&#x2F; tag::actuator[]</span><br><span class="line">    compile(&quot;org.springframework.boot:spring-boot-starter-actuator&quot;)</span><br><span class="line">    &#x2F;&#x2F; end::actuator[]</span><br><span class="line">    testCompile(&quot;junit:junit&quot;)</span><br><span class="line">    testCompile(&quot;org.springframework.boot:spring-boot-starter-test&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看了一下内容，大致上就是配置一些依赖包，先不管那么多了，把工程跑起来先，后面再来研究。<br>接着执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gradle wrapper --gradle-version 2.13</span><br></pre></td></tr></table></figure>
+
+<p>这个命令执行完之后会生成gradlew.bat文件，gradlew命令里面内置了一些脚本，可以让没有安装gralde的机器也可以运行这个gradle工程，就像下面这段文档所说的：</p>
+<blockquote>
+<p>  <em>The Gradle Wrapper is the preferred way of starting a Gradle build. It consists of a batch script for Windows and a shell script for OS X and Linux. These scripts allow you to run a Gradle build without requiring that Gradle be installed on your system. This used to be something added to your build file, but it’s been folded into Gradle, so there is no longer any need.</em></p>
+</blockquote>
+<h2 id="编写接口"><a href="#编写接口" class="headerlink" title="编写接口"></a>编写接口</h2><p>在src\main\java\目录下创建了一个名为com.b4u.tinyfacebook.controller的包，用来存放项目的Controller，然后在底下创建了PostController类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PostController</span> </span>&#123;</span><br><span class="line">   <span class="meta">@RequestMapping</span>(<span class="string">"/post"</span>)</span><br><span class="line">   <span class="function"><span class="keyword">public</span> String <span class="title">post</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="string">"this is a post"</span>;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Application"><a href="#Application" class="headerlink" title="Application"></a>Application</h2><p>在src\main\java\com\b4u\tinyfacebook目录下创建Application类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(Application<span class="class">.<span class="keyword">class</span>, <span class="title">args</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> CommandLineRunner <span class="title">commandLineRunner</span><span class="params">(ApplicationContext ctx)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> args -&gt; &#123;</span><br><span class="line"></span><br><span class="line">            System.out.println(<span class="string">"Let's inspect the beans provided by Spring Boot:"</span>);</span><br><span class="line"></span><br><span class="line">            String[] beanNames = ctx.getBeanDefinitionNames();</span><br><span class="line">            Arrays.sort(beanNames);</span><br><span class="line">            <span class="keyword">for</span> (String beanName : beanNames) &#123;</span><br><span class="line">                System.out.println(beanName);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><p>在项目根目录下执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gradlew build &amp;&amp; java -jar build&#x2F;libs&#x2F;tiny-facebook-0.1.0.jar</span><br></pre></td></tr></table></figure>
+
+<p>这里面包含了两条命令，前一条是构建jar包，后一条是执行jar包。<br>可以看到控制台打出了“Srping”的字样，最后输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Started Application in 5.743 seconds (JVM running for 6.388)</span><br></pre></td></tr></table></figure>
+
+<p>访问<a href="http://localhost:8080/post" target="_blank" rel="noopener">http://localhost:8080/post</a>:</p>
+<p><img src="/images/innerimage/qinzidong/v2-6aeebdf172328ed66b247d53b26d98ac_720w.jpg" alt="img"></p>
+<p>“太神奇了，<strong>只用了不到5分钟的时间，不用一行Xml代码，就可以创建一个Web应用了！</strong>”</p>
+<h2 id="提交代码"><a href="#提交代码" class="headerlink" title="提交代码"></a>提交代码</h2><p>到这里算是实现了一个基于Spring Boot的最小Web项目了，大雄把代码提交到了<a href="https://link.zhihu.com/?target=https%3A//github.com/hzy38324/tiny-facebook">Github</a>，并且打上了Tag，使用下面命令就可以拿到这份代码啦：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git clone git@github.com:hzy38324&#x2F;tiny-facebook.git</span><br><span class="line">git checkout v1.0</span><br></pre></td></tr></table></figure>
+
+<p>“<strong>大家快来给我加星吧，嘿嘿嘿</strong>“，大雄开始做起了白日梦。</p>
+<h2 id="探秘"><a href="#探秘" class="headerlink" title="探秘"></a>探秘</h2><p>照着文档一路做下来，一个Web工程就这样出来，不过这里面还有很多不知其然的地方，大雄决定一探究竟。</p>
+<h2 id="哪来的Servlet容器"><a href="#哪来的Servlet容器" class="headerlink" title="哪来的Servlet容器"></a>哪来的Servlet容器</h2><p>按照以往的经验，在写完代码之后，还需要把代码部署到Servlet容器中去，比如Tomcat，接着启动容器，才可以访问，可是上面的步骤里似乎并没有涉及到Servlet容器，这是为什么？</p>
+<p>其实，我们在build.gradle里面引入了spring-boot-starter-web这个依赖，利用传递依赖的特性，我们就可以顺带引入了一个内嵌的Tomcat：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    &#x2F;&#x2F; There&#39;s tomcat embedded in it</span><br><span class="line">    compile(&quot;org.springframework.boot:spring-boot-starter-web&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>我们在Application中，使用@Bean注解了commandLineRunner，因此这个方法在Spring Boot容器启动时会被执行，在这个方法里面，打印了容器内的所有对象,在打印列表中，我们可以找到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tomcatEmbeddedServletContainerFactory</span><br></pre></td></tr></table></figure>
+
+<p>这个就是内嵌的tomcat容器了。</p>
+<p>事实上spring-boot-starter-web这个依赖还帮我们引入了很多Web开发中常用的依赖，比如Spring MVC，Spring Boot觉得，反正你们开发Web的时候，都是要用到SpringMVC的，干脆我就把SpringMVC和Spring打包在一起给你好了，而且不需要你指定版本号，<strong>Spring Boot会根据自身的版本号，下载对应版本的其他依赖</strong>，这样你就<strong>不用担心说自己选择的各种依赖之间会不兼容</strong>了，因为Spring Boot都帮你处理好了。这种做法，大大简化了我们的开发，因而也被叫做<strong>起步依赖</strong>。</p>
+<h2 id="RestController"><a href="#RestController" class="headerlink" title="@RestController"></a>@RestController</h2><p>@RestController注解等于@Controller + @ResponseBody，也就是说，@RestController即把被它注解的类，交给了Spring容器管理，又使得这个请求将会返回数据，而不是返回视图。</p>
+<h2 id="为什么不需要一行Xml代码"><a href="#为什么不需要一行Xml代码" class="headerlink" title="为什么不需要一行Xml代码"></a>为什么不需要一行Xml代码</h2><p>Spring Boot给人最深的印象就是，整个Web应用的创建过程中，不需要编写任何Xml文件，以往在使用Spring时，至少需要在application.xml和web.xml里面，进行Spring的一些配置，比如开启自动注入、配置DispatcherServlet（Spring MVC的前端控制器，就是它，找到请求对应的Controller，并交给Controller处理）等等，那么Spring Boot为什么不需要一行Xml代码，就可以实现和Spring一样的功能呢？</p>
+<p>首先我们得再来看一下这个Application类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(Application<span class="class">.<span class="keyword">class</span>, <span class="title">args</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> CommandLineRunner <span class="title">commandLineRunner</span><span class="params">(ApplicationContext ctx)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> args -&gt; &#123;</span><br><span class="line"></span><br><span class="line">            System.out.println(<span class="string">"Let's inspect the beans provided by Spring Boot:"</span>);</span><br><span class="line"></span><br><span class="line">            String[] beanNames = ctx.getBeanDefinitionNames();</span><br><span class="line">            Arrays.sort(beanNames);</span><br><span class="line">            <span class="keyword">for</span> (String beanName : beanNames) &#123;</span><br><span class="line">                System.out.println(beanName);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的@SpringBootApplication注解，实际上包含了三个注解：</p>
+<ul>
+<li>@Configuration：表明这是一个Java Config的配置类（Java Config是Spring依赖注入配置方式三种中的其中一种，不了解的同学可以参考之前的章节：<a href="https://zhuanlan.zhihu.com/p/29938139" target="_blank" rel="noopener">xml、注解和Java Config到底选哪个</a>），因此在这个类下面使用@Bean就可以往容器注入对象了；</li>
+<li>@ComponentScan：启用组件扫描，这就能理解为什么不需要在xml里面开启扫描了吧！当然这个配置要结合上面的@Configuration才有效；</li>
+<li>@EnableAutoConfiguration ：开启Spring Boot<strong>自动配置</strong>的能力，就是这个注解，让你少写了很多Xml配置呢！</li>
+</ul>
+<p>那么这个“自动配置”到底是什么原理呢？其实顾名思义，就是自动帮你写好配置的意思，比如说，Spring Boot检查到了你的classpath下面有Spring MVC，那就说明你用到了Spring MVC，既然你用到了Spring MVC，那你肯定要去web.xml中去配置DispatcherServlet，既然你肯定要做，好，不用麻烦你了，我帮你配置好了，你直接用就行！这就是Spring Boot自动配置最“淳朴”的解释啦，如果你想了解自动配置的具体原理，可以参考《Spring Boot实战》2.3章节。</p>
+<h2 id="大雄的笔记"><a href="#大雄的笔记" class="headerlink" title="大雄的笔记"></a>大雄的笔记</h2><p>今天又是收获丰富的一天，大雄见识到了什么叫服务意识，服务意识就是我知道你要做什么，然后提前帮你做了。Spring Boot就是一个服务意识超强的帮手。临睡前，大雄把关于Spring Boot的学习心得记了下来：</p>
+<ul>
+<li>Spring Boot使用了<strong>自动配置</strong>的特性，帮我们配置好了以前使用Spring开发时需要做的很多固定配置，从而让我们<strong>更加专注于核心代码的开发</strong>；</li>
+<li>Spring Boot提供了很多<strong>起步依赖</strong>，减少了对引入依赖的代码的编写，也避免了手动引入依赖可能造成的各个依赖之间不兼容的问题；</li>
+<li><strong>Spring官网的资料写的真不赖！是我看到的写的最好的英文文档！</strong></li>
+</ul>
+<h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2><p>“小伙子英文不错嘛，这就把框架搭好了”，哆啦拍着大雄的肩膀，少见的表扬了一句。<br>“Where where, 人家文档写的好嘛！”<br>“哎哟呵，这么谦虚。 对了，我们这个tiny facebook后面肯定少不了要提供很多RESTful接口的，你预研一下如何实现Get啊Post啊Put啊Delete啊啥啥啥的接口吧。”<br>“这还不简单，现在那个接口，默认是Get方式，要改成其他方式，不就加上注解指定一下就好啦！”<br>“实现是很简单，但你知道RESTful和传统的SOAP有什么区别吗？为什么RESTful这么流行？怎样写好一个RESTful接口？Post和Put有什么区别……”，哆啦又开启了唐僧叨叨逼模式…<br>……</p>
+<h2 id="参考内容"><a href="#参考内容" class="headerlink" title="参考内容"></a>参考内容</h2><ul>
+<li><a href="https://link.zhihu.com/?target=https%3A//spring.io/guides/gs/spring-boot/">Building an Application with Spring Boot</a></li>
+<li><a href="https://link.zhihu.com/?target=https%3A//spring.io/guides/gs/gradle/">Building Java Projects with Gradle</a></li>
+<li>《Spring Boot实战》</li>
+</ul>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -配置 -小说</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%811/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Redis实现分布式锁1
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/04/12/Config%E9%80%89%E5%93%AA%E4%B8%AA/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Spring3xml注解javaConfig</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: '1qio8bDzfD0zIHgwuD84E3ff-gzGzoHsz',
+        app_key: '4qfVrr8y0w3o33NPw2hQONdg',
+        path: window.location.pathname,
+        notify: 'false',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2020
+        花重锦官城
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <kbd>访问量:<span id="busuanzi_value_page_pv"></span></kbd>
+  <kbd>访客数:<span id="busuanzi_value_site_uv"></span></kbd>
+</span>
+        
+      </li>
+      
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+    <aside class="sidebar">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="犬来八荒"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">目录</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://chengguolaogongya.lofter.com/" target="_blank" rel="noopener">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+    strings: ['浮生有梦三千场 穷尽千里诗酒荒','徒把理想倾倒','不如早还乡'],
+    startDelay: 0,
+    typeSpeed: 100,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+  } catch (err) {
+  }
+  
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1321020935&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

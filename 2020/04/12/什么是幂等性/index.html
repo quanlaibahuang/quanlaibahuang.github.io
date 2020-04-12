@@ -6,7 +6,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    Redis实现分布式锁2 |  犬来八荒
+    什么是幂等性 |  犬来八荒
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -31,7 +31,7 @@
   <div id="app">
     <main class="content">
       <section class="outer">
-  <article id="post-Redis实现分布式锁2" class="article article-type-post" itemscope
+  <article id="post-什么是幂等性" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -39,7 +39,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  Redis实现分布式锁2
+  什么是幂等性
 </h1>
   
 
@@ -48,8 +48,8 @@
 
     
     <div class="article-meta">
-      <a href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%812/" class="article-date">
-  <time datetime="2020-04-12T05:19:52.000Z" itemprop="datePublished">2020-04-12</time>
+      <a href="/2020/04/12/%E4%BB%80%E4%B9%88%E6%98%AF%E5%B9%82%E7%AD%89%E6%80%A7/" class="article-date">
+  <time datetime="2020-04-12T08:10:31.000Z" itemprop="datePublished">2020-04-12</time>
 </a>
       
       
@@ -59,7 +59,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2k字</span>
+            <span class="post-count">1.2k字</span>
         </span>
     </span>
 
@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">7分钟</span>
+            <span class="post-count">4分钟</span>
         </span>
     </span>
 </div>
@@ -95,94 +95,43 @@
       
 
       
-      <h1 id="如何用Redis实现分布式锁（2）——-集群版"><a href="#如何用Redis实现分布式锁（2）——-集群版" class="headerlink" title="如何用Redis实现分布式锁（2）—— 集群版"></a>如何用Redis实现分布式锁（2）—— 集群版</h1><h2 id="单机版实现的局限性"><a href="#单机版实现的局限性" class="headerlink" title="单机版实现的局限性"></a>单机版实现的局限性</h2><p>在上一篇文章中，我们讨论了Redis分布式锁的实现，简单回顾下。</p>
-<p>获取锁：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set file:9527 $&#123;random_value&#125; NX EX $&#123;timeout&#125;</span><br></pre></td></tr></table></figure>
+      <p>HTTP 幂等方法，是指无论调用多少次都不会有不同结果的 HTTP 方法。不管你调用一次，还是调用一百次，一千次，结果都是相同的。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET     /tickets       <span class="comment"># 获取ticket列表</span></span><br><span class="line">GET     /tickets/12    <span class="comment"># 查看某个具体的ticket</span></span><br><span class="line">POST    /tickets       <span class="comment"># 新建一个ticket</span></span><br><span class="line">PUT     /tickets/12    <span class="comment"># 更新ticket 12</span></span><br><span class="line">PATCH   /tickets/12    <span class="comment"># 更新ticket 12</span></span><br><span class="line">DELETE  /tickets/12    <span class="comment"># 删除ticekt 12</span></span><br></pre></td></tr></table></figure>
 
-<p>释放锁，调用lua脚本：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if redis.call(&quot;get&quot;,KEYS[1]) &#x3D;&#x3D; ARGV[1] then</span><br><span class="line">    return redis.call(&quot;del&quot;,KEYS[1])</span><br><span class="line">else</span><br><span class="line">    return 0</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-
-<p>这套实现机制，在只有一个Redis实例的情况下，确实很完美。</p>
 <a id="more"></a>
 
-<p>然而，大多数生产环境，都不可能只部署一个Redis，至少也是主从架构：</p>
-<p><img src="/images/innerimage/qinzidong/v2-167f50493e5241edbdb311aa2a605fb3_720w-1586668900610.jpg" alt="img"></p>
-<p>更多的是主从+分片的架构：</p>
-<p><img src="/images/innerimage/qinzidong/v2-d9233a7708b3eadbb18b64cb48e06024_720w.jpg" alt="img"></p>
-<p>当然主从架构也可以进化为一主多从架构乃至主从链架构（Master-Salve Chain）:</p>
-<p><img src="/images/innerimage/qinzidong/v2-33524e0ba6c6411646333c9cb509462a_720w.jpg" alt="img"></p>
-<p><img src="/images/innerimage/qinzidong/v2-a6c89d4ee949f5a8e076ecf5308750a7_720w.jpg" alt="img"></p>
-<p>而其实在主从架构下，之前那套分布式锁的机制，就已经失效了，原因正如之前说的：</p>
-<blockquote>
-<p>  <em>如果A往Master放入了一把锁，然后再数据同步到Slave之前，Master crash，Slave被提拔为Master，这时候Master上面就没有锁了，这样其他进程也可以拿到锁，违法了锁的互斥性。</em></p>
-</blockquote>
-<p>那么，要怎么解决这个问题呢？</p>
-<h2 id="Redlock算法"><a href="#Redlock算法" class="headerlink" title="Redlock算法"></a>Redlock算法</h2><p>针对Redis集群架构，redis的作者antirez提出了Redlock算法，来实现集群架构下的分布式锁。</p>
-<p>Redlock算法并不复杂，我们先简单描述一下，假设我们Redis分片下，有三个Master的节点，这三个Master，又各自有一个Slave：</p>
-<p><img src="https://pic1.zhimg.com/80/v2-d9233a7708b3eadbb18b64cb48e06024_720w.jpg" alt="img"></p>
-<p>好，现在客户端想获取一把分布式锁：</p>
-<ul>
-<li>记下开始获取锁的时间 startTime</li>
-<li>按照A-&gt;B-&gt;C的顺序，依次向这三台Master发送获取锁的命令。客户端在等待每台Master回响应时，都有超时时间timeout。举个例子，客户端向A发送获取锁的命令，在等了timeout时间之后，都没收到响应，就会认为获取锁失败，继续尝试获取下一把锁</li>
-<li>如果获取到超过半数的锁，也就是 3/2+1 = 2把锁，这时候还没完，要记下当前时间endTime</li>
-<li>计算拿到这些锁花费的时间 costTime = endTime - startTime，如果costTime小于锁的过期时间expireTime，则认为获取锁成功</li>
-<li>如果获取不到超过一半的锁，或者拿到超过一半的锁时，计算出costTime&gt;=expireTime，这两种情况下，都视为获取锁失败</li>
-<li>如果获取锁失败，需要向全部Master节点，都发生释放锁的命令，也就是那段Lua脚本</li>
-</ul>
-<p>看完这个Redlock算法，相信你会有很多疑问，下面就一起来追问Redlock。</p>
-<h2 id="追问Redlock"><a href="#追问Redlock" class="headerlink" title="追问Redlock"></a>追问Redlock</h2><p>1、为什么要给每个获取锁的请求设置timeout</p>
-<p>为了防止在某个出了问题的Master节点上，浪费太多时间。一旦超时了，马上尝试下一个。</p>
-<p>2、获取了过半数的锁之后，还要不要继续获取</p>
-<p>这个没有约束。</p>
-<p>你可以选择适可而止，这样可以提高获取锁的速度，总共三台，A和B都拿到了，就不必去拿C了。</p>
-<p>你也可以很贪心，A和B都拿到了，还要去拿C。这有什么好处呢？后面会跟你说。</p>
-<p>3、如果costTime只比expireTime小一点点，会不会有问题？</p>
-<p>当然有问题，这样你前脚刚拿到锁，走进门，后脚分布式锁就过期了，别人也拿到锁，进门了，互斥性被打破。</p>
-<p>解决办法是，每个请求的timeout要比expireTime小很多，比如你的expireTime是10s，那么timeout可以设置为50ms，这样costTime最多也就50*3=150ms，剩下的9850ms，这九秒多钟，你都可以用来执行代码，保证不会有其他进程可以进入。</p>
-<blockquote>
-<p>  <em>For example if the auto-release time is 10 seconds, the timeout could be in the ~ 5-50 milliseconds range. This prevents the client from remaining blocked for a long time trying to talk with a Redis node which is down: if an instance is not available, we should try to talk with the next instance ASAP.</em></p>
-</blockquote>
-<p>当然，如果你的代码执行了9850ms还没执行完，那别的进程还是可以抢到锁。这也是一个暂时无解的问题。</p>
-<p>4、释放锁时，为什么不能只向成功获取到锁的Master发送释放命令，而要向所有的Master节点发送</p>
-<p>很简单，假设你向Master A发送了获取锁的命令，set命令执行成功了，但是在回响应时发送了故障，响应没发回来，过了超时时间后，你会认为获取锁失败，而实际上，锁已经在redis那边生效了。</p>
-<p>所以在释放锁的时候，必须向全部节点都发生命令，不管你到底有没有在那节点上面获取到锁。</p>
-<p>5、如果有节点crash，锁不也还是会丢失吗？</p>
-<p>的确，单机时候的问题，在集群依然存在。</p>
-<p>Redlock算法，在有节点重启或者crash的情况下，也会有可能无法达到互斥的目的。</p>
-<p>假设有三个节点ABC：</p>
-<ul>
-<li>进程1在B和C上拿到了锁</li>
-<li>这时候B crash了</li>
-<li>如果B没有Slave节点，那么B会重启，如果数据还没备份，那么重启后B上的锁就丢了</li>
-<li>又或者B有Slave节点，但是crash时，Master B的数据还没同步到Slave，Slave被提拔为Master</li>
-<li>不管有没有Slave，其他进程都有可能在Bcrash掉之后，在B上拿到锁，再加上在A拿到的锁，就可以拿到超过半数的锁，这样就有两个进程同时拿到了锁，互斥性被打破</li>
-</ul>
-<p>对于上面这个问题，Redis的作者，同时也是Redlock的作者antirez，提出了delay的解决方案，就是让B别那么快重启，稍微等一下，等的时间，就是分布式锁的最大过期时间，等到其他节点上的锁都过期了，你再重启，对外提供服务。</p>
-<p>对于有Slave的情况，也可以用类似的方案，Slave先别那么快接替Master，稍微等一下下。</p>
-<p>6、会不会有锁饥饿的问题？</p>
-<p>还是三台Master节点，现在有三个进程同时要加同一把锁，会不会出现每次都是一个进程抢到一把锁的情况？</p>
-<p>这是有可能的。</p>
-<p>解决办法1：<br>获取锁失败后，随机休息一段时间</p>
-<p>解决办法2：<br>如果客户端在发现，就算后面全部的锁，都被我抢到，加起来也不能超过半数，这时候就不再继续往下抢。</p>
-<p>举个例子，进程1抢到了节点A的锁，进程2抢到节点B的，这时候进程3想过来抢锁，按照ABC的顺序，逐个抢，A和B都抢不过别人，于是掐指一算，就算C让我抢到了，我也抢不到超过半数了，没必要继续抢了，我还是先尝试抢一下A吧。</p>
-<p>这样就不会出现三把锁，分别被三个不同的进程抢的情况了。</p>
-<p>Redisson（一个Java的redis客户端）在实现redlock时就采用了这个解决方案。</p>
-<p>RedissonMultiLock line248:</p>
-<p><img src="/images/innerimage/qinzidong/v2-7f9d29debdc29b0076f180d6fa0d5015_720w.jpg" alt="img"></p>
-<p>现在让我们回过头来看第2个问题，获取了过半数的锁之后，还要不要继续获取？</p>
-<p>之前说了，不继续获取可以提高速度，但是贪心点继续获取也并非一无是处，比如你已经获取了A和B，如果把C也获取了，那么就算后面A挂掉了，别人也最多只能从恢复过来的A上获取到锁，还是拿不到超过半数的。</p>
-<h2 id="Redlock实现：Redisson"><a href="#Redlock实现：Redisson" class="headerlink" title="Redlock实现：Redisson"></a>Redlock实现：Redisson</h2><p>上面讲的只是Redlock的算法，具体怎么用代码来实现，可以看redlock各种语言的客户端源码，比如Java的实现，就可以看看Redisson。</p>
-<p>我在看的过程中，就发现redisson在释放锁的时候，只是释放了成功获取到的锁。<br>RedissonMultiLock line248:</p>
-<p><img src="/images/innerimage/qinzidong/v2-5275963f56c50eb34ba797595eb85cf1_720w.jpg" alt="img"></p>
-<p>当然，或许redisson有其他考虑，这个还不得而知。</p>
-<blockquote>
-<p>  <em>针对这个疑惑，给redisson提了个issuse（<a href="https://link.zhihu.com/?target=https%3A//github.com/redisson/redisson/issues/1606">https://github.com/redisson/redisson/issues/1606</a>），不过还没有答复 (￣▽￣)／</em></p>
-</blockquote>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://link.zhihu.com/?target=https%3A//redis.io/topics/distlock">Distributed locks with Redis</a></li>
-<li><a href="https://link.zhihu.com/?target=http%3A//martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html">How to do distributed locking</a></li>
-<li><a href="https://link.zhihu.com/?target=http%3A//zhangtielei.com/posts/blog-redlock-reasoning-part2.html">基于Redis的分布式锁到底安全吗（下）| 张铁蕾</a></li>
-</ul>
+<h2 id="HTTP-GET-方法"><a href="#HTTP-GET-方法" class="headerlink" title="HTTP GET 方法"></a>HTTP GET 方法</h2><p>HTTP GET 方法，用于获取资源，不管调用多少次接口，结果都不会改变，所以是幂等的。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET     /tickets       <span class="comment"># 获取ticket列表</span></span><br><span class="line">GET     /tickets/12    <span class="comment"># 查看某个具体的ticket</span></span><br></pre></td></tr></table></figure>
+
+<p>只是查询数据，不会影响到资源的变化，因此我们认为它幂等。</p>
+<p>值得注意，幂等性指的是作用于结果而非资源本身。怎么理解呢？例如，这个 HTTP GET 方法可能会每次得到不同的返回内容，但并不影响资源。</p>
+<p>可能你会问有这种情况么？当然有咯。例如，我们有一个接口获取当前时间，我们就应该设计成</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET     /service_time <span class="comment"># 获取服务器当前时间</span></span><br></pre></td></tr></table></figure>
+
+<p>它本身不会对资源本身产生影响，因此满足幂等性。</p>
+<h2 id="HTTP-POST-方法"><a href="#HTTP-POST-方法" class="headerlink" title="HTTP POST 方法"></a>HTTP POST 方法</h2><p>HTTP POST 方法是一个非幂等方法，因为调用多次，都将产生新的资源。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">POST    /tickets       <span class="comment"># 新建一个ticket</span></span><br></pre></td></tr></table></figure>
+
+<p>因为它会对资源本身产生影响，每次调用都会有新的资源产生，因此不满足幂等性。</p>
+<h2 id="HTTP-PUT-方法"><a href="#HTTP-PUT-方法" class="headerlink" title="HTTP PUT 方法"></a>HTTP PUT 方法</h2><p>HTTP PUT 方法是不是幂等的呢？我们来看下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PUT     /tickets/12    <span class="comment"># 更新ticket 12</span></span><br></pre></td></tr></table></figure>
+
+<p>因为它直接把实体部分的数据替换到服务器的资源，我们多次调用它，只会产生一次影响，但是有相同结果的 HTTP 方法，所以满足幂等性。</p>
+<h2 id="HTTP-PATCH-方法"><a href="#HTTP-PATCH-方法" class="headerlink" title="HTTP PATCH 方法"></a>HTTP PATCH 方法</h2><p>HTTP PATCH 方法是非幂等的。HTTP POST 方法和 HTTP PUT 方法可能比较好理解，但是 HTTP PATCH 方法只是更新部分资源，怎么是非幂等的呢?</p>
+<p>因为，PATCH 提供的实体则需要根据程序或其它协议的定义，解析后在服务器上执行，以此来修改服务器上的资源。换句话说，PATCH 请求是会执行某个程序的，如果重复提交，程序可能执行多次，对服务器上的资源就可能造成额外的影响，这就可以解释它为什么是非幂等的了。</p>
+<p>可能你还不能理解这点。我们举个例子</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PATCH   /tickets/12    <span class="comment"># 更新ticket 12</span></span><br></pre></td></tr></table></figure>
+
+<p>此时，我们服务端对方法的处理是，当调用一次方法，更新部分字段，将这条 ticket 记录的操作记录加一，这次，每次调用的资源是不是变了呢，所以它是有可能是非幂等的操作。</p>
+<h2 id="HTTP-DELETE-方法"><a href="#HTTP-DELETE-方法" class="headerlink" title="HTTP DELETE 方法"></a>HTTP DELETE 方法</h2><p>HTTP DELETE 方法用于删除资源，会将资源删除。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE  /tickets/12    <span class="comment"># 删除ticekt 12</span></span><br></pre></td></tr></table></figure>
+
+<p>调用一次和多次对资源产生影响是相同的，所以也满足幂等性。</p>
+<h2 id="如何设计符合幂等性的高质量-RESTful-API"><a href="#如何设计符合幂等性的高质量-RESTful-API" class="headerlink" title="如何设计符合幂等性的高质量 RESTful API"></a>如何设计符合幂等性的高质量 RESTful API</h2><h2 id="HTTP-GET-vs-HTTP-POST"><a href="#HTTP-GET-vs-HTTP-POST" class="headerlink" title="HTTP GET vs HTTP POST"></a>HTTP GET vs HTTP POST</h2><p>也许，你会想起一个面试题。<strong>HTTP 请求的 GET 与 POST 方式有什么区别？</strong> 你可能会回答到：GET 方式通过 URL 提交数据，数据在 URL 中可以看到；POST 方式，数据放置在 HTML HEADER 内提交。但是，我们现在从 RESTful 的资源角度来看待问题，HTTP GET 方法是幂等的，所以它适合作为查询操作，HTTP POST 方法是非幂等的，所以用来表示新增操作。</p>
+<p>但是，也有例外，我们有的时候可能需要把查询方法改造成 HTTP POST 方法。比如，超长（1k）的 GET URL 使用 POST 方法来替代，因为 GET 受到 URL 长度的限制。虽然，它不符合幂等性，但是它是一种折中的方案。</p>
+<h2 id="HTTP-POST-vs-HTTP-PUT"><a href="#HTTP-POST-vs-HTTP-PUT" class="headerlink" title="HTTP POST vs HTTP PUT"></a>HTTP POST vs HTTP PUT</h2><p>对于 HTTP POST 方法和 HTTP PUT 方法，我们一般的理解是 POST 表示创建资源，PUT 表示更新资源。当然，这个是正确的理解。</p>
+<p>但是，实际上，两个方法都用于创建资源，更为本质的差别是在幂等性。HTTP POST 方法是非幂等，所以用来表示创建资源，HTTP PUT 方法是幂等的，因此表示更新资源更加贴切。</p>
+<h2 id="HTTP-PUT-vs-HTTP-PATCH"><a href="#HTTP-PUT-vs-HTTP-PATCH" class="headerlink" title="HTTP PUT vs HTTP PATCH"></a>HTTP PUT vs HTTP PATCH</h2><p>此时，你看会有另外一个问题。HTTP PUT 方法和 HTTP PATCH 方法，都是用来表述更新资源，它们之间有什么区别呢？我们一般的理解是 PUT 表示更新全部资源，PATCH 表示更新部分资源。首先，这个是我们遵守的第一准则。根据上面的描述，PATCH 方法是非幂等的，因此我们在设计我们服务端的 RESTful API 的时候，也需要考虑。如果，我们想要明确的告诉调用者我们的资源是幂等的，我的设计更倾向于使用 HTTP PUT 方法。</p>
 
       
       <!-- reward -->
@@ -199,6 +148,8 @@
     <footer class="article-footer">
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Restful-%E5%B9%82%E7%AD%89%E6%80%A7/" rel="tag">-Restful -幂等性</a></li></ul>
+
 
     </footer>
 
@@ -208,19 +159,19 @@
   
   <nav class="article-nav">
     
-      <a href="/2020/04/12/%E5%85%B3%E4%BA%8E%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" class="article-nav-link">
+      <a href="/2020/04/12/SpringMVC%E7%BB%8F%E5%85%B8%E5%BC%82%E5%B8%B81/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            关于单例模式
+            SpringMVC经典异常1
           
         </div>
       </a>
     
     
-      <a href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%811/" class="article-nav-link">
+      <a href="/2020/04/12/%E5%85%B3%E4%BA%8E%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">Redis实现分布式锁1</div>
+        <div class="article-nav-title">关于单例模式</div>
       </a>
     
   </nav>

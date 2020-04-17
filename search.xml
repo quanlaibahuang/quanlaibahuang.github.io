@@ -1,6 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Spring开源项目</title>
+    <url>/2020/04/17/Spring%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/</url>
+    <content><![CDATA[<h1 id="硬核推荐15个最火的Spring实战开源项目！总有一款适合你！"><a href="#硬核推荐15个最火的Spring实战开源项目！总有一款适合你！" class="headerlink" title="硬核推荐15个最火的Spring实战开源项目！总有一款适合你！"></a>硬核推荐15个最火的Spring实战开源项目！总有一款适合你！</h1><p>哔哩哔哩在线演示视频：<a href="https://www.bilibili.com/video/av92191212" target="_blank" rel="noopener"> https://www.bilibili.com/video/av92191212</a></p>
+<blockquote>
+<p>  Guide哥注：下面这些推荐的项目几乎都和 Spring Boot 有关，毕竟这年头没有理由再搞 SSM/SSH 这些东西了。</p>
+</blockquote>
+<h3 id="商城系统"><a href="#商城系统" class="headerlink" title="商城系统"></a>商城系统</h3><blockquote>
+<p>  Guide哥注：下面的商城系统大多比较复杂比如 mall ,如果没有 Java 基础和 Spring Boot 都还没有摸熟的话不推荐过度研究下面几个项目或者使用这些项目当作毕业设计。</p>
+</blockquote>
+<ol>
+<li><strong><a href="https://github.com/macrozheng/mall" target="_blank" rel="noopener">mall</a></strong> ：mall 项目是一套电商系统，包括前台商城系统及后台管理系统，基于 SpringBoot+MyBatis 实现。</li>
+<li><strong><a href="https://github.com/macrozheng/mall-swarm" target="_blank" rel="noopener">mall-swarm</a></strong> : mall-swarm 是一套微服务商城系统，采用了 Spring Cloud Greenwich、Spring Boot 2、MyBatis、Docker、Elasticsearch 等核心技术，同时提供了基于 Vue 的管理后台方便快速搭建系统。</li>
+<li><strong><a href="https://github.com/YunaiV/onemall" target="_blank" rel="noopener">onemall</a></strong> ：mall 商城，基于微服务的思想，构建在 B2C 电商场景下的项目实战。核心技术栈，是 Spring Boot + Dubbo 。未来，会重构成 Spring Cloud Alibaba 。</li>
+<li><strong><a href="https://github.com/linlinjava/litemall" target="_blank" rel="noopener">litemall</a></strong> ： 又一个小商城。litemall = Spring Boot 后端 + Vue 管理员前端 + 微信小程序用户前端 + Vue 用户移动端。</li>
+<li><strong><a href="https://github.com/Exrick/xmall" target="_blank" rel="noopener">xmall</a></strong> :基于SOA架构的分布式电商购物商城 前后端分离 前台商城:Vue全家桶 后台管理系统:Spring/Dubbo/SSM/Elasticsearch/Redis/MySQL/ActiveMQ/Shiro/Zookeeper等</li>
+<li><strong><a href="https://github.com/newbee-ltd/newbee-mall" target="_blank" rel="noopener">newbee-mall</a></strong> :newbee-mall 项目（新蜂商城）是一套电商系统，包括 newbee-mall 商城系统及 newbee-mall-admin 商城后台管理系统，基于 Spring Boot 2.X 及相关技术栈开发。</li>
+</ol>
+<h3 id="博客-论团-其他"><a href="#博客-论团-其他" class="headerlink" title="博客/论团/其他"></a>博客/论团/其他</h3><blockquote>
+<p>  Guide哥注：下面这几个项目都是非常适合 Spring Boot初学者学习的，下面的大部分项目的总体代码架构我都看过，个人觉得还算不错，不会误导没有实际做过项目的老哥，特别是前两个项目 vhr 和 favorites-web 。</p>
+</blockquote>
+<ol>
+<li><strong><a href="https://github.com/lenve/vhr" target="_blank" rel="noopener">vhr</a></strong> ：微人事是一个前后端分离的人力资源管理系统，项目采用 SpringBoot+Vue 开发。</li>
+<li><strong><a href="https://github.com/cloudfavorites/favorites-web" target="_blank" rel="noopener">favorites-web</a></strong> :云收藏 Spring Boot 2.X 开源项目。云收藏是一个使用 Spring Boot 构建的开源网站，可以让用户在线随时随地收藏的一个网站，在网站上分类整理收藏的网站或者文章。</li>
+<li><strong><a href="https://github.com/codedrinker/community" target="_blank" rel="noopener">community</a></strong> ：开源论坛、问答系统，现有功能提问、回复、通知、最新、最热、消除零回复功能。功能持续更新中…… 技术栈 Spring、Spring Boot、MyBatis、MySQL/H2、Bootstrap。</li>
+<li><strong><a href="https://github.com/lenve/VBlog" target="_blank" rel="noopener">VBlog</a></strong> ：V部落，Vue+SpringBoot实现的多用户博客管理平台!</li>
+<li><strong><a href="https://github.com/ZHENFENG13/My-Blog" target="_blank" rel="noopener">My-Blog</a></strong> ： My Blog 是由 SpringBoot + Mybatis + Thymeleaf 等技术实现的 Java 博客系统，页面美观、功能齐全、部署简单及完善的代码，一定会给使用者无与伦比的体验。</li>
+</ol>
+<h3 id="权限管理系统"><a href="#权限管理系统" class="headerlink" title="权限管理系统"></a>权限管理系统</h3><blockquote>
+<p>  Guide哥注：权限管理系统在企业级的项目中一般都是非常重要的，如果你需求去实际了解一个不错的权限系统是如何设计的话，推荐你可以参考下面这些开源项目。</p>
+</blockquote>
+<ol>
+<li><strong><a href="https://github.com/wxiaoqi/Spring-Cloud-Admin" target="_blank" rel="noopener">Spring-Cloud-Admin</a></strong> ：Cloud-Admin 是国内首个基于 Spring Cloud 微服务化开发平台，具有统一授权、认证后台管理系统，其中包含具备用户管理、资源权限管理、网关 API 管理等多个模块，支持多业务系统并行开发，可以作为后端服务的开发脚手架。代码简洁，架构清晰，适合学习和直接项目中使用。核心技术采用 Spring Boot2 以及 Spring Cloud Gateway 相关核心组件，前端采用 vue-element-admin 组件。</li>
+<li><strong><a href="https://gitee.com/log4j/pig" target="_blank" rel="noopener">pig</a></strong>：（gitee）基于 Spring Boot 2.2、 Spring Cloud Hoxton &amp; Alibaba、 OAuth2 的 RBAC 权限管理系统。</li>
+<li><strong><a href="https://github.com/wuyouzhuguli/FEBS-Shiro" target="_blank" rel="noopener">FEBS-Shiro</a></strong> ：Spring Boot 2.1.3，Shiro1.4.0 &amp; Layui 2.5.4 权限管理系统。</li>
+<li><strong><a href="https://github.com/elunez/eladmin" target="_blank" rel="noopener">eladmin</a></strong> : 项目基于 Spring Boot 2.1.0 、 Jpa、 Spring Security、redis、Vue的前后端分离的后台管理系统，项目采用分模块开发方式， 权限控制采用 RBAC，支持数据字典与数据权限管理，支持一键生成前后端代码，支持动态路由。</li>
+</ol>
+<h3 id="开源项目推荐"><a href="#开源项目推荐" class="headerlink" title="开源项目推荐"></a>开源项目推荐</h3><p>作者的其他开源项目推荐：</p>
+<ol>
+<li><a href="https://github.com/Snailclimb/JavaGuide" target="_blank" rel="noopener">JavaGuide</a>：【Java学习+面试指南】 一份涵盖大部分Java程序员所需要掌握的核心知识。</li>
+<li><a href="https://github.com/Snailclimb/springboot-guide" target="_blank" rel="noopener">springboot-guide</a> : 适合新手入门以及有经验的开发人员查阅的 Spring Boot 教程（业余时间维护中，欢迎一起维护）。</li>
+<li><a href="https://github.com/Snailclimb/programmer-advancement" target="_blank" rel="noopener">programmer-advancement</a> : 我觉得技术人员应该有的一些好习惯！</li>
+<li><a href="https://github.com/Snailclimb/spring-security-jwt-guide" target="_blank" rel="noopener">spring-security-jwt-guide</a> :从零入门 ！Spring Security With JWT（含权限验证）后端部分代码。</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>-开源 -实战</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>SpringMVC经典异常1</title>
     <url>/2020/04/12/SpringMVC%E7%BB%8F%E5%85%B8%E5%BC%82%E5%B8%B81/</url>
     <content><![CDATA[<h1 id="异常-This-application-has-no-explicit-mapping-for-error-so-you-are-seeing-this-as-a-fallback"><a href="#异常-This-application-has-no-explicit-mapping-for-error-so-you-are-seeing-this-as-a-fallback" class="headerlink" title="异常:This application has no explicit mapping for /error, so you are seeing this as a fallback."></a>异常:This application has no explicit mapping for /error, so you are seeing this as a fallback.</h1><p>访问测试项目路径localhost:8080/hello 后台抛出异常:This application has no explicit mapping for /error, so you are seeing this as a fallback.</p>

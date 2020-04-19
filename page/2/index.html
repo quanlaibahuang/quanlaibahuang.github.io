@@ -65,6 +65,170 @@
     
     
     
+    <article id="post-Spring1为什么需要依赖注入" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/Spring1%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/"
+    >Spring为什么需要依赖注入</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Spring1%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/" class="article-date">
+  <time datetime="2020-04-12T04:24:49.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>本集概要：</p>
+<ul>
+<li>使用依赖注入前，代码是什么样子，有什么缺点？</li>
+<li>依赖注入是什么？为什么要使用依赖注入？</li>
+<li>Spring如何使用xml配置的方式进行依赖注入？</li>
+</ul>
+<hr>
+<p>大雄是一个刚踏入社会的95后，热爱编程的他，在毕业之后进入了一家互联网公司，负责公司内一个电商项目的开发工作。<br>为了让大雄更快的成长，公司安排了哆啦作为大雄的导师。</p>
+<h2 id="春风得意"><a href="#春风得意" class="headerlink" title="春风得意"></a>春风得意</h2><p>在哆啦的指导下，大雄很快对这个项目的代码有了大致的了解，于是哆啦准备给大雄安排点任务。</p>
+<p>“大雄，我们这项目现在缺少<strong>日志打印</strong>，万一到时上线后发现bug了，很难定位。你看看有什么办法可以把一些必要的信息<strong>打印到日志文件</strong>中。”<br>“没问题！”大雄爽快地答应了。</p>
+<p>大雄以前在学校时，经常上网找各种资源，于是很快就锁定了一个叫PerfectLogger的工具。“资料很完善，很多大神都推荐它，嗯，就用它了”。</p>
+<p>大雄看了一下PerfectLogger的官方文档，发现里面提供了很多种日志打印功能，有打印到文件的，有打印到控制台的，还有打印到远程服务器上的，这些类都实现了一个叫ILogger的接口：</p>
+<ul>
+<li><p>ILogger</p>
+</li>
+<li><ul>
+<li>FileLogger</li>
+<li>ConsoleLogger</li>
+<li>ServerLogger</li>
+<li>…</li>
+</ul>
+</li>
+</ul>
+<p>“哆啦说要打印到文件，那就用FileLogger吧！”<br>于是，大雄先在支付接口的代码中，加入了日志打印（<strong>本文使用的代码，可以到</strong> <strong><a href="https://link.zhihu.com/?target=https%3A//github.com/hzy38324/SpringNovel">SpringNovel</a></strong> <strong>下载</strong>）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentAction</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> ILogger logger = <span class="keyword">new</span> FileLogger();</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pay</span><span class="params">(BigDecimal payValue)</span> </span>&#123;</span><br><span class="line">		logger.log(<span class="string">"pay begin, payValue is "</span> + payValue);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// do otherthing</span></span><br><span class="line">		<span class="comment">// ...</span></span><br><span class="line">		</span><br><span class="line">		logger.log(<span class="string">"pay end"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着，大雄又在登录、鉴权、退款、退货等接口，都加上和支付接口类似的日志功能，要加的地方还真不少，大雄加了两天两夜，终于加完了，大功告成！想到自己第一个任务就顺利完成了，大雄不禁有点小得意…</p>
+<h2 id="改需求了"><a href="#改需求了" class="headerlink" title="改需求了"></a>改需求了</h2><p>很快公司升级了系统，大雄做的日志功能也将第一次迎来生产环境的考验。</p>
+<p>两天后，哆啦找到了大雄。 “大雄，测试那边说，日志文件太多了，不能都打印到本地的目录下，要我们把日志打印到一台<strong>日志服务器上</strong>，你看看改动大不大。”<br>“这个简单，我只需要做个<strong>全局替换</strong>，把FileLogger都替换成ServerLogger就完事了。”<br>哆啦听完，皱了皱眉头，问道，“那要是下次公司让我们把日志打印到控制台，或者又突然想让我们打印到本地文件呢，你还是继续全局替换吗？”<br>大雄听完，觉得是有点不妥……</p>
+<h2 id="代码如何解耦"><a href="#代码如何解耦" class="headerlink" title="代码如何解耦"></a>代码如何解耦</h2><p>“我看了一下你现在的代码，每个Action中的logger都是由Action自己创造的，所以如果要修改logger的实现类，就要改很多地方。有没有想过可以<strong>把logger对象的创建交给外部去做呢</strong>？”<br>大雄听完，觉得这好像是某种自己以前学过的设计模式，“工厂模式！”大雄恍然大悟。</p>
+<p>很快，大雄对代码做了重构：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentAction</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> ILogger logger = LoggerFactory.createLogger();</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pay</span><span class="params">(BigDecimal payValue)</span> </span>&#123;</span><br><span class="line">		logger.log(<span class="string">"pay begin, payValue is "</span> + payValue);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// do otherthing</span></span><br><span class="line">		<span class="comment">// ...</span></span><br><span class="line">		</span><br><span class="line">		logger.log(<span class="string">"pay end"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoggerFactory</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ILogger <span class="title">createLogger</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> ServerLogger();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有了这个LoggerFactory，以后要是要换日志打印的方式，只需要修改这个工厂类就好了。</p>
+<h2 id="啪！一盘冷水"><a href="#啪！一盘冷水" class="headerlink" title="啪！一盘冷水"></a>啪！一盘冷水</h2><p>大雄高兴地给哆啦提了代码检视的请求，但是，很快，一盘冷水就泼了过来，哆啦的回复是这样的：</p>
+<ul>
+<li>工厂类每次都new一个新对象，是不是很浪费，能不能做成<strong>单例</strong>的，甚至是做成单例和多例是<strong>可以配置</strong>；</li>
+<li>如果有这种需求：支付信息比较多而且比较敏感，日志要打印到远程服务器，其他信息都打印到本地，怎么实现；</li>
+<li>…</li>
+</ul>
+<p>大雄看完，顿时感觉自己2young2simple了，准备今晚留下来好好加班……</p>
+<h2 id="Spring-Spring"><a href="#Spring-Spring" class="headerlink" title="Spring! Spring!"></a>Spring! Spring!</h2><p>正当大雄郁闷着的时候，屏幕右下角哆啦的头像突然蹦了出来。</p>
+<p>“其实这种<strong>将对象交给外部去创建</strong>的机制，不仅仅是工厂模式，它还被称为<strong>控制反转</strong>（Inverse of Control），它还有另一个更常用的名称，<strong>依赖注入</strong>（Dependency Injection）。这种机制，业界已经有很成熟的实现了，它就是<strong>Spring Framework</strong>，晚上早点回去，有空可以看看Spring，明天再过来改。”</p>
+<p>那天晚上，大雄在网上找了下Spring的资料，他似乎发现了另一个世界…</p>
+<h2 id="使用Spring改造代码"><a href="#使用Spring改造代码" class="headerlink" title="使用Spring改造代码"></a>使用Spring改造代码</h2><p>第二天大雄早早地就来到了公司，他迫不及待地想把原来的代码使用Spring的方式改造一遍。</p>
+<p>在使用<a href="https://link.zhihu.com/?target=https%3A//gradle.org/">gradle</a>引入了必要的jar包后，大雄对原来的PaymentAction做了修改，不再在类内部创建logger对象，同时给PaymentAction添加了一个构造函数，方便Spring进行注入：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PaymentAction</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> ILogger logger;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">PaymentAction</span><span class="params">(ILogger logger)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">		<span class="keyword">this</span>.logger = logger;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pay</span><span class="params">(BigDecimal payValue)</span> </span>&#123;</span><br><span class="line">		logger.log(<span class="string">"pay begin, payValue is "</span> + payValue);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// do otherthing</span></span><br><span class="line">		<span class="comment">// ...</span></span><br><span class="line">		</span><br><span class="line">		logger.log(<span class="string">"pay end"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着创建了一个以<beans>为根节点的xml文件，引入必要的XSD文件，并且配置了两个bean对象，使用了<constructor-arg>标签，指定了ServerLogger作为PaymentAction构造函数的入参：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">  <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"paymentAction"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.paymentwithspringxml.PaymentAction"</span>&gt;</span></span><br><span class="line">  	<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">"serverLogger"</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">        </span><br><span class="line">  <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"serverLogger"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.perfectlogger.ServerLogger"</span> /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>差不多了，现在测试一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">"payment.xml"</span>);</span><br><span class="line">PaymentAction paymentAction = (PaymentAction) context.getBean(<span class="string">"paymentAction"</span>);</span><br><span class="line">paymentAction.pay(<span class="keyword">new</span> BigDecimal(<span class="number">2</span>));</span><br></pre></td></tr></table></figure>
+
+<p>Output:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ServerLogger: pay begin, payValue is 2</span><br><span class="line">ServerLogger: pay end</span><br></pre></td></tr></table></figure>
+
+<p>很棒！ServerLogger对象已经被注入到PaymentAction中了。<br>就这样，大雄很快就使用Spring实现了自己昨天写的工厂类的功能，修复了之前代码耦合性过高的问题。</p>
+<h2 id="学以致用"><a href="#学以致用" class="headerlink" title="学以致用"></a>学以致用</h2><p>这边大雄正高兴呢，突然发现旁边的测试妹妹静香眉头紧锁，于是过去关心了一番。<br>原来静香正在测试一个删除订单的功能，但是现在测试用的数据库突然挂了，导致静香不能进行测试。</p>
+<p>大雄看了看订单删除接口的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderAction</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteOrder</span><span class="params">(String orderId)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 鉴权</span></span><br><span class="line">		<span class="comment">// 此处略去一万字...</span></span><br><span class="line">		</span><br><span class="line">		IOrderDao orderDao = <span class="keyword">new</span> OrderDao();</span><br><span class="line">		orderDao.deleteOrder(orderId);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>“这又是一个<strong>代码耦合过紧</strong>的问题！”大雄脱口而出。<br>“这个删除订单的接口有几个逻辑：鉴权、删除、回滚等，但是这里把删除的数据库操作和OrderDao绑定死了，<strong>这样就要求测试这个接口时必须要连接到数据库中</strong>，但是作为单元测试，我们只是想测删除订单的逻辑是否合理，而订单是否真的删除，应该属于另一个单元测试了” 大雄很是激动，嘴里唾沫横飞。<br>“我来帮你改一下。”</p>
+<p>“控制反转”后的OrderAction:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderAction</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> IOrderDao orderDao;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">OrderAction</span><span class="params">(IOrderDao orderDao)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>();</span><br><span class="line">		<span class="keyword">this</span>.orderDao = orderDao;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteOrder</span><span class="params">(String orderId)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 鉴权</span></span><br><span class="line">		<span class="comment">// 此处略去一万字...</span></span><br><span class="line">		</span><br><span class="line">		orderDao.deleteOrder(orderId);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>改造后的OrderAction，不再和OrderDao这个实现类耦合在一起，做单元测试的时候，可以写一个“Mock”测试，就像这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">mockDeleteOrderTest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	IOrderDao orderDao = <span class="keyword">new</span> MockOrderDao();</span><br><span class="line">	OrderAction orderAction = <span class="keyword">new</span> OrderAction(orderDao);</span><br><span class="line">	orderAction.deleteOrder(<span class="string">"1234567@#%^$"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而这个MockOrderDao是不需要连接数据库的，因此即便数据库挂了，也同样可以进行单元测试。</p>
+<p>一旁的哆啦一直在静静地看着，然后拍了拍大雄的肩膀，“晚上请你和静香去撸串啊”，说完，鬼魅的朝大雄挑了挑眉毛。</p>
+<h2 id="大雄的笔记"><a href="#大雄的笔记" class="headerlink" title="大雄的笔记"></a>大雄的笔记</h2><p>这两天大雄可谓是收获颇丰，见识了依赖注入的必要性，还了解了如何使用Spring实现依赖注入。撸完串后，回到家，大雄在记事本上写下了心得：</p>
+<ul>
+<li><p>为什么要使用依赖注入</p>
+</li>
+<li><ul>
+<li>传统的代码，每个对象负责管理与自己需要依赖的对象，导致如果需要切换依赖对象的实现类时，需要修改多处地方。同时，过度耦合也使得对象难以进行单元测试。</li>
+<li>依赖注入把对象的创造交给外部去管理,很好的解决了代码<strong>紧耦合</strong>（tight couple）的问题，是一种让代码实现<strong>松耦合</strong>（loose couple）的机制。</li>
+<li>松耦合让代码更具灵活性，能更好地<strong>应对需求变动</strong>，以及<strong>方便单元测试</strong>。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>为什么要使用Spring</p>
+</li>
+<li><ul>
+<li>使用Spring框架主要是为了<strong>简化Java开发</strong>（大多数框架都是为了简化开发），它帮我们封装好了很多完善的功能，而且Spring的生态圈也非常庞大。</li>
+<li>基于XML的配置是Spring提供的<strong>最原始的依赖注入配置方式</strong>，从Spring诞生之时就有了，功能也是最完善的（但是貌似有更好的配置方法，明天看看！）。</li>
+</ul>
+</li>
+</ul>
+<h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2><p>写完笔记，大雄继续看之前只看了一小部分的Spring指南，他发现除了构造器注入，还有一种注入叫set注入；除了xml配置，还可以使用注解、甚至是Java进行配置。Spring真是强大啊，给了用户那么多选择，可<strong>具体什么情况下该使用哪种注入方式和哪种配置方式呢</strong>，大雄陷入了沉思……</p>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E5%8E%9F%E7%90%86-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -原理 -小说</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
     <article id="post-MyBatis04：使用注解开发" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -921,81 +1085,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringMVC-Spring-Mybatis-%E6%95%B4%E5%90%88-%E6%A1%86%E6%9E%B6-SSM/" rel="tag">-SpringMVC -Spring -Mybatis -整合 -框架 -SSM</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringMVC04：数据处理及跳转" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/07/SpringMVC04%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E5%8F%8A%E8%B7%B3%E8%BD%AC/"
-    >SpringMVC04：数据处理及跳转</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/07/SpringMVC04%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E5%8F%8A%E8%B7%B3%E8%BD%AC/" class="article-date">
-  <time datetime="2020-04-07T00:21:50.000Z" itemprop="datePublished">2020-04-07</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>在上一节中，我们了解了控制器和Restful风格操作</p>
-<p>现在我们来看看SpringMVC参数接收处理和结果跳转处理吧！</p>
-<h2 id="结果跳转方式"><a href="#结果跳转方式" class="headerlink" title="结果跳转方式"></a>结果跳转方式</h2><h3 id="ModelAndView"><a href="#ModelAndView" class="headerlink" title="ModelAndView"></a>ModelAndView</h3><p>设置ModelAndView对象 , 根据view的名称 , 和视图解析器跳到指定的页面 .</p>
-<p>页面 : {视图解析器前缀} + viewName +{视图解析器后缀}</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 视图解析器 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.view.InternalResourceViewResolver"</span></span></span><br><span class="line"><span class="tag">     <span class="attr">id</span>=<span class="string">"internalResourceViewResolver"</span>&gt;</span></span><br><span class="line">   <span class="comment">&lt;!-- 前缀 --&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"prefix"</span> <span class="attr">value</span>=<span class="string">"/WEB-INF/jsp/"</span> /&gt;</span></span><br><span class="line">   <span class="comment">&lt;!-- 后缀 --&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"suffix"</span> <span class="attr">value</span>=<span class="string">".jsp"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
-      
-      <a class="article-more-link" href="/2020/04/07/SpringMVC04%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E5%8F%8A%E8%B7%B3%E8%BD%AC/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringMVC-ModelAndView-%E8%A7%86%E5%9B%BE%E8%A7%A3%E6%9E%90%E5%99%A8/" rel="tag">-SpringMVC -ModelAndView -视图解析器</a></li></ul>
 
 
     </footer>

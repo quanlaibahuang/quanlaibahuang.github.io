@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    如何分析开源项目 |  犬来八荒
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-如何分析开源项目" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  如何分析开源项目
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/18/%E5%A6%82%E4%BD%95%E5%88%86%E6%9E%90%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/" class="article-date">
+  <time datetime="2020-04-18T01:54:39.000Z" itemprop="datePublished">2020-04-18</time>
+</a>
+      
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">691字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">2分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="观察开源项目，以Eladmin为例"><a href="#观察开源项目，以Eladmin为例" class="headerlink" title="观察开源项目，以Eladmin为例"></a>观察开源项目，以Eladmin为例</h2><p><strong>README找到下载地址</strong></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418104700527.png" alt="image-20200418104700527"></p>
+<a id="more"></a>
+
+<p><strong>后端的</strong></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418103651365.png" alt="image-20200418103651365"></p>
+<p><strong>前端的</strong></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418104513464.png" alt="image-20200418104513464"></p>
+<h2 id="开源项目下载"><a href="#开源项目下载" class="headerlink" title="开源项目下载"></a>开源项目下载</h2><p>下载完毕，然后解压，优先码云！</p>
+<p>解压，先不要着急运行！</p>
+<p><strong>观察：</strong></p>
+<p>1.用了哪些技术（Springboot,Vue,Redis,MQ…）</p>
+<p>2.是否有数据库（MySQL）</p>
+<p>3.你的环境是否匹配（Java,Maven,npm,nodejs,redis…）</p>
+<p>通过了，再想办法运行！</p>
+<h2 id="跑起来是第一步"><a href="#跑起来是第一步" class="headerlink" title="跑起来是第一步"></a>跑起来是第一步</h2><p>1.很多项目带的SQL没有建库的语句，需要自己手动建，然后执行SQL。</p>
+<p>2.前端需要跑起来</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418110736843.png" alt="image-20200418110736843"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418111226005.png" alt="image-20200418111226005"></p>
+<p>3.后端项目==<strong>导入</strong>==跑起来</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418111752467.png" alt="image-20200418111752467"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418112231884.png" alt="image-20200418112231884"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418112325015.png" alt="image-20200418112325015"></p>
+<p>一路保持默认。</p>
+<p>4.等待所有的项目跑成功。</p>
+<ul>
+<li>数据库成功<pre><code>- ![image-20200418112838860](/images/innerimage/qinzidong/image-20200418112838860.png)</code></pre></li>
+</ul>
+<ul>
+<li>后端成功<ul>
+<li><img src="/images/innerimage/qinzidong/image-20200418113157307.png" alt="image-20200418113157307"></li>
+</ul>
+</li>
+</ul>
+<p><strong>5.分析并启动后端项目</strong></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418113633392.png" alt="image-20200418113633392"></p>
+<p>查看Config发现Redis</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418113817658.png" alt="image-20200418113817658"></p>
+<p>所以先要打开Redis</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418114058714.png" alt="image-20200418114058714"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418114119905.png" alt="image-20200418114119905"></p>
+<p>查看主要配置</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418190525418.png" alt="image-20200418190525418"></p>
+<p>注意端口号匹配：</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418190710927.png" alt="image-20200418190710927"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418190720801.png" alt="image-20200418190720801"></p>
+<p>只要项目中有swaager，那么项目跑起来的第一步就是进入Swagger-ui界面，因为这里面都是接口，进而查看配置文件！默认端口有哪些配置需要改为自己的项目环境和地址。</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418191037980.png" alt="image-20200418191037980"></p>
+<p>我们用AppRun把项目跑起来：</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418191406448.png" alt="image-20200418191406448"></p>
+<p>项目0报错：</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418191745242.png" alt="image-20200418191745242"></p>
+<p>进入swagger-ui界面，固定地址<a href="http://localhost:8000/swagger-ui.html" target="_blank" rel="noopener">http://localhost:8000/swagger-ui.html</a></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418191820667.png" alt="image-20200418191820667"></p>
+<p>前端就是安装依赖，启动测试运行，看借口是否正常！</p>
+<h2 id="前后端分离项目固定套路"><a href="#前后端分离项目固定套路" class="headerlink" title="前后端分离项目固定套路"></a>前后端分离项目固定套路</h2><p>1.从前端开始分析，打开控制台，点一个接口，分析调用关系。</p>
+<p>2.前后端接口不一致</p>
+<ul>
+<li><p>前端8013</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418204257377.png" alt="image-20200418204257377"></p>
+</li>
+<li><p>后端是8000</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418204331291.png" alt="image-20200418204331291"></p>
+</li>
+</ul>
+<p>他是怎么操作的？</p>
+<ul>
+<li><p>封装了接口请求 ajax axios request</p>
+</li>
+<li><p>找到配置</p>
+<ul>
+<li><img src="/images/innerimage/qinzidong/image-20200418204830092.png" alt="image-20200418204830092"></li>
+</ul>
+</li>
+<li><p>前后端分离项目的重点：找到接口的调用关系</p>
+</li>
+<li><p>Springboot提供服务！前端调用接口数据！Vue负责渲染页面！</p>
+<ul>
+<li><img src="/images/innerimage/qinzidong/image-20200418205026599.png" alt="image-20200418205026599"></li>
+</ul>
+</li>
+<li><p>前端项目固定套路 </p>
+<ul>
+<li><img src="/images/innerimage/qinzidong/image-20200418205755512.png" alt="image-20200418205755512"></li>
+</ul>
+</li>
+</ul>
+<p><img src="/images/innerimage/qinzidong/image-20200418210000877.png" alt="image-20200418210000877"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418210210294.png" alt="image-20200418210210294"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418211340450.png" alt="image-20200418211340450"></p>
+<p>通过抓取前端的请求找到接口的地址：</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418211752237.png" alt="image-20200418211752237"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418212355251.png" alt="image-20200418212355251"></p>
+<p>在后台连按两次shift，搜索api/users</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418212656069.png" alt="image-20200418212656069"></p>
+<p>找到了userController</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418212808312.png" alt="image-20200418212808312"></p>
+<p><strong>==后端分析的固定套路 ：Controller→Service→Dao==</strong></p>
+<p>具体分析流程，举个栗子，以字典管理为例：</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418213453171.png" alt="image-20200418213453171"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418213848798.png" alt="image-20200418213848798"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418214112062.png" alt="image-20200418214112062"></p>
+<p>它是怎么渲染到视图上的呢？看前端！</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418214449242.png" alt="image-20200418214449242"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418214701196.png" alt="image-20200418214701196"></p>
+<p>标准的Vue套路：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">tempalate</span>&gt;</span></span><br><span class="line">    视图层</span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line">js操作，接口的调用</span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span>&#123;</span></span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    </span><br><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line">页面样式    </span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果你现在自己的项目或者你要学习一个模块，将这个模块独立冲取出来即可！</li>
+</ul>
+<h2 id="如何找到一个好的开源项目"><a href="#如何找到一个好的开源项目" class="headerlink" title="如何找到一个好的开源项目"></a>如何找到一个好的开源项目</h2><p>码云/github:</p>
+<p>1.找分类</p>
+<p>2.看收藏，开源项目，找star多的</p>
+<p>3.根据自身理解，Java,SSM，Springboot，阶段性学习成果。</p>
+<h2 id="退出前端npm"><a href="#退出前端npm" class="headerlink" title="退出前端npm"></a>退出前端npm</h2><p>输入快捷键Ctrl+C</p>
+<h1 id="你一定会遇到的问题："><a href="#你一定会遇到的问题：" class="headerlink" title="你一定会遇到的问题："></a>你一定会遇到的问题：</h1><p><img src="/images/innerimage/qinzidong/image-20200418202111665.png" alt="image-20200418202111665"></p>
+<p>解决方案是：</p>
+<p>删除node_modules,重装npm</p>
+<p><img src="/images/innerimage/qinzidong/image-20200418202332297.png" alt="image-20200418202332297"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418202315338.png" alt="image-20200418202315338"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418202454477.png" alt="image-20200418202454477"></p>
+<p><img src="/images/innerimage/qinzidong/image-20200418202554239.png" alt="image-20200418202554239"></p>
+<p><strong>别问，问就是npm辣鸡</strong></p>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BC%80%E6%BA%90-%E5%AE%9E%E6%88%98/" rel="tag">-开源 -实战</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+    
+      <a href="/2020/04/17/Spring%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Spring开源项目</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: '1qio8bDzfD0zIHgwuD84E3ff-gzGzoHsz',
+        app_key: '4qfVrr8y0w3o33NPw2hQONdg',
+        path: window.location.pathname,
+        notify: 'false',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2020
+        花重锦官城
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <kbd>访问量:<span id="busuanzi_value_page_pv"></span></kbd>
+  <kbd>访客数:<span id="busuanzi_value_site_uv"></span></kbd>
+</span>
+        
+      </li>
+      
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+    <aside class="sidebar">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="犬来八荒"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">目录</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://chengguolaogongya.lofter.com/" target="_blank" rel="noopener">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+    strings: ['浮生有梦三千场 穷尽千里诗酒荒','徒把理想倾倒','不如早还乡'],
+    startDelay: 0,
+    typeSpeed: 100,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+  } catch (err) {
+  }
+  
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1321020935&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

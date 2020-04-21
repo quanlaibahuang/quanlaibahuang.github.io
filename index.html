@@ -65,6 +65,385 @@
     
     
     
+    <article id="post-JVM方法区精简（背诵全文）" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/21/JVM%E6%96%B9%E6%B3%95%E5%8C%BA%E7%B2%BE%E7%AE%80%EF%BC%88%E8%83%8C%E8%AF%B5%E5%85%A8%E6%96%87%EF%BC%89/"
+    >JVM方法区精简（背诵全文）</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/21/JVM%E6%96%B9%E6%B3%95%E5%8C%BA%E7%B2%BE%E7%AE%80%EF%BC%88%E8%83%8C%E8%AF%B5%E5%85%A8%E6%96%87%EF%BC%89/" class="article-date">
+  <time datetime="2020-04-21T13:05:55.000Z" itemprop="datePublished">2020-04-21</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>JAVA虚拟机方法区介绍</p>
+<p>1、JVM内存模型</p>
+<p>大多数JVM将内存分配为Method Area(方法区)、Heap(堆)、ProgramCounter Register(程序计数器)、JAVA MethodStack(JAVA方法栈)、Native MethodStack(本地方法栈)。</p>
+<p>1.1 Method Area<br>    线程共享，存储已经被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等等。（HotSpot虚拟机上开发部署人员更愿意成为“永久代”，Permanent Generation）。示意图如下：</p>
+<p><img src="/images/innerimage/qinzidong/image-20200421210849856.png" alt="image-20200421210849856"></p>
+      
+      <a class="article-more-link" href="/2020/04/21/JVM%E6%96%B9%E6%B3%95%E5%8C%BA%E7%B2%BE%E7%AE%80%EF%BC%88%E8%83%8C%E8%AF%B5%E5%85%A8%E6%96%87%EF%BC%89/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JVM-%E6%96%B9%E6%B3%95%E5%8C%BA/" rel="tag">-JVM -方法区</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-JVM之方法区" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/21/JVM%E4%B9%8B%E6%96%B9%E6%B3%95%E5%8C%BA/"
+    >JVM之方法区</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/21/JVM%E4%B9%8B%E6%96%B9%E6%B3%95%E5%8C%BA/" class="article-date">
+  <time datetime="2020-04-21T12:35:03.000Z" itemprop="datePublished">2020-04-21</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="特点："><a href="#特点：" class="headerlink" title="特点："></a>特点：</h2><ul>
+<li><p>方法区（Method Area）与 Java 堆一样，是所有线程共享的内存区域。</p>
+</li>
+<li><p>JDK7 之前（永久代）用于存储已被虚拟机加载的类信息、常量、字符串常量、类静态变量、即时编译器编译后的代码等数据。</p>
+</li>
+<li><p>Java 虚拟机规范把方法区描述为堆的一个逻辑部分，但是它却有一个别名叫做 Non-Heap（非堆），目的应该是与 Java 堆区分开来。</p>
+</li>
+<li><p>运行时常量池（Runtime Constant Pool）是方法区的一部分。Class 文件中除了有类的版本/字段/方法/接口等描述信息外，还有一项信息是常量池（Constant Pool Table），用于存放编译期生成的各种字面量和符号引用，这部分内容将类在加载后进入方法区的运行时常量池中存放。运行期间也可能将新的常量放入池中，这种特性被开发人员利用得比较多的是 <a href="https://links.jianshu.com/go?to=https%3A%2F%2Ftech.meituan.com%2Fin_depth_understanding_string_intern.html" target="_blank" rel="noopener">String.intern()</a> 方法。受方法区内存的限制，当常量池无法再申请到内存时会抛出 OutOfMemoryError 异常。</p>
+      
+      <a class="article-more-link" href="/2020/04/21/JVM%E4%B9%8B%E6%96%B9%E6%B3%95%E5%8C%BA/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JVM-%E6%96%B9%E6%B3%95%E5%8C%BA/" rel="tag">-JVM -方法区</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-JVM之PC寄存器" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/21/JVM%E4%B9%8BPC%E5%AF%84%E5%AD%98%E5%99%A8/"
+    >JVM之PC寄存器</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/21/JVM%E4%B9%8BPC%E5%AF%84%E5%AD%98%E5%99%A8/" class="article-date">
+  <time datetime="2020-04-21T12:20:53.000Z" itemprop="datePublished">2020-04-21</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="目录："><a href="#目录：" class="headerlink" title="目录："></a>目录：</h2><ol>
+<li>JVM体系结构概览</li>
+<li>JVM之PC寄存器</li>
+</ol>
+<hr>
+<h3 id="1-JVM体系结构概览"><a href="#1-JVM体系结构概览" class="headerlink" title="1. JVM体系结构概览"></a>1. JVM体系结构概览</h3><p><img src="/images/innerimage/qinzidong/image-20200421202149997.png" alt="image-20200421202149997"></p>
+<p>###2.JVM之PC寄存器<br>1.PC寄存器（ PC register ）：每个线程启动的时候，都会创建一个PC（Program Counter，程序计数器）寄存器。PC寄存器里保存有当前正在执行的JVM指令的地址。 每一个线程都有它自己的PC寄存器，也是该线程启动时创建的。保存下一条将要执行的指令地址的寄存器是 ：PC寄存器。PC寄存器的内容总是指向下一条将被执行指令的地址，这里的地址可以是一个本地指针，也可以是在方法区中相对应于该方法起始指令的偏移量。</p>
+<p>2.每个线程都有一个程序计数器，是线程私有的,就是一个指针，指向方法区中的方法字节码（用来存储指向下一条指令的地址,也即将要执行的指令代码），由执行引擎读取下一条指令，是一个非常小的内存空间，几乎可以忽略不记。</p>
+<p>3.这块内存区域很小，它是当前线程所执行的字节码的行号指示器，字节码解释器通过改变这个计数器的值来选取下一条需要执行的字节码指令。</p>
+<p>4.如果执行的是一个Native方法，那这个计数器是空的。</p>
+<p>举例：如值日表，又如test1()调用test2()，test2()调用test3()，肯定顺序执行，就是pc寄存器的作用。</p>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JVM-PC%E5%AF%84%E5%AD%98%E5%99%A8/" rel="tag">-JVM -PC寄存器</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-Native关键词、JNI详解" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/21/Native%E5%85%B3%E9%94%AE%E8%AF%8D%E3%80%81JNI%E8%AF%A6%E8%A7%A3/"
+    >Native关键词、JNI详解</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/21/Native%E5%85%B3%E9%94%AE%E8%AF%8D%E3%80%81JNI%E8%AF%A6%E8%A7%A3/" class="article-date">
+  <time datetime="2020-04-21T12:12:13.000Z" itemprop="datePublished">2020-04-21</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h3 id="1-native关键词的引入"><a href="#1-native关键词的引入" class="headerlink" title="1.native关键词的引入"></a>1.native关键词的引入</h3><p>　　再完美的编程语言也有自己的不足之处，当然Java也不例外，Java的不足之处除了体现在运行速度（这点往往被一些其他编程语言使用者所诟病）上要比传统的C++慢许多之外，Java无法直接访问到操作系统底层（如系统硬件等)，为此Java使用native(原生的)关键词来扩展Java程序的功能。native关键字说明其修饰的方法是一个原生态方法，方法对应的实现不是在当前文件，而是在用其他语言（如C和C++）实现的文件中。Java语言本身不能对操作系统底层进行访问和操作，但是可以通过JNI接口调用其他语言来实现对底层的访问。JNI是Java Native Interface的缩写，它提供了若干的API实现了Java和其他语言的通信（主要C&amp;C++）。从Java1.1开始，JNI标准成为java平台的一部分，它允许Java代码和其他语言写的代码进行交互。JNI一开始是为了本地已编译语言，尤其是C和C++而设计的，但是它并不妨碍你使用其他编程语言，只要调用约定受支持就可以了。使用java与本地已编译的代码交互，通常会丧失平台可移植性。但是，有些情况下这样做是可以接受的，甚至是必须的。例如，使用一些旧的库，与硬件、操作系统进行交互，或者为了提高程序的性能。JNI标准至少要保证本地代码能工作在任何Java 虚拟环境。简而言之，JNI功能即为：Java和本地代码间的双向交互。JNI允许Java代码使用以其他语言编写的代码和代码库。Invocation API（JNI的一部分）可以用来将Java虚拟机（JVM）嵌入到本机应用程序中，从而允许程序员从本机代码内部调用Java代码。</p>
+      
+      <a class="article-more-link" href="/2020/04/21/Native%E5%85%B3%E9%94%AE%E8%AF%8D%E3%80%81JNI%E8%AF%A6%E8%A7%A3/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JVM-Native-JNI/" rel="tag">-JVM -Native -JNI</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-java双亲委派机制及作用" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/21/java%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%9C%BA%E5%88%B6%E5%8F%8A%E4%BD%9C%E7%94%A8/"
+    >java双亲委派机制及作用</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/21/java%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%9C%BA%E5%88%B6%E5%8F%8A%E4%BD%9C%E7%94%A8/" class="article-date">
+  <time datetime="2020-04-21T10:08:56.000Z" itemprop="datePublished">2020-04-21</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="什么是双亲委派机制"><a href="#什么是双亲委派机制" class="headerlink" title="什么是双亲委派机制"></a>什么是双亲委派机制</h2><p>当某个类加载器需要加载某个<code>.class</code>文件时，它首先把这个任务委托给他的上级类加载器，递归这个操作，如果上级的类加载器没有加载，自己才会去加载这个类。</p>
+<h3 id="类加载器的类别"><a href="#类加载器的类别" class="headerlink" title="类加载器的类别"></a>类加载器的类别</h3><h4 id="BootstrapClassLoader（启动类加载器）"><a href="#BootstrapClassLoader（启动类加载器）" class="headerlink" title="BootstrapClassLoader（启动类加载器）"></a>BootstrapClassLoader（启动类加载器）</h4><p><code>c++</code>编写，加载<code>java</code>核心库 <code>java.*</code>,构造<code>ExtClassLoader</code>和<code>AppClassLoader</code>。由于引导类加载器涉及到虚拟机本地实现细节，开发者无法直接获取到启动类加载器的引用，所以不允许直接通过引用进行操作</p>
+<h4 id="ExtClassLoader-（标准扩展类加载器）"><a href="#ExtClassLoader-（标准扩展类加载器）" class="headerlink" title="ExtClassLoader （标准扩展类加载器）"></a>ExtClassLoader （标准扩展类加载器）</h4><p><code>java</code>编写，加载扩展库，如<code>classpath</code>中的<code>jre</code> ，<code>javax.*</code>或者<br> <code>java.ext.dir</code> 指定位置中的类，开发者可以直接使用标准扩展类加载器。</p>
+<h4 id="AppClassLoader（系统类加载器）"><a href="#AppClassLoader（系统类加载器）" class="headerlink" title="AppClassLoader（系统类加载器）"></a>AppClassLoader（系统类加载器）</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java&#96;编写，加载程序所在的目录，如&#96;user.dir&#96;所在的位置的&#96;class</span><br></pre></td></tr></table></figure>
+
+<h4 id="CustomClassLoader（用户自定义类加载器）"><a href="#CustomClassLoader（用户自定义类加载器）" class="headerlink" title="CustomClassLoader（用户自定义类加载器）"></a>CustomClassLoader（用户自定义类加载器）</h4><p><code>java</code>编写,用户自定义的类加载器,可加载指定路径的<code>class</code>文件</p>
+      
+      <a class="article-more-link" href="/2020/04/21/java%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%9C%BA%E5%88%B6%E5%8F%8A%E4%BD%9C%E7%94%A8/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JVM-%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE/" rel="tag">-JVM -双亲委派</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
     <article id="post-如何分析开源项目" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -430,414 +809,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%8D%95%E4%BE%8B/" rel="tag">-设计模式 -单例</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-Redis实现分布式锁2" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%812/"
-    >Redis实现分布式锁2</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%812/" class="article-date">
-  <time datetime="2020-04-12T05:19:52.000Z" itemprop="datePublished">2020-04-12</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="如何用Redis实现分布式锁（2）——-集群版"><a href="#如何用Redis实现分布式锁（2）——-集群版" class="headerlink" title="如何用Redis实现分布式锁（2）—— 集群版"></a>如何用Redis实现分布式锁（2）—— 集群版</h1><h2 id="单机版实现的局限性"><a href="#单机版实现的局限性" class="headerlink" title="单机版实现的局限性"></a>单机版实现的局限性</h2><p>在上一篇文章中，我们讨论了Redis分布式锁的实现，简单回顾下。</p>
-<p>获取锁：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set file:9527 $&#123;random_value&#125; NX EX $&#123;timeout&#125;</span><br></pre></td></tr></table></figure>
-
-<p>释放锁，调用lua脚本：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if redis.call(&quot;get&quot;,KEYS[1]) &#x3D;&#x3D; ARGV[1] then</span><br><span class="line">    return redis.call(&quot;del&quot;,KEYS[1])</span><br><span class="line">else</span><br><span class="line">    return 0</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
-
-<p>这套实现机制，在只有一个Redis实例的情况下，确实很完美。</p>
-      
-      <a class="article-more-link" href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%812/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-Redis实现分布式锁1" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%811/"
-    >Redis实现分布式锁1</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%811/" class="article-date">
-  <time datetime="2020-04-12T05:19:25.000Z" itemprop="datePublished">2020-04-12</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="如何用Redis实现分布式锁（1）——-单机版"><a href="#如何用Redis实现分布式锁（1）——-单机版" class="headerlink" title="如何用Redis实现分布式锁（1）—— 单机版"></a>如何用Redis实现分布式锁（1）—— 单机版</h1><h2 id="为什么要使用分布式锁"><a href="#为什么要使用分布式锁" class="headerlink" title="为什么要使用分布式锁"></a>为什么要使用分布式锁</h2><p>这个问题，可以分为两个问题来回答：</p>
-<ol>
-<li>为什么要使用锁？</li>
-<li>分布式锁和本地锁的区别是什么？</li>
-</ol>
-<p><strong>1、为什么要使用锁？</strong><br><em>Martin Kleppmann</em>在他的文章<a href="https://link.zhihu.com/?target=https%3A//martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html">How to do distributed locking</a>里，把使用锁的目的，总结为两个。</p>
-<p>第一个是<strong>正确性</strong>，这个众人皆知。就像Java里的synchronize，就是用来保证多线程并发场景下，程序的正确性。</p>
-<p>JVM里需要保证并发访问的正确性，在分布式系统里面，也同样需要，只不过<strong>并发访问的单位，不再是线程，而是进程。</strong></p>
-      
-      <a class="article-more-link" href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%811/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-Spring4" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/12/Spring4/"
-    >Spring4</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/12/Spring4/" class="article-date">
-  <time datetime="2020-04-12T04:58:31.000Z" itemprop="datePublished">2020-04-12</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="使用Spring-Boot创建NoXml的Web应用"><a href="#使用Spring-Boot创建NoXml的Web应用" class="headerlink" title="使用Spring Boot创建NoXml的Web应用"></a>使用Spring Boot创建NoXml的Web应用</h1><p>本集概要：</p>
-<ul>
-<li>怎样用Spring Boot搭建Web应用？</li>
-<li>Spring Boot和Spring相比，有什么优势？</li>
-<li>Spring Boot的起步依赖和自动配置是什么东西？</li>
-<li>为什么不需要配置Servlet容器也可以启动Web应用？</li>
-</ul>
-<hr>
-<p>经过了国庆七天长假的休息，回到公司的大雄已经打满了鸡血，准备在新的项目 —— tiny facebook，大干一场。第一次被委以重任，大雄心里还是有点小紧张的…</p>
-<p>“从目前社区的反馈来看，Spring Boot相比于Spring而言，可以大大提高开发的效率，我们这个tiny facebook，就用Spring Boot开发吧！”，哆啦对大雄说。<br>“啊，那我岂不是又得重新学习啦，好不容易才学完了Spring的基础…”<br>“学是肯定还要学的，但是其实Spring Boot只是将原先Spring一些比较繁琐的配置简化了而已，进一步提高了Java开发的效率，而你之前学的Spring控制反转，对你理解Spring Boot是有很大作用的。”<br>“Soga！那就是说原理是一样的罗，那好办！哆啦你有没有写过什么总结文档，让我参考一下嘛”<br>“自己到Spring官网上找去，你小子整天就想不劳而获…”，哆啦心里暗自说道，其实我就没写过总结文档。</p>
-      
-      <a class="article-more-link" href="/2020/04/12/Spring4/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -配置 -小说</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-Spring3xml注解JavaConfig" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/12/Spring3xml%E6%B3%A8%E8%A7%A3JavaConfig/"
-    >Spring3--xml,注解,javaConfig</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/12/Spring3xml%E6%B3%A8%E8%A7%A3JavaConfig/" class="article-date">
-  <time datetime="2020-04-12T04:50:30.000Z" itemprop="datePublished">2020-04-12</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="xml、注解和Java-Config到底选哪个"><a href="#xml、注解和Java-Config到底选哪个" class="headerlink" title="xml、注解和Java Config到底选哪个"></a>xml、注解和Java Config到底选哪个</h1><p>本集概要：</p>
-<ul>
-<li>为什么说xml配置是类型不安全的配置方式？</li>
-<li>如何使用注解进行配置？</li>
-<li>注解配置是万能的吗？</li>
-<li>如何使用Java Config进行配置？</li>
-<li>xml、注解、Java Config，到底该如何选择？</li>
-</ul>
-<hr>
-<p>大雄一脸懵逼，心想，“我不就改了一处地方，怎么就把服务器给整挂了呢”，他仔细地看了一下自己改的代码：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"serverLogger"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.perfectlogger.CosoleLogger"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>“啊！！原来是CosoleLogger拼错了…”</p>
-<h2 id="类型不安全的xml配置"><a href="#类型不安全的xml配置" class="headerlink" title="类型不安全的xml配置"></a>类型不安全的xml配置</h2><p>到了公司，大雄跟哆啦讲了自己干的这件蠢事。</p>
-<p>“小伙子，早上没睡醒吧，哈哈哈”</p>
-<p>“额，你还笑得出来”</p>
-<p>“其实吧，我有办法让你在没睡醒的时候也不会犯这种错误”</p>
-<p>“啥办法，该不会是让我喝咖啡吧…”</p>
-<p>“喝咖啡也没我这个办法管用，你小子之前学Spring的时候，不会只知道用xml这种<strong>类型不安全</strong>的方式来配置吧？”</p>
-<p>“噢，好像还有其他配置方式…注解？还有Java Config…啊！我明白你的意思了，使用注解和Java Config，这样在我拼写错的时候，由于找不到这类，编译都不会通过，我也就知道我拼写错了！”</p>
-<p>“就是罗，而且这只是其他配置方式优于xml配置的一点，你用过之后就会发现他们有更多的优点了”</p>
-<p>“好，我这就试试用注解方式改造一下我们的代码！”</p>
-      
-      <a class="article-more-link" href="/2020/04/12/Spring3xml%E6%B3%A8%E8%A7%A3JavaConfig/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -配置 -小说</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-Spring2注入方式哪家强" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/12/Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/"
-    >Spring2--注入方式哪家强</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/12/Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/" class="article-date">
-  <time datetime="2020-04-12T04:46:00.000Z" itemprop="datePublished">2020-04-12</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>本集概要：</p>
-<ul>
-<li>构造器注入有什么缺点？</li>
-<li>如何使用setter注入？</li>
-<li>setter注入为什么会导致空指针异常？</li>
-</ul>
-<p>前情回顾：<a href="https://zhuanlan.zhihu.com/p/29426019" target="_blank" rel="noopener">用小说的形式讲解Spring（1） —— 为什么需要依赖注入</a></p>
-<hr>
-<p>大雄给项目引入了Spring框架，解决了代码过度耦合的问题，当然，这只是Spring强大功力的冰山一角，菜鸟大雄还仍然是菜鸟大雄……</p>
-<h2 id="越来越庞大的构造函数"><a href="#越来越庞大的构造函数" class="headerlink" title="越来越庞大的构造函数"></a>越来越庞大的构造函数</h2><p>一天，晨会过后，哆啦对大雄说，“大雄，我们的订单接口和支付接口都已经非常完善了，现在需要<strong>在支付完成时更新一下订单的状态</strong>，你看看这个需求如何实现。”</p>
-<p>“这个好办，只需要给支付接口添加一个新的依赖IOrderDao，然后把OrderDao注入进去就可以了。”</p>
-<p>“好小子，张嘴一个‘依赖’，闭嘴一个‘注入’，术语说的挺溜的呀”</p>
-<p>“那是，你等着，马上搞定这个需求”，说完，大雄就火急火燎地写代码去了。</p>
-<p>大雄给PaymentAction加了一个成员变量orderDao，然后新建了一个构造函数，把orderDao注入到PaymentAction里面去，接着写了一个updateOrderAfterPayment方法，调用orderDao的方法更新订单（<strong>本文使用的代码，可以到 <a href="https://link.zhihu.com/?target=https%3A//github.com/hzy38324/SpringNovel">SpringNovel</a> 下载</strong>）：</p>
-      
-      <a class="article-more-link" href="/2020/04/12/Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -配置 -小说</a></li></ul>
 
 
     </footer>

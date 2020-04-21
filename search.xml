@@ -1,6 +1,358 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>JVM方法区精简（背诵全文）</title>
+    <url>/2020/04/21/JVM%E6%96%B9%E6%B3%95%E5%8C%BA%E7%B2%BE%E7%AE%80%EF%BC%88%E8%83%8C%E8%AF%B5%E5%85%A8%E6%96%87%EF%BC%89/</url>
+    <content><![CDATA[<p>JAVA虚拟机方法区介绍</p>
+<p>1、JVM内存模型</p>
+<p>大多数JVM将内存分配为Method Area(方法区)、Heap(堆)、ProgramCounter Register(程序计数器)、JAVA MethodStack(JAVA方法栈)、Native MethodStack(本地方法栈)。</p>
+<p>1.1 Method Area<br>    线程共享，存储已经被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等等。（HotSpot虚拟机上开发部署人员更愿意成为“永久代”，Permanent Generation）。示意图如下：</p>
+<p><img src="/images/innerimage/qinzidong/image-20200421210849856.png" alt="image-20200421210849856"></p>
+<a id="more"></a>
+
+<p>1、类型信息</p>
+<ul>
+<li><p>类型的全限定名</p>
+</li>
+<li><p>超类的全限定名</p>
+</li>
+<li><p>直接超接口的全限定名</p>
+</li>
+<li><p>类型标志（该类是类类型还是接口类型）</p>
+</li>
+<li><p>类的访问描述符（public、private、default、abstract、final、static）</p>
+</li>
+</ul>
+<p>2、类型的常量池（<strong>==该部分是独有的，然后运行时，把该部分加载进运行时常量池，当调用时则从符号引用解析为直接引用，但是有些确定的方法会直接转换，比如静态方法，比如构造方法==</strong>）</p>
+<p>存放该类型所用到的常量的有序集合，包括<strong>==直接常量==</strong>（如字符串、整数、浮点数的常量）和对其他类型、字段、方法的符号引用。常量池中每一个保存的常量都有一个索引，就像数组中的字段一样。因为常量池中保存中所有类型使用到的类型、字段、方法的符号引用，所以它也是<strong>==动态连接(栈中对应的方法指向这个引用)的主要对象（在动态链接中起到核心作用）。==</strong></p>
+<p>3、字段信息（该类声明的所有字段）</p>
+<ul>
+<li><p>字段修饰符（public、protect、private、default）</p>
+</li>
+<li><p>字段的类型</p>
+</li>
+<li><p>字段名称</p>
+</li>
+</ul>
+<p>4、方法信息</p>
+<p>​     方法信息中包含类的所有方法，每个方法包含以下信息：</p>
+<ul>
+<li>方法名 </li>
+<li>方法的返回类型（包括void） </li>
+<li>方法参数的类型、数目以及顺序</li>
+<li>方法修饰符（public,private,protected,static,final,synchronized,native,abstract）<br>针对非本地方法，还有些附加方法信息需要存储在方法区内：</li>
+<li>方法字节码</li>
+<li>方法中局部变量区的大小、方法栈帧 </li>
+<li> 异常表</li>
+</ul>
+<p>5、类变量（静态变量）</p>
+<p> 指该类所有对象共享的变量，即使没有任何实例对象时，也可以访问的类变量。它们与类进行绑定。</p>
+<p>6、  指向类加载器的引用</p>
+<p>每一个被JVM加载的类型，都保存这个类加载器的引用，类加载器动态链接时会用到。</p>
+<p>7、指向Class实例的引用</p>
+<p>类加载的过程中，虚拟机会创建该类型的Class实例，方法区中必须保存对该对象的引用。通过Class.forName(StringclassName)来查找获得该实例的引用，然后创建该类的对象。</p>
+<p>8、方法表</p>
+<p>为了提高访问效率，JVM可能会对每个装载的非抽象类，都创建一个数组，数组的每个元素是实例可能调用的方法的直接引用，包括父类中继承过来的方法。这个表在抽象类或者接口中是没有的，类似C++虚函数表vtbl。</p>
+<p>二、运行时常量池(Runtime Constant Pool)</p>
+<p>Class文件中除了有类的版本、字段、方法、接口等描述信息外，还有一项信息是<strong>==运行时常量池==</strong>，用于存放<strong>==编译器生成的各种字面常量和符号引用==</strong>，这部分内容被类加载后进入方法区的运行时常量池中存放。</p>
+<p>运行时常量池相对于Class文件常量池的另外一个特征具有动态性，可以在运行期间将新的常量放入池中（典型的如String类的intern()方法）。</p>
+<p>运行时常量池是把Class文件常量池加载进来，每个类有一个独立的。刚开始时运行的时候运行时常量池里的链接都是符号链接（只用名字没有实体），跟在Class文件里的一样；<strong>==只有调用该方法时，才把常量转换成直接引用。然后就可以供给给其他方法调用了。==</strong>如下3个图：</p>
+<p><img src="/images/innerimage/qinzidong/image-20200421211622816.png" alt="image-20200421211622816"></p>
+<p>如果符号引用是在<strong>==类加载阶段或者第一次使用的时候转化为直接应用==</strong>,那么这种转换成为<strong>==静态解析==</strong>,如果是在运行期间转换为直接引用,那么这种转换就成为<strong>==动态连接==</strong>。</p>
+<p>例如说加载完Class A之后的Foo.bar()方法等一段时间被调用，A.class文件里就会有对该方法的Method ref常量，是个符号链接（只有名字没有实体），加载到运行时常量池也还是一样是符号链接（符号引用），等真的要调用该方法的时候该常量就会被resolve（解析）为一个直接链接（直接引用）。</p>
+<p><strong>==（该部分是独有的，然后运行时，把该部分加载进运行时常量池，当调用时则从符号引用解析为直接引用，但是有些确定的方法会直接转换，比如静态方法，比如构造方法）==</strong></p>
+<hr>
+]]></content>
+      <tags>
+        <tag>-JVM -方法区</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JVM之方法区</title>
+    <url>/2020/04/21/JVM%E4%B9%8B%E6%96%B9%E6%B3%95%E5%8C%BA/</url>
+    <content><![CDATA[<h2 id="特点："><a href="#特点：" class="headerlink" title="特点："></a>特点：</h2><ul>
+<li><p>方法区（Method Area）与 Java 堆一样，是所有线程共享的内存区域。</p>
+</li>
+<li><p>JDK7 之前（永久代）用于存储已被虚拟机加载的类信息、常量、字符串常量、类静态变量、即时编译器编译后的代码等数据。</p>
+</li>
+<li><p>Java 虚拟机规范把方法区描述为堆的一个逻辑部分，但是它却有一个别名叫做 Non-Heap（非堆），目的应该是与 Java 堆区分开来。</p>
+</li>
+<li><p>运行时常量池（Runtime Constant Pool）是方法区的一部分。Class 文件中除了有类的版本/字段/方法/接口等描述信息外，还有一项信息是常量池（Constant Pool Table），用于存放编译期生成的各种字面量和符号引用，这部分内容将类在加载后进入方法区的运行时常量池中存放。运行期间也可能将新的常量放入池中，这种特性被开发人员利用得比较多的是 <a href="https://links.jianshu.com/go?to=https%3A%2F%2Ftech.meituan.com%2Fin_depth_understanding_string_intern.html" target="_blank" rel="noopener">String.intern()</a> 方法。受方法区内存的限制，当常量池无法再申请到内存时会抛出 OutOfMemoryError 异常。</p>
+<a id="more"></a>
+
+</li>
+</ul>
+<blockquote>
+<p>  Java 中基本类型的包装类的大部分都实现了常量池技术，这些类是 Byte、Short、Integer、Long、Character、Boolean，另外 Float 和 Double 类型的包装类则没有实现。另外 Byte、Short、Integer、Long、Character 这5种整型的包装类也只是在对应值在-128到127之间时才可使用对象池。</p>
+</blockquote>
+<p><img src="/images/innerimage/qinzidong/image-20200421204136707.png" alt="image-20200421204136707"></p>
+<ul>
+<li>实现区域<br> 永久代：存储包括类信息、常量、字符串常量、类静态变量、即时编译器编译后的代码等数据。可以通过 <code>-XX:PermSize</code> 和 <code>-XX:MaxPermSize</code> 来进行调节。当内存不足时，会导致 OutOfMemoryError 异常。JDK8 彻底将永久代移除出 HotSpot JVM，将其原有的数据迁移至 Java Heap 或 Native Heap（Metaspace），取代它的是另一个内存区域被称为元空间（Metaspace）。<br> 元空间（Metaspace）：元空间是方法区的在 HotSpot JVM 中的实现，方法区主要用于存储类信息、常量池、方法数据、方法代码、符号引用等。元空间的本质和永久代类似，都是对 JVM 规范中方法区的实现。不过元空间与永久代之间最大的区别在于：元空间并不在虚拟机中，而是使用本地内存。，理论上取决于32位/64位系统内存大小，可以通过 <code>-XX:MetaspaceSize</code> 和 <code>-XX:MaxMetaspaceSize</code> 配置内存大小。</li>
+</ul>
+<h2 id="随JDK版本变迁的方法区"><a href="#随JDK版本变迁的方法区" class="headerlink" title="随JDK版本变迁的方法区"></a>随JDK版本变迁的方法区</h2><h3 id="JDK6"><a href="#JDK6" class="headerlink" title="JDK6"></a>JDK6</h3><ul>
+<li>Klass 元数据信息</li>
+<li>每个类的运行时常量池（字段、方法、类、接口等符号引用）、编译后的代码</li>
+<li>静态字段（无论是否有final）在 instanceKlass 末尾（位于 PermGen 内）</li>
+<li>oop（Ordinary Object Pointer（普通对象指针）） 其实就是 Class 对象实例</li>
+<li>全局字符串常量池 StringTable，本质上就是个 Hashtable</li>
+<li>符号引用（类型指针是 SymbolKlass）</li>
+</ul>
+<h3 id="JDK7"><a href="#JDK7" class="headerlink" title="JDK7"></a>JDK7</h3><ul>
+<li>Klass 元数据信息</li>
+<li>每个类的运行时常量池（字段、方法、类、接口等符号引用）、编译后的代码</li>
+<li>静态字段从 instanceKlass 末尾移动到了 java.lang.Class 对象（oop）的末尾（位于 Java Heap 内）</li>
+<li>oop 与全局字符串常量池移到 Java Heap 上</li>
+<li>符号引用被移动到 Native Heap 中</li>
+</ul>
+<h3 id="JDK8"><a href="#JDK8" class="headerlink" title="JDK8"></a>JDK8</h3><ul>
+<li>移除永久代</li>
+<li>Klass 元数据信息</li>
+<li>每个类的运行时常量池、编译后的代码移到了另一块与堆不相连的本地内存 – 元空间（Metaspace）</li>
+</ul>
+<p>关于 Open JDK 移除永久代的相关信息：<a href="https://links.jianshu.com/go?to=http%3A%2F%2Fopenjdk.java.net%2Fjeps%2F122" target="_blank" rel="noopener">http://openjdk.java.net/jeps/122</a></p>
+<h2 id="类信息"><a href="#类信息" class="headerlink" title="类信息"></a>类信息</h2><table>
+<thead>
+<tr>
+<th>方法区</th>
+<th>详细信息</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>类型信息</td>
+<td>1. 类型的全限定名 2. 超类的全限定名 3. 直接超接口的全限定名 4. 类型标志（该类是类类型还是接口类型） 5.  类的访问描述符（public、private、default、abstract、final、static）</td>
+</tr>
+<tr>
+<td>类型的常量池</td>
+<td>存放该类型所用到的常量的有序集合，包括直接常量（如字符串、整数、浮点数的常量）和对其他类型、字段、方法的符号引用。常量池中每一个保存的常量都有一个索引，就像数组中的字段一样。因为常量池中保存中所有类型使用到的类型、字段、方法的符号引用，所以它也是动态连接（栈中对应的方法指向这个引用）的主要对象（在动态链接中起到核心作用）。</td>
+</tr>
+<tr>
+<td>字段信息</td>
+<td>1. 字段修饰符（public、protect、private、default） 2. 字段的类型 3. 字段名称</td>
+</tr>
+<tr>
+<td>方法信息</td>
+<td>1. 方法名 2.方法的返回类型（包括void）3. 方法参数的类型、数目以及顺序 4. 方法修饰符（public、private、protected、static、final、synchronized、native、abstract） 5. 针对非本地方法，还有些附加方法信息需要存储在方法区中（局部变量表大小和操作数栈大小、方法体字节码、异常表）</td>
+</tr>
+<tr>
+<td>类变量（静态变量）</td>
+<td>指该类所有对象共享的变量，即使没有创建该对象实例，也可以访问的类变量。它们与类进行绑定</td>
+</tr>
+<tr>
+<td>指向类加载器的引用</td>
+<td>JVM 必须知道一个类型是由启动加载器加载的还是由用户类加载器加载的。如果一个类型是由用户类加载器加载的，那么 JVM 会将这个类加载器的一个引用作为类型信息的一部分保存在方法区中。JVM 在动态链接的时候需要这个信息。当解析一个类型到另一个类型的引用的时候，JVM 需要保证这两个类型的类加载器是相同的。这对 JVM 区分名字空间的方式是至关重要的。</td>
+</tr>
+<tr>
+<td>指向 Class 实例的引用</td>
+<td>JVM 为每个加载的类和接口都创建一个 <code>java.lang.Class</code> 实例（JDK6 存储在方法区，JDK6 之后存储在 Java 堆），这个对象存储了所有这个字节码内存块的相关信息，如平时使用的 <code>this.getClass().getName()</code> <code>this.getClass().getDeclaredMethods()</code> <code>this.getClass().getDeclaredFields()</code>，可以获取类的各种信息，都是通过这个 Class 引用获取。</td>
+</tr>
+<tr>
+<td>方法表</td>
+<td>为了提高访问效率，必须仔细的设计存储在方法区中的数据信息结构。除了以上讨论的结构，JVM 的实现者还可以添加一些其他的数据结构，如方法表。JVM 对每个加载的非虚拟类的类型信息中都添加了一个方法表，方法表是一组对类实例方法的直接引用(包括从父类继承的方法)。JVM 可以通过方法表快速激活实例方法。(这里的方法表与 C++ 中的虚拟函数表一样。正像 Java 宣称没有指针了，其实 Java 里全是指针。更安全只是加了更完备的检查机制，但这都是以牺牲效率为代价的，Java 的设计者始终是把安全放在效率之上的，所有 Java 才更适合于网络开发)</td>
+</tr>
+</tbody></table>
+<h2 id="疑问？"><a href="#疑问？" class="headerlink" title="疑问？"></a>疑问？</h2><p>Class 对象存储在哪个区域？</p>
+<h1 id="Class实例在堆中还是方法区中？"><a href="#Class实例在堆中还是方法区中？" class="headerlink" title="Class实例在堆中还是方法区中？"></a>Class实例在堆中还是方法区中？</h1><p><strong>1、JVM中OOP-KLASS模型</strong></p>
+<p>在JVM中，使用了OOP-KLASS模型来表示java对象，即：<br>1.jvm在加载class时，创建instanceKlass，表示其元数据，包括常量池、字段、方法等，存放在方法区；instanceKlass是jvm中的数据结构；<br>2.在new一个对象时，jvm创建instanceOopDesc，来表示这个对象，存放在堆区，其引用，存放在栈区；它用来表示对象的实例信息，看起来像个指针实际上是藏在指针里的对象；instanceOopDesc对应java中的对象实例；<br>3.HotSpot并不把instanceKlass暴露给Java，而会另外创建对应的instanceOopDesc来表示java.lang.Class对象，并将后者称为前者的“Java镜像”，klass持有指向oop引用(_java_mirror便是该instanceKlass对Class对象的引用)；<br>4.要注意，new操作返回的instanceOopDesc类型指针指向instanceKlass，而instanceKlass指向了对应的类型的Class实例的instanceOopDesc；有点绕，简单说，就是Person实例——&gt;Person的instanceKlass——&gt;Person的Class。</p>
+<p>instanceOopDesc，只包含数据信息，它包含三部分：<br>\1. 对象头，也叫Mark Word，主要存储对象运行时记录信息，如hashcode, GC分代年龄，锁状态标志，线程ID，时间戳等;<br>\2. 元数据指针，即指向方法区的instanceKlass实例<br>\3. 实例数据;<br>\4. 另外，如果是数组对象，还多了一个数组长度</p>
+<p><strong>2、方法区变迁</strong><br>JVM规范虽说编译后代码在方法区，但是不做强制要求，具体要看JVM实现，hotspot将JIT编译生成的代码存放在native memory的CodeCache区域<br>jdk6<br>Klass元数据信息<br>每个类的运行时常量池(字段、方法、类、接口等符号引用)、编译后的代码<br>静态字段(无论是否有final)在instanceKlass末尾（位于PermGen内）<br>oop 其实就是Class对象实例<br>全局字符串常量池StringTable，本质上就是个Hashtable<br>符号引用（类型指针是SymbolKlass）</p>
+<p>jdk7<br>Klass元数据信息<br>每个类的运行时常量池(字段、方法、类、接口等符号引用)、编译后的代码<br>静态字段从instanceKlass末尾移动到了java.lang.Class对象（oop）的末尾（位于普通Java heap内）<br>oop与全局字符串常量池移到java heap上<br>符号引用被移动到native heap中</p>
+<p>jdk8<br>移除永久代：<br>Klass元数据信息、每个类的运行时常量池、编译后的代码移到了另一块与堆不相连的本地内存————元空间（Metaspace）<br>参数控制-XX:MetaspaceSize与-XX:MaxMetaspaceSize。<br>关于openjdk移除永久代的相关信息：<a href="http://openjdk.java.net/jeps/122" target="_blank" rel="noopener">http://openjdk.java.net/jeps/122</a></p>
+<p><strong>3、Class实例在堆中还是方法区中？</strong></p>
+<p><strong>JDK6</strong></p>
+<p>查看openjdk\hotspot\src\share\vm\classfile\classFileParser.cpp文件的instanceKlassHandle ClassFileParser::parseClassFile方法，在3522行使用oopFactory::new_instanceKlass来创建klassOop；</p>
+<p>klassOop相当于Java中的class,一个klassOop对象包含header、klass_field和Klass</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">instanceKlassHandle ClassFileParser::parseClassFile(symbolHandle name,</span><br><span class="line">                                                    Handle class_loader,</span><br><span class="line">                                                    Handle protection_domain,</span><br><span class="line">                                                    KlassHandle host_klass,</span><br><span class="line">                                                    GrowableArray&lt;Handle&gt;* cp_patches,</span><br><span class="line">                                                    symbolHandle&amp; parsed_name,</span><br><span class="line">                                                    bool verify,</span><br><span class="line">                                                    TRAPS) &#123;</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3522</span></span><br><span class="line">    <span class="comment">// We can now create the basic klassOop for this klass</span></span><br><span class="line">    klassOop ik = oopFactory::new_instanceKlass(vtable_size, itable_size,</span><br><span class="line">                                                static_field_size,</span><br><span class="line">                                                total_oop_map_count,</span><br><span class="line">                                                rt, CHECK_(nullHandle));</span><br><span class="line">    <span class="function">instanceKlassHandle <span class="title">this_klass</span> <span class="params">(THREAD, ik)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Create new handle outside HandleMark</span></span><br><span class="line">  <span class="function">instanceKlassHandle <span class="title">this_klass</span> <span class="params">(THREAD, preserve_this_klass)</span></span>;</span><br><span class="line">  debug_only(this_klass-&gt;as_klassOop()-&gt;verify();)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> this_klass;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">klassOop oopFactory::new_instanceKlass(Symbol* name, <span class="keyword">int</span> vtable_len, <span class="keyword">int</span> itable_len,</span><br><span class="line">                                       <span class="keyword">int</span> static_field_size,</span><br><span class="line">                                       unsigned <span class="keyword">int</span> nonstatic_oop_map_count,</span><br><span class="line">                                       ReferenceType rt, TRAPS) &#123;</span><br><span class="line">  instanceKlassKlass* ikk = instanceKlassKlass::cast(Universe::instanceKlassKlassObj());</span><br><span class="line">  <span class="keyword">return</span> ikk-&gt;allocate_instance_klass(name, vtable_len, itable_len, static_field_size, nonstatic_oop_map_count, rt, CHECK_NULL);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">klassOop instanceKlassKlass::allocate_instance_klass(Symbol* name, <span class="keyword">int</span> vtable_len, <span class="keyword">int</span> itable_len,</span><br><span class="line">                                            <span class="keyword">int</span> static_field_size,</span><br><span class="line">                                            unsigned nonstatic_oop_map_count,</span><br><span class="line">                                            ReferenceType rt, TRAPS) &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">int</span> nonstatic_oop_map_size =</span><br><span class="line">    instanceKlass::nonstatic_oop_map_size(nonstatic_oop_map_count);</span><br><span class="line">  <span class="keyword">int</span> size = instanceKlass::object_size(align_object_offset(vtable_len) + align_object_offset(itable_len) + nonstatic_oop_map_size);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Allocation</span></span><br><span class="line">  <span class="function">KlassHandle <span class="title">h_this_klass</span><span class="params">(THREAD, as_klassOop()</span>)</span>;</span><br><span class="line">  KlassHandle k;</span><br><span class="line">  <span class="keyword">if</span> (rt == REF_NONE) &#123;</span><br><span class="line">    <span class="keyword">if</span> (name != vmSymbols::java_lang_Class()) &#123;</span><br><span class="line">      <span class="comment">// regular klass</span></span><br><span class="line">      instanceKlass o;</span><br><span class="line">      k = base_create_klass(h_this_klass, size, o.vtbl_value(), CHECK_NULL);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// Class</span></span><br><span class="line">      instanceMirrorKlass o;</span><br><span class="line">      k = base_create_klass(h_this_klass, size, o.vtbl_value(), CHECK_NULL);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// reference klass</span></span><br><span class="line">    instanceRefKlass o;</span><br><span class="line">    k = base_create_klass(h_this_klass, size, o.vtbl_value(), CHECK_NULL);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  .....</span><br><span class="line">  </span><br><span class="line">  k()-&gt;set_partially_loaded();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> k();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> 在openjdk\hotspot\src\share\vm\oops\klass.cpp中base_create_klass方法内部直接调用base_create_klass_oop来创建klassOop</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">KlassHandle Klass::base_create_klass(KlassHandle&amp; klass, <span class="keyword">int</span> size,</span><br><span class="line">                                     <span class="keyword">const</span> Klass_vtbl&amp; vtbl, TRAPS) &#123;</span><br><span class="line">  klassOop ek = base_create_klass_oop(klass, size, vtbl, THREAD);</span><br><span class="line">  <span class="keyword">return</span> KlassHandle(THREAD, ek);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> allocate_permanent方法默认在PermGen分配内存，instanceKlass对象保存在永久代区域</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">klassOop Klass::base_create_klass_oop(KlassHandle&amp; klass, <span class="keyword">int</span> size,</span><br><span class="line">                                      <span class="keyword">const</span> Klass_vtbl&amp; vtbl, TRAPS) &#123;</span><br><span class="line">  size = align_object_size(size);</span><br><span class="line">  <span class="comment">// allocate and initialize vtable</span></span><br><span class="line">  Klass*   kl = (Klass*) vtbl.allocate_permanent(klass, size, CHECK_NULL);  <span class="comment">// as_klassOop在klass.hpp文件中</span></span><br><span class="line">  klassOop k  = kl-&gt;as_klassOop();</span><br><span class="line"></span><br><span class="line">  ......  <span class="keyword">return</span> k;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> 总结，从klassOop构建流程看出，JDK1.6中Class实例在方法区，而且和JDK7创建流程有了很大差异</p>
+<p><strong>JDK7</strong></p>
+<p>对于引用类型和数组类型对应的Class实例，openjdk\hotspot\src\share\vm\classfile\classFileParser.cpp的instanceKlassHandle ClassFileParser::parseClassFile方法的3615行通过java_lang_Class::create_mirror来创建</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">instanceKlassHandle ClassFileParser::parseClassFile(Symbol* name,</span><br><span class="line">                                                    Handle class_loader,</span><br><span class="line">                                                    Handle protection_domain,</span><br><span class="line">                                                    KlassHandle host_klass,</span><br><span class="line">                                                    GrowableArray&lt;Handle&gt;* cp_patches,</span><br><span class="line">                                                    TempNewSymbol&amp; parsed_name,</span><br><span class="line">                                                    bool verify,</span><br><span class="line">                                                    TRAPS) &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 3615</span></span><br><span class="line">    <span class="comment">// Allocate mirror and initialize static fields</span></span><br><span class="line">    java_lang_Class::create_mirror(this_klass, CHECK_(nullHandle));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> this_klass;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> 在openjdk\hotspot\src\share\vm\classfile\javaClasses.cpp中找到create_mirror方法,看如下发现InstanceMirrorKlass::allocate_instance创建了对象实例，而且实例不是数组时会初始化静态字段</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">oop java_lang_Class::create_mirror(KlassHandle k, TRAPS) &#123;</span><br><span class="line">  <span class="keyword">assert</span>(k-&gt;java_mirror() == NULL, <span class="string">"should only assign mirror once"</span>);</span><br><span class="line">  <span class="comment">// Use this moment of initialization to cache modifier_flags also,</span></span><br><span class="line">  <span class="comment">// to support Class.getModifiers().  Instance classes recalculate</span></span><br><span class="line">  <span class="comment">// the cached flags after the class file is parsed, but before the</span></span><br><span class="line">  <span class="comment">// class is put into the system dictionary.</span></span><br><span class="line">  <span class="keyword">int</span> computed_modifiers = k-&gt;compute_modifier_flags(CHECK_0);</span><br><span class="line">  k-&gt;set_modifier_flags(computed_modifiers);</span><br><span class="line">  <span class="keyword">if</span> (SystemDictionary::Class_klass_loaded() &amp;&amp; (k-&gt;oop_is_instance() || k-&gt;oop_is_javaArray())) &#123;</span><br><span class="line">    <span class="comment">// Allocate mirror (java.lang.Class instance)</span></span><br><span class="line">    Handle mirror = instanceMirrorKlass::cast(SystemDictionary::Class_klass())-&gt;allocate_instance(k, CHECK_0);</span><br><span class="line">    <span class="comment">// Setup indirections</span></span><br><span class="line">    mirror-&gt;obj_field_put(klass_offset,  k());</span><br><span class="line">    k-&gt;set_java_mirror(mirror());</span><br><span class="line"></span><br><span class="line">    instanceMirrorKlass* mk = instanceMirrorKlass::cast(mirror-&gt;klass());</span><br><span class="line">    java_lang_Class::set_oop_size(mirror(), mk-&gt;instance_size(k));</span><br><span class="line">    java_lang_Class::set_static_oop_field_count(mirror(), mk-&gt;compute_static_oop_field_count(mirror()));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// It might also have a component mirror.  This mirror must already exist.</span></span><br><span class="line">    <span class="keyword">if</span> (k-&gt;oop_is_javaArray()) &#123;</span><br><span class="line">      Handle comp_mirror;</span><br><span class="line">      <span class="keyword">if</span> (k-&gt;oop_is_typeArray()) &#123;</span><br><span class="line">        BasicType type = typeArrayKlass::cast(k-&gt;as_klassOop())-&gt;element_type();</span><br><span class="line">        comp_mirror = Universe::java_mirror(type);</span><br><span class="line">        <span class="keyword">assert</span>(comp_mirror.not_null(), <span class="string">"must have primitive mirror"</span>);</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (k-&gt;oop_is_objArray()) &#123;</span><br><span class="line">        klassOop element_klass = objArrayKlass::cast(k-&gt;as_klassOop())-&gt;element_klass();</span><br><span class="line">        <span class="keyword">if</span> (element_klass != NULL</span><br><span class="line">            &amp;&amp; (Klass::cast(element_klass)-&gt;oop_is_instance() ||</span><br><span class="line">                Klass::cast(element_klass)-&gt;oop_is_javaArray())) &#123;</span><br><span class="line">          comp_mirror = Klass::cast(element_klass)-&gt;java_mirror();</span><br><span class="line">          <span class="keyword">assert</span>(comp_mirror.not_null(), <span class="string">"must have element mirror"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// else some object array internal to the VM, like systemObjArrayKlassObj</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (comp_mirror.not_null()) &#123;</span><br><span class="line">        <span class="comment">// Two-way link between the array klass and its component mirror:</span></span><br><span class="line">        arrayKlass::cast(k-&gt;as_klassOop())-&gt;set_component_mirror(comp_mirror());</span><br><span class="line">        set_array_klass(comp_mirror(), k-&gt;as_klassOop());</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (k-&gt;oop_is_instance()) &#123;</span><br><span class="line">      <span class="comment">// Initialize static fields</span></span><br><span class="line">      instanceKlass::cast(k())-&gt;do_local_static_fields(&amp;initialize_static_field, CHECK_NULL);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> mirror();</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> NULL;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> 对于基本数据类型，是JVM内置的Class类型，openjdk\hotspot\src\share\vm\memory\universe.cpp中initialize_basic_type_mirrors方法便是初始化基本类型的类型实例的，通过调用java_lang_Class::create_basic_type_mirror</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">void</span> Universe::initialize_basic_type_mirrors(TRAPS) &#123;</span><br><span class="line">  <span class="keyword">if</span> (UseSharedSpaces) &#123;</span><br><span class="line">    <span class="keyword">assert</span>(_int_mirror != NULL, <span class="string">"already loaded"</span>);</span><br><span class="line">    <span class="keyword">assert</span>(_void_mirror == _mirrors[T_VOID], <span class="string">"consistently loaded"</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">assert</span>(_int_mirror==NULL, <span class="string">"basic type mirrors already initialized"</span>);</span><br><span class="line">    _int_mirror     =</span><br><span class="line">      java_lang_Class::create_basic_type_mirror(<span class="string">"int"</span>,    T_INT, CHECK);</span><br><span class="line">    _float_mirror   =</span><br><span class="line">      java_lang_Class::create_basic_type_mirror(<span class="string">"float"</span>,  T_FLOAT,   CHECK);</span><br><span class="line">    _double_mirror  =</span><br><span class="line">      java_lang_Class::create_basic_type_mirror(<span class="string">"double"</span>, T_DOUBLE,  CHECK);</span><br><span class="line">    _byte_mirror    =</span><br><span class="line">      java_lang_Class::create_basic_type_mirror(<span class="string">"byte"</span>,   T_BYTE, CHECK);</span><br><span class="line">    _bool_mirror    =</span><br><span class="line">      java_lang_Class::create_basic_type_mirror(<span class="string">"boolean"</span>,T_BOOLEAN, CHECK);</span><br><span class="line">    _char_mirror    =</span><br><span class="line">      java_lang_Class::create_basic_type_mirror(<span class="string">"char"</span>,   T_CHAR, CHECK);</span><br><span class="line">    _long_mirror    =</span><br><span class="line">      java_lang_Class::create_basic_type_mirror(<span class="string">"long"</span>,   T_LONG, CHECK);</span><br><span class="line">    _short_mirror   =</span><br><span class="line">      java_lang_Class::create_basic_type_mirror(<span class="string">"short"</span>,  T_SHORT,   CHECK);</span><br><span class="line">    _void_mirror    =</span><br><span class="line">      java_lang_Class::create_basic_type_mirror(<span class="string">"void"</span>,   T_VOID, CHECK);</span><br><span class="line"></span><br><span class="line">    _mirrors[T_INT]     = _int_mirror;</span><br><span class="line">    _mirrors[T_FLOAT]   = _float_mirror;</span><br><span class="line">    _mirrors[T_DOUBLE]  = _double_mirror;</span><br><span class="line">    _mirrors[T_BYTE]    = _byte_mirror;</span><br><span class="line">    _mirrors[T_BOOLEAN] = _bool_mirror;</span><br><span class="line">    _mirrors[T_CHAR]    = _char_mirror;</span><br><span class="line">    _mirrors[T_LONG]    = _long_mirror;</span><br><span class="line">    _mirrors[T_SHORT]   = _short_mirror;</span><br><span class="line">    _mirrors[T_VOID]    = _void_mirror;</span><br><span class="line">    <span class="comment">//_mirrors[T_OBJECT]  = instanceKlass::cast(_object_klass)-&gt;java_mirror();</span></span><br><span class="line">    <span class="comment">//_mirrors[T_ARRAY]   = instanceKlass::cast(_object_klass)-&gt;java_mirror();</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>openjdk\hotspot\src\share\vm\classfile\javaClasses.cpp中的create_basic_type_mirror方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">oop java_lang_Class::create_basic_type_mirror(<span class="keyword">const</span> <span class="keyword">char</span>* basic_type_name, BasicType type, TRAPS) &#123;</span><br><span class="line">  <span class="comment">// This should be improved by adding a field at the Java level or by</span></span><br><span class="line">  <span class="comment">// introducing a new VM klass (see comment in ClassFileParser)</span></span><br><span class="line">  oop java_class = instanceMirrorKlass::cast(SystemDictionary::Class_klass())-&gt;allocate_instance((oop)NULL, CHECK_0);</span><br><span class="line">  <span class="keyword">if</span> (type != T_VOID) &#123;</span><br><span class="line">    klassOop aklass = Universe::typeArrayKlassObj(type);</span><br><span class="line">    <span class="keyword">assert</span>(aklass != NULL, <span class="string">"correct bootstrap"</span>);</span><br><span class="line">    set_array_klass(java_class, aklass);</span><br><span class="line">  &#125;</span><br><span class="line">  instanceMirrorKlass* mk = instanceMirrorKlass::cast(SystemDictionary::Class_klass());</span><br><span class="line">  java_lang_Class::set_oop_size(java_class, mk-&gt;instance_size(oop(NULL)));</span><br><span class="line">  java_lang_Class::set_static_oop_field_count(java_class, <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">return</span> java_class;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>对比引用类型和基本数据类型的Class实例创建，发现都是通过instanceOop instanceMirrorKlass::allocate_instance方法；在openjdk\hotspot\src\share\vm\oops\instanceMirrorKlass.cpp中可以找到；以下代码就是核心了，通过对JavaObjectsInPerm</p>
+<p>参数的判断来决定Class实例存在方法区还是在堆中。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">instanceOop instanceMirrorKlass::allocate_instance(KlassHandle k, TRAPS) &#123;</span><br><span class="line">  <span class="comment">// Query before forming handle.</span></span><br><span class="line">  <span class="keyword">int</span> size = instance_size(k);</span><br><span class="line">  <span class="function">KlassHandle <span class="title">h_k</span><span class="params">(THREAD, as_klassOop()</span>)</span>;</span><br><span class="line">  instanceOop i;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (JavaObjectsInPerm) &#123;</span><br><span class="line">    i = (instanceOop) CollectedHeap::permanent_obj_allocate(h_k, size, CHECK_NULL);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">assert</span>(ScavengeRootsInCode &gt; <span class="number">0</span>, <span class="string">"must be"</span>);</span><br><span class="line">    i = (instanceOop) CollectedHeap::obj_allocate(h_k, size, CHECK_NULL);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> 接下来先看JavaObjectsInPerm为true的情况，CollectedHeap::permanent_obj_allocate方法，在openjdk\hotspot\src\share\vm\gc_interface\collectedHeap.inline.hpp中；</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">oop CollectedHeap::permanent_obj_allocate(KlassHandle klass, <span class="keyword">int</span> size, TRAPS) &#123;</span><br><span class="line">  oop obj = permanent_obj_allocate_no_klass_install(klass, size, CHECK_NULL);</span><br><span class="line">  post_allocation_install_obj_klass(klass, obj, size);</span><br><span class="line">  NOT_PRODUCT(Universe::heap()-&gt;check_for_bad_heap_word_value((HeapWord*) obj,</span><br><span class="line">                                                              size));</span><br><span class="line">  <span class="keyword">return</span> obj;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">oop CollectedHeap::permanent_obj_allocate_no_klass_install(KlassHandle klass,</span><br><span class="line">                                                           <span class="keyword">int</span> size,</span><br><span class="line">                                                           TRAPS) &#123;</span><br><span class="line">  debug_only(check_for_valid_allocation_state());</span><br><span class="line">  <span class="keyword">assert</span>(!Universe::heap()-&gt;is_gc_active(), <span class="string">"Allocation during gc not allowed"</span>);</span><br><span class="line">  <span class="keyword">assert</span>(size &gt;= <span class="number">0</span>, <span class="string">"int won't convert to size_t"</span>);</span><br><span class="line">  HeapWord* obj = common_permanent_mem_allocate_init(size, CHECK_NULL);</span><br><span class="line">  post_allocation_setup_no_klass_install(klass, obj, size);</span><br><span class="line">  NOT_PRODUCT(Universe::heap()-&gt;check_for_bad_heap_word_value(obj, size));</span><br><span class="line">  <span class="keyword">return</span> (oop)obj;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> 最终调用的是common_permanent_mem_allocate_init方法中的common_permanent_mem_allocate_noinit方法来创建实例</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">HeapWord* CollectedHeap::common_permanent_mem_allocate_init(size_t size, TRAPS) &#123;　<span class="comment">// 内存空间的分配</span></span><br><span class="line">  HeapWord* obj = common_permanent_mem_allocate_noinit(size, CHECK_NULL);</span><br><span class="line">  <span class="comment">// 对象的初始化  init_obj(obj, size);</span></span><br><span class="line">  <span class="keyword">return</span> obj;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> 从common_permanent_mem_allocate_noinit方法的名字，和内存溢出的异常”PermGen space”可以看出最后创建oop实例是在方法区中</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Need to investigate, do we really want to throw OOM exception here?</span></span><br><span class="line">HeapWord* CollectedHeap::common_permanent_mem_allocate_noinit(size_t size, TRAPS) &#123;</span><br><span class="line">  <span class="keyword">if</span> (HAS_PENDING_EXCEPTION) &#123;</span><br><span class="line">    NOT_PRODUCT(guarantee(<span class="keyword">false</span>, <span class="string">"Should not allocate with exception pending"</span>));</span><br><span class="line">    <span class="keyword">return</span> NULL;  <span class="comment">// caller does a CHECK_NULL too</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">#ifdef ASSERT</span><br><span class="line">  <span class="keyword">if</span> (CIFireOOMAt &gt; <span class="number">0</span> &amp;&amp; THREAD-&gt;is_Compiler_thread() &amp;&amp;</span><br><span class="line">      ++_fire_out_of_memory_count &gt;= CIFireOOMAt) &#123;</span><br><span class="line">    <span class="comment">// For testing of OOM handling in the CI throw an OOM and see how</span></span><br><span class="line">    <span class="comment">// it does.  Historically improper handling of these has resulted</span></span><br><span class="line">    <span class="comment">// in crashes which we really don't want to have in the CI.</span></span><br><span class="line">    THROW_OOP_0(Universe::out_of_memory_error_perm_gen());</span><br><span class="line">  &#125;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">  HeapWord* result = Universe::heap()-&gt;permanent_mem_allocate(size);</span><br><span class="line">  <span class="keyword">if</span> (result != NULL) &#123;</span><br><span class="line">    NOT_PRODUCT(Universe::heap()-&gt;</span><br><span class="line">      check_for_non_bad_heap_word_value(result, size));</span><br><span class="line">    <span class="keyword">assert</span>(!HAS_PENDING_EXCEPTION,</span><br><span class="line">           <span class="string">"Unexpected exception, will result in uninitialized storage"</span>);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// -XX:+HeapDumpOnOutOfMemoryError and -XX:OnOutOfMemoryError support</span></span><br><span class="line">  report_java_out_of_memory(<span class="string">"PermGen space"</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (JvmtiExport::should_post_resource_exhausted()) &#123;</span><br><span class="line">    JvmtiExport::post_resource_exhausted(</span><br><span class="line">        JVMTI_RESOURCE_EXHAUSTED_OOM_ERROR,</span><br><span class="line">        <span class="string">"PermGen space"</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  THROW_OOP_0(Universe::out_of_memory_error_perm_gen());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> 再看JavaObjectsInPerm参数为false的情况，仍然是在collectedHeap.inline.hpp文件中，发现调用了common_mem_allocate_init，接着又调用了common_mem_allocate_noinit</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">oop CollectedHeap::obj_allocate(KlassHandle klass, <span class="keyword">int</span> size, TRAPS) &#123;</span><br><span class="line">  debug_only(check_for_valid_allocation_state());</span><br><span class="line">  <span class="keyword">assert</span>(!Universe::heap()-&gt;is_gc_active(), <span class="string">"Allocation during gc not allowed"</span>);</span><br><span class="line">  <span class="keyword">assert</span>(size &gt;= <span class="number">0</span>, <span class="string">"int won't convert to size_t"</span>);</span><br><span class="line">  HeapWord* obj = common_mem_allocate_init(size, <span class="keyword">false</span>, CHECK_NULL);</span><br><span class="line">  post_allocation_setup_obj(klass, obj, size);</span><br><span class="line">  NOT_PRODUCT(Universe::heap()-&gt;check_for_bad_heap_word_value(obj, size));</span><br><span class="line">  <span class="keyword">return</span> (oop)obj;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">HeapWord* CollectedHeap::common_mem_allocate_init(size_t size, bool is_noref, TRAPS) &#123;  <span class="comment">// 内存空间的分配</span></span><br><span class="line">  HeapWord* obj = common_mem_allocate_noinit(size, is_noref, CHECK_NULL);  <span class="comment">// 对象的初始化 </span></span><br><span class="line">  init_obj(obj, size);</span><br><span class="line">  <span class="keyword">return</span> obj;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> 从common_mem_allocate_noinit方法的名字，和内存溢出的异常”Java heap space”可以创建oop实例是在java heap中</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">HeapWord* CollectedHeap::common_mem_allocate_noinit(size_t size, bool is_noref, TRAPS) &#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Clear unhandled oops for memory allocation.  Memory allocation might</span></span><br><span class="line">  <span class="comment">// not take out a lock if from tlab, so clear here.</span></span><br><span class="line">  CHECK_UNHANDLED_OOPS_ONLY(THREAD-&gt;clear_unhandled_oops();)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (HAS_PENDING_EXCEPTION) &#123;</span><br><span class="line">    NOT_PRODUCT(guarantee(<span class="keyword">false</span>, <span class="string">"Should not allocate with exception pending"</span>));</span><br><span class="line">    <span class="keyword">return</span> NULL;  <span class="comment">// caller does a CHECK_0 too</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// We may want to update this, is_noref objects might not be allocated in TLABs.</span></span><br><span class="line">  HeapWord* result = NULL;</span><br><span class="line">  <span class="keyword">if</span> (UseTLAB) &#123;</span><br><span class="line">    result = CollectedHeap::allocate_from_tlab(THREAD, size);</span><br><span class="line">    <span class="keyword">if</span> (result != NULL) &#123;</span><br><span class="line">      <span class="keyword">assert</span>(!HAS_PENDING_EXCEPTION,</span><br><span class="line">             <span class="string">"Unexpected exception, will result in uninitialized storage"</span>);</span><br><span class="line">      <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  bool gc_overhead_limit_was_exceeded = <span class="keyword">false</span>;</span><br><span class="line">  result = Universe::heap()-&gt;mem_allocate(size,</span><br><span class="line">                                          is_noref,</span><br><span class="line">                                          <span class="keyword">false</span>,</span><br><span class="line">                                          &amp;gc_overhead_limit_was_exceeded);</span><br><span class="line">  <span class="keyword">if</span> (result != NULL) &#123;</span><br><span class="line">    NOT_PRODUCT(Universe::heap()-&gt;</span><br><span class="line">      check_for_non_bad_heap_word_value(result, size));</span><br><span class="line">    <span class="keyword">assert</span>(!HAS_PENDING_EXCEPTION,</span><br><span class="line">           <span class="string">"Unexpected exception, will result in uninitialized storage"</span>);</span><br><span class="line">    THREAD-&gt;incr_allocated_bytes(size * HeapWordSize);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!gc_overhead_limit_was_exceeded) &#123;</span><br><span class="line">    <span class="comment">// -XX:+HeapDumpOnOutOfMemoryError and -XX:OnOutOfMemoryError support</span></span><br><span class="line">    report_java_out_of_memory(<span class="string">"Java heap space"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (JvmtiExport::should_post_resource_exhausted()) &#123;</span><br><span class="line">      JvmtiExport::post_resource_exhausted(</span><br><span class="line">        JVMTI_RESOURCE_EXHAUSTED_OOM_ERROR | JVMTI_RESOURCE_EXHAUSTED_JAVA_HEAP,</span><br><span class="line">        <span class="string">"Java heap space"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    THROW_OOP_0(Universe::out_of_memory_error_java_heap());</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// -XX:+HeapDumpOnOutOfMemoryError and -XX:OnOutOfMemoryError support</span></span><br><span class="line">    report_java_out_of_memory(<span class="string">"GC overhead limit exceeded"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (JvmtiExport::should_post_resource_exhausted()) &#123;</span><br><span class="line">      JvmtiExport::post_resource_exhausted(</span><br><span class="line">        JVMTI_RESOURCE_EXHAUSTED_OOM_ERROR | JVMTI_RESOURCE_EXHAUSTED_JAVA_HEAP,</span><br><span class="line">        <span class="string">"GC overhead limit exceeded"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    THROW_OOP_0(Universe::out_of_memory_error_gc_overhead_limit());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> 最后查看openjdk\hotspot\src\share\vm\runtime\globals.hpp文件，发现JavaObjectsInPerm的值是定义为false的</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">develop(bool, JavaObjectsInPerm, <span class="keyword">false</span>,                                   \</span><br><span class="line">        <span class="string">"controls whether Classes and interned Strings are allocated"</span>     \</span><br><span class="line">        <span class="string">"in perm.  This purely intended to allow debugging issues"</span>        \</span><br><span class="line">        <span class="string">"in production."</span>)</span><br></pre></td></tr></table></figure>
+
+<p>总结：JDK7创建Class实例存在堆中；因为JDK7中JavaObjectsInPerm参数值固定为false。</p>
+<p><strong>JDK8</strong></p>
+<p>JDK8和JDK7创建Class实例的代码大同小异，从openjdk\hotspot\src\share\vm\oops\instanceMirrorKlass.cpp中的instanceOop InstanceMirrorKlass::allocate_instance方法开始才有了区别;<br>不在判断JavaObjectsInPerm参数，因为jdk8已经去除了永久代，取而代之的值MetaSpace。这里直接调用CollectedHeap::Class_obj_allocate</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">instanceOop InstanceMirrorKlass::allocate_instance(KlassHandle k, TRAPS) &#123;</span><br><span class="line">  <span class="comment">// Query before forming handle.</span></span><br><span class="line">  <span class="keyword">int</span> size = instance_size(k);</span><br><span class="line">  <span class="function">KlassHandle <span class="title">h_k</span><span class="params">(THREAD, <span class="keyword">this</span>)</span></span>;</span><br><span class="line">  instanceOop i = (instanceOop) CollectedHeap::Class_obj_allocate(h_k, size, k, CHECK_NULL);</span><br><span class="line">  <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> openjdk\hotspot\src\share\vm\gc_interface\collectedHeap.cpp中找到CollectedHeap::Class_obj_allocate</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">oop CollectedHeap::Class_obj_allocate(KlassHandle klass, <span class="keyword">int</span> size, KlassHandle real_klass, TRAPS) &#123;</span><br><span class="line"> </span><br><span class="line">  HeapWord* obj;</span><br><span class="line">  obj = common_mem_allocate_init(real_klass, size, CHECK_NULL);</span><br><span class="line">  oop mirror = (oop)obj;</span><br><span class="line"></span><br><span class="line">  java_lang_Class::set_oop_size(mirror, size);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Setup indirections</span></span><br><span class="line">  <span class="keyword">if</span> (!real_klass.is_null()) &#123;</span><br><span class="line">    java_lang_Class::set_klass(mirror, real_klass());</span><br><span class="line">    real_klass-&gt;set_java_mirror(mirror);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  InstanceMirrorKlass* mk = InstanceMirrorKlass::cast(mirror-&gt;klass());</span><br><span class="line">  <span class="keyword">assert</span>(size == mk-&gt;instance_size(real_klass), <span class="string">"should have been set"</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// notify jvmti and dtrace</span></span><br><span class="line">  post_allocation_notify(klass, (oop)obj);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> mirror;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> 在openjdk\hotspot\src\share\vm\gc_interface\collectedHeap.inline.hpp中找到common_mem_allocate_init发现调用了common_mem_allocate_noinit</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">HeapWord* CollectedHeap::common_mem_allocate_init(KlassHandle klass, size_t size, TRAPS) &#123;</span><br><span class="line">  HeapWord* obj = common_mem_allocate_noinit(klass, size, CHECK_NULL);</span><br><span class="line">  init_obj(obj, size);</span><br><span class="line">  <span class="keyword">return</span> obj;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>内存溢出的异常”Java heap space”可以看出JDK8创建的Class实例最终在堆中</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">HeapWord* CollectedHeap::common_mem_allocate_noinit(KlassHandle klass, size_t size, TRAPS) &#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Clear unhandled oops for memory allocation.  Memory allocation might</span></span><br><span class="line">  <span class="comment">// not take out a lock if from tlab, so clear here.</span></span><br><span class="line">  CHECK_UNHANDLED_OOPS_ONLY(THREAD-&gt;clear_unhandled_oops();)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (HAS_PENDING_EXCEPTION) &#123;</span><br><span class="line">    NOT_PRODUCT(guarantee(<span class="keyword">false</span>, <span class="string">"Should not allocate with exception pending"</span>));</span><br><span class="line">    <span class="keyword">return</span> NULL;  <span class="comment">// caller does a CHECK_0 too</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  HeapWord* result = NULL;</span><br><span class="line">  <span class="keyword">if</span> (UseTLAB) &#123;</span><br><span class="line">    result = allocate_from_tlab(klass, THREAD, size);</span><br><span class="line">    <span class="keyword">if</span> (result != NULL) &#123;</span><br><span class="line">      <span class="keyword">assert</span>(!HAS_PENDING_EXCEPTION,</span><br><span class="line">             <span class="string">"Unexpected exception, will result in uninitialized storage"</span>);</span><br><span class="line">      <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  bool gc_overhead_limit_was_exceeded = <span class="keyword">false</span>;</span><br><span class="line">  result = Universe::heap()-&gt;mem_allocate(size,</span><br><span class="line">                                          &amp;gc_overhead_limit_was_exceeded);</span><br><span class="line">  <span class="keyword">if</span> (result != NULL) &#123;</span><br><span class="line">    NOT_PRODUCT(Universe::heap()-&gt;</span><br><span class="line">      check_for_non_bad_heap_word_value(result, size));</span><br><span class="line">    <span class="keyword">assert</span>(!HAS_PENDING_EXCEPTION,</span><br><span class="line">           <span class="string">"Unexpected exception, will result in uninitialized storage"</span>);</span><br><span class="line">    THREAD-&gt;incr_allocated_bytes(size * HeapWordSize);</span><br><span class="line"></span><br><span class="line">    AllocTracer::send_allocation_outside_tlab_event(klass, size * HeapWordSize);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!gc_overhead_limit_was_exceeded) &#123;</span><br><span class="line">    <span class="comment">// -XX:+HeapDumpOnOutOfMemoryError and -XX:OnOutOfMemoryError support</span></span><br><span class="line">    report_java_out_of_memory(<span class="string">"Java heap space"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (JvmtiExport::should_post_resource_exhausted()) &#123;</span><br><span class="line">      JvmtiExport::post_resource_exhausted(</span><br><span class="line">        JVMTI_RESOURCE_EXHAUSTED_OOM_ERROR | JVMTI_RESOURCE_EXHAUSTED_JAVA_HEAP,</span><br><span class="line">        <span class="string">"Java heap space"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    THROW_OOP_0(Universe::out_of_memory_error_java_heap());</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// -XX:+HeapDumpOnOutOfMemoryError and -XX:OnOutOfMemoryError support</span></span><br><span class="line">    report_java_out_of_memory(<span class="string">"GC overhead limit exceeded"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (JvmtiExport::should_post_resource_exhausted()) &#123;</span><br><span class="line">      JvmtiExport::post_resource_exhausted(</span><br><span class="line">        JVMTI_RESOURCE_EXHAUSTED_OOM_ERROR | JVMTI_RESOURCE_EXHAUSTED_JAVA_HEAP,</span><br><span class="line">        <span class="string">"GC overhead limit exceeded"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    THROW_OOP_0(Universe::out_of_memory_error_gc_overhead_limit());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 总结：JDK8移除了永久代，转而使用元空间来实现方法区，创建的Class实例在java heap中</p>
+]]></content>
+      <tags>
+        <tag>-JVM -方法区</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JVM之PC寄存器</title>
+    <url>/2020/04/21/JVM%E4%B9%8BPC%E5%AF%84%E5%AD%98%E5%99%A8/</url>
+    <content><![CDATA[<h2 id="目录："><a href="#目录：" class="headerlink" title="目录："></a>目录：</h2><ol>
+<li>JVM体系结构概览</li>
+<li>JVM之PC寄存器</li>
+</ol>
+<hr>
+<h3 id="1-JVM体系结构概览"><a href="#1-JVM体系结构概览" class="headerlink" title="1. JVM体系结构概览"></a>1. JVM体系结构概览</h3><p><img src="/images/innerimage/qinzidong/image-20200421202149997.png" alt="image-20200421202149997"></p>
+<p>###2.JVM之PC寄存器<br>1.PC寄存器（ PC register ）：每个线程启动的时候，都会创建一个PC（Program Counter，程序计数器）寄存器。PC寄存器里保存有当前正在执行的JVM指令的地址。 每一个线程都有它自己的PC寄存器，也是该线程启动时创建的。保存下一条将要执行的指令地址的寄存器是 ：PC寄存器。PC寄存器的内容总是指向下一条将被执行指令的地址，这里的地址可以是一个本地指针，也可以是在方法区中相对应于该方法起始指令的偏移量。</p>
+<p>2.每个线程都有一个程序计数器，是线程私有的,就是一个指针，指向方法区中的方法字节码（用来存储指向下一条指令的地址,也即将要执行的指令代码），由执行引擎读取下一条指令，是一个非常小的内存空间，几乎可以忽略不记。</p>
+<p>3.这块内存区域很小，它是当前线程所执行的字节码的行号指示器，字节码解释器通过改变这个计数器的值来选取下一条需要执行的字节码指令。</p>
+<p>4.如果执行的是一个Native方法，那这个计数器是空的。</p>
+<p>举例：如值日表，又如test1()调用test2()，test2()调用test3()，肯定顺序执行，就是pc寄存器的作用。</p>
+]]></content>
+      <tags>
+        <tag>-JVM -PC寄存器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Native关键词、JNI详解</title>
+    <url>/2020/04/21/Native%E5%85%B3%E9%94%AE%E8%AF%8D%E3%80%81JNI%E8%AF%A6%E8%A7%A3/</url>
+    <content><![CDATA[<h3 id="1-native关键词的引入"><a href="#1-native关键词的引入" class="headerlink" title="1.native关键词的引入"></a>1.native关键词的引入</h3><p>　　再完美的编程语言也有自己的不足之处，当然Java也不例外，Java的不足之处除了体现在运行速度（这点往往被一些其他编程语言使用者所诟病）上要比传统的C++慢许多之外，Java无法直接访问到操作系统底层（如系统硬件等)，为此Java使用native(原生的)关键词来扩展Java程序的功能。native关键字说明其修饰的方法是一个原生态方法，方法对应的实现不是在当前文件，而是在用其他语言（如C和C++）实现的文件中。Java语言本身不能对操作系统底层进行访问和操作，但是可以通过JNI接口调用其他语言来实现对底层的访问。JNI是Java Native Interface的缩写，它提供了若干的API实现了Java和其他语言的通信（主要C&amp;C++）。从Java1.1开始，JNI标准成为java平台的一部分，它允许Java代码和其他语言写的代码进行交互。JNI一开始是为了本地已编译语言，尤其是C和C++而设计的，但是它并不妨碍你使用其他编程语言，只要调用约定受支持就可以了。使用java与本地已编译的代码交互，通常会丧失平台可移植性。但是，有些情况下这样做是可以接受的，甚至是必须的。例如，使用一些旧的库，与硬件、操作系统进行交互，或者为了提高程序的性能。JNI标准至少要保证本地代码能工作在任何Java 虚拟环境。简而言之，JNI功能即为：Java和本地代码间的双向交互。JNI允许Java代码使用以其他语言编写的代码和代码库。Invocation API（JNI的一部分）可以用来将Java虚拟机（JVM）嵌入到本机应用程序中，从而允许程序员从本机代码内部调用Java代码。</p>
+<a id="more"></a>
+
+<h3 id="2-JNI-Java-Native-Interface-的使用场合"><a href="#2-JNI-Java-Native-Interface-的使用场合" class="headerlink" title="2.JNI(Java Native Interface)的使用场合"></a>2.JNI(Java Native Interface)的使用场合</h3><p>1、JAVA程序和本地程序使用TCP/IP或者IPC进行交互。</p>
+<p>2、当用JAVA程序连接本地数据库时，使用JDBC提供的API。</p>
+<p>3、JAVA程序可以使用分布式对象技术，如JAVA IDL API。</p>
+<p>这些方案的共同点是，JAVA和C处于不同的线程，或者不同的机器上。这样，当本地程序崩溃时，不会影响到JAVA程序。</p>
+<p>下面这些场合中，同一进程内JNI的使用无法避免：</p>
+<p>1、程序当中用到了JAVA API不提供的特殊系统环境才会有的特征。而跨进程操作又不现实。</p>
+<p>2、可能想访问一些己有的本地库，但又不想付出跨进程调用时的代价，如效率，内存，数据传递方面。</p>
+<p>3、JAVA程序当中的一部分代码对效率要求非常高，如算法计算，图形渲染等。</p>
+<p>总之，只有当必须在同一进程中调用本地代码时，再使用JNI。</p>
+<h3 id="3-JNI的书写步骤"><a href="#3-JNI的书写步骤" class="headerlink" title="3.JNI的书写步骤"></a>3.JNI的书写步骤</h3><p>第一步：编写带有native声明的方法的Java类</p>
+<p>第二步：使用javac命令编译编写的Java类</p>
+<p>第三步：使用java -jni 来生成后缀名为.h的头文件</p>
+<p>第四步：使用其他语言（C、C++）实现本地方法</p>
+<p>第五步：将本地方法编写的文件生成动态链接库</p>
+<p>第六步：运行程序</p>
+<h3 id="4-一个JNI的简单应用例子（以HelloJNI为例子）"><a href="#4-一个JNI的简单应用例子（以HelloJNI为例子）" class="headerlink" title="4.一个JNI的简单应用例子（以HelloJNI为例子）"></a>4.一个JNI的简单应用例子（以HelloJNI为例子）</h3><p>第一步：编写带有native声明的方法的Java类</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloJNI</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">displayHelloJNI</span><span class="params">()</span></span>;<span class="comment">//所有native关键词修饰的都是对本地的声明</span></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.loadLibrary(<span class="string">"hello"</span>);<span class="comment">//载入本地库</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> JNI().displayHelloJNI();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>声明native方法：如果想将一个方法做为一个本地方法的话，那么就必须声明该方法为native，并且不能实现。 Load动态库：System.loadLibrary(“hello”);加载动态库（可以这样理解：方法 displayHelloJNI()没有实现，但是在后续步骤中就直接使用了，所以必须在使用之前对它进行初始化），这里一般是以static块进行加载的。同时需要注意的是System.loadLibrary()的参数“hello”是动态库的名字。</p>
+<p>第二步：使用javac命令编译编写的Java类</p>
+<p>javac HelloJNI.java</p>
+<p>注意：<a href="https://jingyan.baidu.com/article/6dad5075d1dc40a123e36ea3.html" target="_blank" rel="noopener">JDK环境变量的配置</a></p>
+<p>第三步：使用java -jni 来生成后缀名为.h的头文件（ 生成扩展名为h的头文件javah HelloJNI）</p>
+<p>头文件javah HelloJNI内容如下：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span> <span class="comment">/*DO NOT EDI TTHIS FILE - it is mach inegenerated*/</span></span><br><span class="line"> 2 #include&lt;jni.h&gt;</span><br><span class="line"> <span class="number">3</span> <span class="comment">/*Header for class HelloJNI*/</span></span><br><span class="line"> <span class="number">4</span>  </span><br><span class="line"> 5 #ifndef_Included_HelloJNI</span><br><span class="line"> 6 #define_Included_HelloJNI</span><br><span class="line"> 7 #ifdef__cplusplus</span><br><span class="line"> <span class="number">8</span> extern<span class="string">"C"</span>&#123;</span><br><span class="line"> 9 #endif</span><br><span class="line"><span class="number">10</span> <span class="comment">/*</span></span><br><span class="line"><span class="comment">11 *Class:HelloJNI</span></span><br><span class="line"><span class="comment">12 *Method:displayHelloJNI</span></span><br><span class="line"><span class="comment">13 *Signature:()V</span></span><br><span class="line"><span class="comment">14 */</span></span><br><span class="line"><span class="number">15</span> JNIEXPORTvoidJNICALL</span><br><span class="line"><span class="number">16</span> Java_HelloJNI_displayHelloJNI(JNIEnv*,jobject);</span><br><span class="line"><span class="number">17</span>  </span><br><span class="line">18 #ifdef__cplusplus</span><br><span class="line"><span class="number">19</span> &#125;</span><br><span class="line">20 #endif</span><br><span class="line">21 #endif</span><br></pre></td></tr></table></figure>
+
+<p>注意：这个h文件相当于在java里面的接口，这里声明了一个Java_HelloJNI_displayHelloJNI (JNIEnv *, jobject)方法，然后在本地方法里面实现这个方法，也就是说在编写C/C++程序的时候所使用的方法名必须和这里的一致</p>
+<p>第四步：使用其他语言（C、C++）实现本地方法（编写本地方法实现和由javah命令生成的头文件里面声明的方法名相同的方法）</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">1 #include"jni.h"</span><br><span class="line"> 2 #include"HelloJNI.h"</span><br><span class="line"> <span class="number">3</span>  </span><br><span class="line"> <span class="number">4</span> <span class="comment">//#includeotherheaders</span></span><br><span class="line"> <span class="number">5</span>  </span><br><span class="line"> <span class="number">6</span> JNIEXPORT <span class="keyword">void</span> JNICALL</span><br><span class="line"> <span class="number">7</span> Java_HelloJNI_displayHelloJNI(JNIEnv*env,jobject obj)</span><br><span class="line"> <span class="number">8</span> &#123;</span><br><span class="line"> <span class="number">9</span> printf(<span class="string">"HelloJNI!\n"</span>);</span><br><span class="line"><span class="number">10</span> <span class="keyword">return</span>;</span><br><span class="line"><span class="number">11</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意：代码第一行需要将jni.h（该文件可以在%JAVA_HOME%/include文件夹下面找到）文件引入，因为在程序中的JNIEnv、 jobject等类型都是在该头文件中定义的；另外在第2行需要将HelloJNI.h头文件引入，然后保存为 HelloJNIImpl.c。</p>
+<p>第五步：将本地方法编写的文件生成动态链接库</p>
+<p>这里以在Windows中为例，需要生成dll文件。在保存HelloWorldJNI.c文件夹下面，使用VC的编辑器cl为：cl -I%java_home%\include -I%java_home%\include\win32 -LD HelloJNIImp.c -Fehello.dll 注意：生成的dll文件名在选项-Fe后面配置，这里是hello，因为在HelloJNI.java文件中我们loadLibary的时候使用的名字是hello。当然这里修改之后那里也需要修改。另外需要将-I%java_home%\include -I%java_home%\include\win32参数加上，因为在第四步里面编写本地方法的时候引入了jni.h文件。</p>
+<p>如果配置了MinGW,也可以这样来编译：gcc -Wall -D_JNI_IMPLEMENTATION_ -Wl,–kill-at -Id:/java/include –Id:/java/include/win32 -shared -o (输出的dll文件名，如sum.dll) (输入的c/c++源文件,如abc.c)。</p>
+<p>第六步：运行程序</p>
+<p>运行javaHelloJNI;如果用eclipse/myeclipse，需将dll或so文件放在项目下，而不是src及其子目录下;如果用命令行编译，把dll文件放在该包的同目录下。</p>
+]]></content>
+      <tags>
+        <tag>-JVM -Native -JNI</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java双亲委派机制及作用</title>
+    <url>/2020/04/21/java%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%9C%BA%E5%88%B6%E5%8F%8A%E4%BD%9C%E7%94%A8/</url>
+    <content><![CDATA[<h2 id="什么是双亲委派机制"><a href="#什么是双亲委派机制" class="headerlink" title="什么是双亲委派机制"></a>什么是双亲委派机制</h2><p>当某个类加载器需要加载某个<code>.class</code>文件时，它首先把这个任务委托给他的上级类加载器，递归这个操作，如果上级的类加载器没有加载，自己才会去加载这个类。</p>
+<h3 id="类加载器的类别"><a href="#类加载器的类别" class="headerlink" title="类加载器的类别"></a>类加载器的类别</h3><h4 id="BootstrapClassLoader（启动类加载器）"><a href="#BootstrapClassLoader（启动类加载器）" class="headerlink" title="BootstrapClassLoader（启动类加载器）"></a>BootstrapClassLoader（启动类加载器）</h4><p><code>c++</code>编写，加载<code>java</code>核心库 <code>java.*</code>,构造<code>ExtClassLoader</code>和<code>AppClassLoader</code>。由于引导类加载器涉及到虚拟机本地实现细节，开发者无法直接获取到启动类加载器的引用，所以不允许直接通过引用进行操作</p>
+<h4 id="ExtClassLoader-（标准扩展类加载器）"><a href="#ExtClassLoader-（标准扩展类加载器）" class="headerlink" title="ExtClassLoader （标准扩展类加载器）"></a>ExtClassLoader （标准扩展类加载器）</h4><p><code>java</code>编写，加载扩展库，如<code>classpath</code>中的<code>jre</code> ，<code>javax.*</code>或者<br> <code>java.ext.dir</code> 指定位置中的类，开发者可以直接使用标准扩展类加载器。</p>
+<h4 id="AppClassLoader（系统类加载器）"><a href="#AppClassLoader（系统类加载器）" class="headerlink" title="AppClassLoader（系统类加载器）"></a>AppClassLoader（系统类加载器）</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">java&#96;编写，加载程序所在的目录，如&#96;user.dir&#96;所在的位置的&#96;class</span><br></pre></td></tr></table></figure>
+
+<h4 id="CustomClassLoader（用户自定义类加载器）"><a href="#CustomClassLoader（用户自定义类加载器）" class="headerlink" title="CustomClassLoader（用户自定义类加载器）"></a>CustomClassLoader（用户自定义类加载器）</h4><p><code>java</code>编写,用户自定义的类加载器,可加载指定路径的<code>class</code>文件</p>
+<a id="more"></a>
+
+<p><img src="/images/innerimage/qinzidong/image-20200421181723319.png" alt="image-20200421181723319"></p>
+<h4 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">protected</span> Class&lt;?&gt; loadClass(String name, <span class="keyword">boolean</span> resolve)</span><br><span class="line">            <span class="keyword">throws</span> ClassNotFoundException</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (getClassLoadingLock(name)) &#123;</span><br><span class="line">            <span class="comment">// 首先检查这个classsh是否已经加载过了</span></span><br><span class="line">            Class&lt;?&gt; c = findLoadedClass(name);</span><br><span class="line">            <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">long</span> t0 = System.nanoTime();</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="comment">// c==null表示没有加载，如果有父类的加载器则让父类加载器加载</span></span><br><span class="line">                    <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        c = parent.loadClass(name, <span class="keyword">false</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="comment">//如果父类的加载器为空 则说明递归到bootStrapClassloader了</span></span><br><span class="line">                        <span class="comment">//bootStrapClassloader比较特殊无法通过get获取</span></span><br><span class="line">                        c = findBootstrapClassOrNull(name);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;&#125;</span><br><span class="line">                <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="comment">//如果bootstrapClassLoader 仍然没有加载过，则递归回来，尝试自己去加载class</span></span><br><span class="line">                    <span class="keyword">long</span> t1 = System.nanoTime();</span><br><span class="line">                    c = findClass(name);</span><br><span class="line">                    sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);</span><br><span class="line">                    sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);</span><br><span class="line">                    sun.misc.PerfCounter.getFindClasses().increment();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (resolve) &#123;</span><br><span class="line">                resolveClass(c);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> c;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="委派机制的流程图"><a href="#委派机制的流程图" class="headerlink" title="委派机制的流程图"></a>委派机制的流程图</h3><p><img src="/images/innerimage/qinzidong/sqwp.png" alt="双亲委派机制示意图"></p>
+<h2 id="双亲委派机制的作用"><a href="#双亲委派机制的作用" class="headerlink" title="双亲委派机制的作用"></a>双亲委派机制的作用</h2><p>1、防止重复加载同一个<code>.class</code>。通过委托去向上面问一问，加载过了，就不用再加载一遍。保证数据安全。<br> 2、保证核心<code>.class</code>不能被篡改。通过委托方式，不会去篡改核心<code>.clas</code>，即使篡改也不会去加载，即使加载也不会是同一个<code>.class</code>对象了。不同的加载器加载同一个<code>.class</code>也不是同一个<code>Class</code>对象。这样保证了<code>Class</code>执行安全。</p>
+]]></content>
+      <tags>
+        <tag>-JVM -双亲委派</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>如何分析开源项目</title>
     <url>/2020/04/18/%E5%A6%82%E4%BD%95%E5%88%86%E6%9E%90%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/</url>
     <content><![CDATA[<h2 id="观察开源项目，以Eladmin为例"><a href="#观察开源项目，以Eladmin为例" class="headerlink" title="观察开源项目，以Eladmin为例"></a>观察开源项目，以Eladmin为例</h2><p><strong>README找到下载地址</strong></p>

@@ -65,6 +65,414 @@
     
     
     
+    <article id="post-Redis实现分布式锁2" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%812/"
+    >Redis实现分布式锁2</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%812/" class="article-date">
+  <time datetime="2020-04-12T05:19:52.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="如何用Redis实现分布式锁（2）——-集群版"><a href="#如何用Redis实现分布式锁（2）——-集群版" class="headerlink" title="如何用Redis实现分布式锁（2）—— 集群版"></a>如何用Redis实现分布式锁（2）—— 集群版</h1><h2 id="单机版实现的局限性"><a href="#单机版实现的局限性" class="headerlink" title="单机版实现的局限性"></a>单机版实现的局限性</h2><p>在上一篇文章中，我们讨论了Redis分布式锁的实现，简单回顾下。</p>
+<p>获取锁：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set file:9527 $&#123;random_value&#125; NX EX $&#123;timeout&#125;</span><br></pre></td></tr></table></figure>
+
+<p>释放锁，调用lua脚本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if redis.call(&quot;get&quot;,KEYS[1]) &#x3D;&#x3D; ARGV[1] then</span><br><span class="line">    return redis.call(&quot;del&quot;,KEYS[1])</span><br><span class="line">else</span><br><span class="line">    return 0</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p>这套实现机制，在只有一个Redis实例的情况下，确实很完美。</p>
+      
+      <a class="article-more-link" href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%812/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-Redis实现分布式锁1" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%811/"
+    >Redis实现分布式锁1</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%811/" class="article-date">
+  <time datetime="2020-04-12T05:19:25.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="如何用Redis实现分布式锁（1）——-单机版"><a href="#如何用Redis实现分布式锁（1）——-单机版" class="headerlink" title="如何用Redis实现分布式锁（1）—— 单机版"></a>如何用Redis实现分布式锁（1）—— 单机版</h1><h2 id="为什么要使用分布式锁"><a href="#为什么要使用分布式锁" class="headerlink" title="为什么要使用分布式锁"></a>为什么要使用分布式锁</h2><p>这个问题，可以分为两个问题来回答：</p>
+<ol>
+<li>为什么要使用锁？</li>
+<li>分布式锁和本地锁的区别是什么？</li>
+</ol>
+<p><strong>1、为什么要使用锁？</strong><br><em>Martin Kleppmann</em>在他的文章<a href="https://link.zhihu.com/?target=https%3A//martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html">How to do distributed locking</a>里，把使用锁的目的，总结为两个。</p>
+<p>第一个是<strong>正确性</strong>，这个众人皆知。就像Java里的synchronize，就是用来保证多线程并发场景下，程序的正确性。</p>
+<p>JVM里需要保证并发访问的正确性，在分布式系统里面，也同样需要，只不过<strong>并发访问的单位，不再是线程，而是进程。</strong></p>
+      
+      <a class="article-more-link" href="/2020/04/12/Redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%811/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-Spring4" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/Spring4/"
+    >Spring4</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Spring4/" class="article-date">
+  <time datetime="2020-04-12T04:58:31.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="使用Spring-Boot创建NoXml的Web应用"><a href="#使用Spring-Boot创建NoXml的Web应用" class="headerlink" title="使用Spring Boot创建NoXml的Web应用"></a>使用Spring Boot创建NoXml的Web应用</h1><p>本集概要：</p>
+<ul>
+<li>怎样用Spring Boot搭建Web应用？</li>
+<li>Spring Boot和Spring相比，有什么优势？</li>
+<li>Spring Boot的起步依赖和自动配置是什么东西？</li>
+<li>为什么不需要配置Servlet容器也可以启动Web应用？</li>
+</ul>
+<hr>
+<p>经过了国庆七天长假的休息，回到公司的大雄已经打满了鸡血，准备在新的项目 —— tiny facebook，大干一场。第一次被委以重任，大雄心里还是有点小紧张的…</p>
+<p>“从目前社区的反馈来看，Spring Boot相比于Spring而言，可以大大提高开发的效率，我们这个tiny facebook，就用Spring Boot开发吧！”，哆啦对大雄说。<br>“啊，那我岂不是又得重新学习啦，好不容易才学完了Spring的基础…”<br>“学是肯定还要学的，但是其实Spring Boot只是将原先Spring一些比较繁琐的配置简化了而已，进一步提高了Java开发的效率，而你之前学的Spring控制反转，对你理解Spring Boot是有很大作用的。”<br>“Soga！那就是说原理是一样的罗，那好办！哆啦你有没有写过什么总结文档，让我参考一下嘛”<br>“自己到Spring官网上找去，你小子整天就想不劳而获…”，哆啦心里暗自说道，其实我就没写过总结文档。</p>
+      
+      <a class="article-more-link" href="/2020/04/12/Spring4/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -配置 -小说</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-Spring3xml注解JavaConfig" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/Spring3xml%E6%B3%A8%E8%A7%A3JavaConfig/"
+    >Spring3--xml,注解,javaConfig</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Spring3xml%E6%B3%A8%E8%A7%A3JavaConfig/" class="article-date">
+  <time datetime="2020-04-12T04:50:30.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="xml、注解和Java-Config到底选哪个"><a href="#xml、注解和Java-Config到底选哪个" class="headerlink" title="xml、注解和Java Config到底选哪个"></a>xml、注解和Java Config到底选哪个</h1><p>本集概要：</p>
+<ul>
+<li>为什么说xml配置是类型不安全的配置方式？</li>
+<li>如何使用注解进行配置？</li>
+<li>注解配置是万能的吗？</li>
+<li>如何使用Java Config进行配置？</li>
+<li>xml、注解、Java Config，到底该如何选择？</li>
+</ul>
+<hr>
+<p>大雄一脸懵逼，心想，“我不就改了一处地方，怎么就把服务器给整挂了呢”，他仔细地看了一下自己改的代码：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"serverLogger"</span> <span class="attr">class</span>=<span class="string">"com.springnovel.perfectlogger.CosoleLogger"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>“啊！！原来是CosoleLogger拼错了…”</p>
+<h2 id="类型不安全的xml配置"><a href="#类型不安全的xml配置" class="headerlink" title="类型不安全的xml配置"></a>类型不安全的xml配置</h2><p>到了公司，大雄跟哆啦讲了自己干的这件蠢事。</p>
+<p>“小伙子，早上没睡醒吧，哈哈哈”</p>
+<p>“额，你还笑得出来”</p>
+<p>“其实吧，我有办法让你在没睡醒的时候也不会犯这种错误”</p>
+<p>“啥办法，该不会是让我喝咖啡吧…”</p>
+<p>“喝咖啡也没我这个办法管用，你小子之前学Spring的时候，不会只知道用xml这种<strong>类型不安全</strong>的方式来配置吧？”</p>
+<p>“噢，好像还有其他配置方式…注解？还有Java Config…啊！我明白你的意思了，使用注解和Java Config，这样在我拼写错的时候，由于找不到这类，编译都不会通过，我也就知道我拼写错了！”</p>
+<p>“就是罗，而且这只是其他配置方式优于xml配置的一点，你用过之后就会发现他们有更多的优点了”</p>
+<p>“好，我这就试试用注解方式改造一下我们的代码！”</p>
+      
+      <a class="article-more-link" href="/2020/04/12/Spring3xml%E6%B3%A8%E8%A7%A3JavaConfig/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -配置 -小说</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-Spring2注入方式哪家强" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/"
+    >Spring2--注入方式哪家强</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/" class="article-date">
+  <time datetime="2020-04-12T04:46:00.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>本集概要：</p>
+<ul>
+<li>构造器注入有什么缺点？</li>
+<li>如何使用setter注入？</li>
+<li>setter注入为什么会导致空指针异常？</li>
+</ul>
+<p>前情回顾：<a href="https://zhuanlan.zhihu.com/p/29426019" target="_blank" rel="noopener">用小说的形式讲解Spring（1） —— 为什么需要依赖注入</a></p>
+<hr>
+<p>大雄给项目引入了Spring框架，解决了代码过度耦合的问题，当然，这只是Spring强大功力的冰山一角，菜鸟大雄还仍然是菜鸟大雄……</p>
+<h2 id="越来越庞大的构造函数"><a href="#越来越庞大的构造函数" class="headerlink" title="越来越庞大的构造函数"></a>越来越庞大的构造函数</h2><p>一天，晨会过后，哆啦对大雄说，“大雄，我们的订单接口和支付接口都已经非常完善了，现在需要<strong>在支付完成时更新一下订单的状态</strong>，你看看这个需求如何实现。”</p>
+<p>“这个好办，只需要给支付接口添加一个新的依赖IOrderDao，然后把OrderDao注入进去就可以了。”</p>
+<p>“好小子，张嘴一个‘依赖’，闭嘴一个‘注入’，术语说的挺溜的呀”</p>
+<p>“那是，你等着，马上搞定这个需求”，说完，大雄就火急火燎地写代码去了。</p>
+<p>大雄给PaymentAction加了一个成员变量orderDao，然后新建了一个构造函数，把orderDao注入到PaymentAction里面去，接着写了一个updateOrderAfterPayment方法，调用orderDao的方法更新订单（<strong>本文使用的代码，可以到 <a href="https://link.zhihu.com/?target=https%3A//github.com/hzy38324/SpringNovel">SpringNovel</a> 下载</strong>）：</p>
+      
+      <a class="article-more-link" href="/2020/04/12/Spring2%E6%B3%A8%E5%85%A5%E6%96%B9%E5%BC%8F%E5%93%AA%E5%AE%B6%E5%BC%BA/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE-%E5%B0%8F%E8%AF%B4/" rel="tag">-Spring -配置 -小说</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
     <article id="post-Spring1为什么需要依赖注入" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -659,432 +1067,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD/" rel="tag">-文件上传 -文件下载</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-JDBC连接报错500" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/07/JDBC%E8%BF%9E%E6%8E%A5%E6%8A%A5%E9%94%99500/"
-    >JDBC连接报错500</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/07/JDBC%E8%BF%9E%E6%8E%A5%E6%8A%A5%E9%94%99500/" class="article-date">
-  <time datetime="2020-04-07T14:13:17.000Z" itemprop="datePublished">2020-04-07</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>##报错截图：</p>
-<p><img src="../images/innerimage/qinzidong/image-20200407221435165.png" alt="image-20200407221435165"></p>
-<p>###详细错误提示：</p>
-<p><img src="../images/innerimage/qinzidong/image-20200407221454228.png" alt="image-20200407221454228"></p>
-      
-      <a class="article-more-link" href="/2020/04/07/JDBC%E8%BF%9E%E6%8E%A5%E6%8A%A5%E9%94%99500/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%A5%E9%94%99-500/" rel="tag">-报错 -500</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringMVC08：拦截器" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/07/SpringMVC08%EF%BC%9A%E6%8B%A6%E6%88%AA%E5%99%A8/"
-    >SpringMVC08：拦截器</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/07/SpringMVC08%EF%BC%9A%E6%8B%A6%E6%88%AA%E5%99%A8/" class="article-date">
-  <time datetime="2020-04-07T00:23:06.000Z" itemprop="datePublished">2020-04-07</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h1><blockquote>
-<p>  概述</p>
-</blockquote>
-<p>SpringMVC的处理器拦截器类似于Servlet开发中的过滤器Filter,用于对处理器进行预处理和后处理。开发者可以自己定义一些拦截器来实现特定的功能。</p>
-<p><strong>过滤器与拦截器的区别：</strong>拦截器是AOP思想的具体应用。</p>
-<p><strong>过滤器</strong></p>
-<ul>
-<li>servlet规范中的一部分，任何java web工程都可以使用</li>
-<li>在url-pattern中配置了/*之后，可以对所有要访问的资源进行拦截</li>
-</ul>
-<p><strong>拦截器</strong> </p>
-<ul>
-<li>拦截器是SpringMVC框架自己的，只有使用了SpringMVC框架的工程才能使用</li>
-<li>拦截器只会拦截访问的控制器方法， 如果访问的是jsp/html/css/image/js是不会进行拦截的</li>
-</ul>
-      
-      <a class="article-more-link" href="/2020/04/07/SpringMVC08%EF%BC%9A%E6%8B%A6%E6%88%AA%E5%99%A8/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8B%A6%E6%88%AA%E5%99%A8-Interceptor/" rel="tag">-拦截器 -Interceptor</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringMVC07：Ajax研究" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/07/SpringMVC07%EF%BC%9AAjax%E7%A0%94%E7%A9%B6/"
-    >SpringMVC07：Ajax研究</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/07/SpringMVC07%EF%BC%9AAjax%E7%A0%94%E7%A9%B6/" class="article-date">
-  <time datetime="2020-04-07T00:22:46.000Z" itemprop="datePublished">2020-04-07</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="Ajax"><a href="#Ajax" class="headerlink" title="Ajax"></a>Ajax</h1><blockquote>
-<p>  简介</p>
-</blockquote>
-<ul>
-<li><p><strong>AJAX = Asynchronous JavaScript and XML（异步的 JavaScript 和 XML）。</strong></p>
-</li>
-<li><p>AJAX 是一种在无需重新加载整个网页的情况下，能够更新部分网页的技术。</p>
-</li>
-<li><p><strong>Ajax 不是一种新的编程语言，而是一种用于创建更好更快以及交互性更强的Web应用程序的技术。</strong></p>
-</li>
-<li><p>在 2005 年，Google 通过其 Google Suggest 使 AJAX 变得流行起来。Google Suggest能够自动帮你完成搜索单词。</p>
-</li>
-<li><p>Google Suggest 使用 AJAX 创造出动态性极强的 web 界面：当您在谷歌的搜索框输入关键字时，JavaScript 会把这些字符发送到服务器，然后服务器会返回一个搜索建议的列表。</p>
-</li>
-<li><p>就和国内百度的搜索框一样!</p>
-</li>
-<li><p>传统的网页(即不用ajax技术的网页)，想要更新内容或者提交一个表单，都需要重新加载整个网页。</p>
-</li>
-<li><p>使用ajax技术的网页，通过在后台服务器进行少量的数据交换，就可以实现异步局部更新。</p>
-</li>
-<li><p>使用Ajax，用户可以创建接近本地桌面应用的直接、高可用、更丰富、更动态的Web用户界面。</p>
-</li>
-</ul>
-      
-      <a class="article-more-link" href="/2020/04/07/SpringMVC07%EF%BC%9AAjax%E7%A0%94%E7%A9%B6/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Ajax-Asynchronous-Asynchronous-JavaScript-and-XML-%E5%BC%82%E6%AD%A5/" rel="tag">-Ajax -Asynchronous -Asynchronous JavaScript and XML -异步</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringMVC06：Json交互处理" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/07/SpringMVC06%EF%BC%9AJson%E4%BA%A4%E4%BA%92%E5%A4%84%E7%90%86/"
-    >SpringMVC06：Json交互处理</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/07/SpringMVC06%EF%BC%9AJson%E4%BA%A4%E4%BA%92%E5%A4%84%E7%90%86/" class="article-date">
-  <time datetime="2020-04-07T00:22:26.000Z" itemprop="datePublished">2020-04-07</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="Json"><a href="#Json" class="headerlink" title="Json"></a>Json</h1><blockquote>
-<p>  什么是JSON？</p>
-</blockquote>
-<ul>
-<li>JSON(JavaScript Object Notation, JS 对象标记) 是一种轻量级的数据交换格式，目前使用特别广泛。</li>
-<li>采用完全独立于编程语言的<strong>文本格式</strong>来存储和表示数据。</li>
-<li>简洁和清晰的层次结构使得 JSON 成为理想的数据交换语言。</li>
-<li>易于人阅读和编写，同时也易于机器解析和生成，并有效地提升网络传输效率。</li>
-</ul>
-<p>在 JavaScript 语言中，一切都是对象。因此，任何JavaScript 支持的类型都可以通过 JSON 来表示，例如字符串、数字、对象、数组等。看看他的要求和语法格式：</p>
-<ul>
-<li>对象表示为键值对，数据由逗号分隔</li>
-<li>花括号保存对象</li>
-<li>方括号保存数组</li>
-</ul>
-      
-      <a class="article-more-link" href="/2020/04/07/SpringMVC06%EF%BC%9AJson%E4%BA%A4%E4%BA%92%E5%A4%84%E7%90%86/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/json-jackson-%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/" rel="tag">-json -jackson -数据处理</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringMVC05：整合SSM框架" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/07/SpringMVC05%EF%BC%9A%E6%95%B4%E5%90%88SSM%E6%A1%86%E6%9E%B6/"
-    >SpringMVC05：整合SSM框架</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/07/SpringMVC05%EF%BC%9A%E6%95%B4%E5%90%88SSM%E6%A1%86%E6%9E%B6/" class="article-date">
-  <time datetime="2020-04-07T00:22:08.000Z" itemprop="datePublished">2020-04-07</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>在上一节中，我们了解了SpringMVC参数接收处理和结果跳转处理！</p>
-<p>现在我们来看看，如何集成SSM框架！完整项目的整合！</p>
-<h2 id="整合SSM"><a href="#整合SSM" class="headerlink" title="整合SSM"></a>整合SSM</h2><blockquote>
-<p>  环境要求</p>
-</blockquote>
-<p>环境：</p>
-<ul>
-<li><p>IDEA</p>
-</li>
-<li><p>MySQL 5.7.19</p>
-</li>
-<li><p>Tomcat 9</p>
-</li>
-<li><p>Maven 3.6</p>
-<p>要求：</p>
-</li>
-<li><p>需要熟练掌握MySQL数据库，Spring，JavaWeb及MyBatis知识，简单的前端知识；</p>
-</li>
-</ul>
-      
-      <a class="article-more-link" href="/2020/04/07/SpringMVC05%EF%BC%9A%E6%95%B4%E5%90%88SSM%E6%A1%86%E6%9E%B6/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SpringMVC-Spring-Mybatis-%E6%95%B4%E5%90%88-%E6%A1%86%E6%9E%B6-SSM/" rel="tag">-SpringMVC -Spring -Mybatis -整合 -框架 -SSM</a></li></ul>
 
 
     </footer>

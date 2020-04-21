@@ -65,6 +65,380 @@
     
     
     
+    <article id="post-SpringBoot07：整合JDBC" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/03/SpringBoot07%EF%BC%9A%E6%95%B4%E5%90%88JDBC/"
+    >SpringBoot07：整合JDBC</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/03/SpringBoot07%EF%BC%9A%E6%95%B4%E5%90%88JDBC/" class="article-date">
+  <time datetime="2020-04-03T10:59:53.000Z" itemprop="datePublished">2020-04-03</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="SpringData简介"><a href="#SpringData简介" class="headerlink" title="SpringData简介"></a>SpringData简介</h1><p>对于数据访问层，无论是 SQL(关系型数据库) 还是 NOSQL(非关系型数据库)，Spring Boot 底层都是采用 Spring Data 的方式进行统一处理。</p>
+<p>Spring Boot 底层都是采用 Spring Data 的方式进行统一处理各种数据库，Spring Data 也是 Spring 中与 Spring Boot、Spring Cloud 等齐名的知名项目。</p>
+<p>Sping Data 官网：<a href="https://spring.io/projects/spring-data" target="_blank" rel="noopener">https://spring.io/projects/spring-data</a></p>
+<p>数据库相关的启动器 ：可以参考官方文档：</p>
+<p><a href="https://docs.spring.io/spring-boot/docs/2.2.5.RELEASE/reference/htmlsingle/#using-boot-starter" target="_blank" rel="noopener">https://docs.spring.io/spring-boot/docs/2.2.5.RELEASE/reference/htmlsingle/#using-boot-starter</a></p>
+      
+      <a class="article-more-link" href="/2020/04/03/SpringBoot07%EF%BC%9A%E6%95%B4%E5%90%88JDBC/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-jdbc-SpringData/" rel="tag">-Spring -jdbc -SpringData</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-SpringBoot06：自定义starter" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/03/SpringBoot06%EF%BC%9A%E8%87%AA%E5%AE%9A%E4%B9%89starter/"
+    >SpringBoot06：自定义starter</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/03/SpringBoot06%EF%BC%9A%E8%87%AA%E5%AE%9A%E4%B9%89starter/" class="article-date">
+  <time datetime="2020-04-03T02:14:45.000Z" itemprop="datePublished">2020-04-03</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="自定义Starter"><a href="#自定义Starter" class="headerlink" title="自定义Starter"></a>自定义Starter</h1><p>我们分析完毕了源码以及自动装配的过程，我们可以尝试自定义一个启动器来玩玩！</p>
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>启动器模块是一个 空 jar 文件，仅提供辅助性依赖管理，这些依赖可能用于自动装配或者其他类库；</p>
+<p><strong>命名归约：</strong></p>
+<p>官方命名：</p>
+<ul>
+<li>前缀：spring-boot-starter-xxx</li>
+<li>比如：spring-boot-starter-web</li>
+</ul>
+<p>自定义命名：</p>
+<ul>
+<li>xxx-spring-boot-starter</li>
+<li>比如：mybatis-spring-boot-starter</li>
+</ul>
+      
+      <a class="article-more-link" href="/2020/04/03/SpringBoot06%EF%BC%9A%E8%87%AA%E5%AE%9A%E4%B9%89starter/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-starter/" rel="tag">-Spring -starter</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-SpringBoot05：自动配置原理" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/03/SpringBoot05%EF%BC%9A%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86/"
+    >SpringBoot05：自动配置原理</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/03/SpringBoot05%EF%BC%9A%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86/" class="article-date">
+  <time datetime="2020-04-03T00:11:05.000Z" itemprop="datePublished">2020-04-03</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="自动配置原理"><a href="#自动配置原理" class="headerlink" title="自动配置原理"></a>自动配置原理</h1><p>配置文件到底能写什么？怎么写？</p>
+<p>SpringBoot官方文档中有大量的配置，我们无法全部记住</p>
+<p><img src="/images/innerimage/qin/25.png" alt=""></p>
+      
+      <a class="article-more-link" href="/2020/04/03/SpringBoot05%EF%BC%9A%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E5%8E%9F%E7%90%86/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Config/" rel="tag">-Spring -Config</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-SpringBoot04：JSR303数据校验及多环境切换" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/02/SpringBoot04%EF%BC%9AJSR303%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C%E5%8F%8A%E5%A4%9A%E7%8E%AF%E5%A2%83%E5%88%87%E6%8D%A2/"
+    >SpringBoot04：JSR303数据校验及多环境切换</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/02/SpringBoot04%EF%BC%9AJSR303%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C%E5%8F%8A%E5%A4%9A%E7%8E%AF%E5%A2%83%E5%88%87%E6%8D%A2/" class="article-date">
+  <time datetime="2020-04-02T01:00:42.000Z" itemprop="datePublished">2020-04-02</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="JSR303数据校验"><a href="#JSR303数据校验" class="headerlink" title="JSR303数据校验"></a>JSR303数据校验</h1><h2 id="先看看如何使用"><a href="#先看看如何使用" class="headerlink" title="先看看如何使用"></a>先看看如何使用</h2><p>Springboot中可以用@validated来校验数据，如果数据异常则会统一抛出异常，方便异常中心统一处理。我们这里来写个注解让我们的name只能支持Email格式；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span> <span class="comment">//注册bean</span></span><br><span class="line"><span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"person"</span>)</span><br><span class="line"><span class="meta">@Validated</span>  <span class="comment">//数据校验</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Email</span>(message=<span class="string">"邮箱格式错误"</span>) <span class="comment">//name必须是邮箱格式</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果 ：default message [不是一个合法的电子邮件地址];</p>
+      
+      <a class="article-more-link" href="/2020/04/02/SpringBoot04%EF%BC%9AJSR303%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C%E5%8F%8A%E5%A4%9A%E7%8E%AF%E5%A2%83%E5%88%87%E6%8D%A2/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%85%8D%E7%BD%AE/" rel="tag">-Spring -配置</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-Spring经典报错-Autowired报错" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/01/Spring%E7%BB%8F%E5%85%B8%E6%8A%A5%E9%94%99-Autowired%E6%8A%A5%E9%94%99/"
+    >Spring经典报错@Autowired报错</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/01/Spring%E7%BB%8F%E5%85%B8%E6%8A%A5%E9%94%99-Autowired%E6%8A%A5%E9%94%99/" class="article-date">
+  <time datetime="2020-04-01T13:08:36.000Z" itemprop="datePublished">2020-04-01</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="【Spring】-Autowired报错Could-not-autowire-No-beans-of-xxx"><a href="#【Spring】-Autowired报错Could-not-autowire-No-beans-of-xxx" class="headerlink" title="【Spring】@Autowired报错Could not autowire. No beans of xxx"></a>【Spring】@Autowired报错Could not autowire. No beans of xxx</h1><p>在使用springboot main方法启动项目时遇到[@Autowdired]注解无法注入</p>
+<h4 id="SpringBoot项目的Bean装配默认规则是根据Application类所在的包位置从上往下扫描！“Application类”是指SpringBoot项目入口类。这个类的位置很关键：如果Application类所在的包为：com-boot-app，则只会扫描com-boot-app包及其所有子包，如果service或dao所在包不在com-boot-app及其子包下，则不会被扫描！即-把Application类放到dao、service所在包的上级，com-boot-Application知道这一点非常关键"><a href="#SpringBoot项目的Bean装配默认规则是根据Application类所在的包位置从上往下扫描！“Application类”是指SpringBoot项目入口类。这个类的位置很关键：如果Application类所在的包为：com-boot-app，则只会扫描com-boot-app包及其所有子包，如果service或dao所在包不在com-boot-app及其子包下，则不会被扫描！即-把Application类放到dao、service所在包的上级，com-boot-Application知道这一点非常关键" class="headerlink" title="SpringBoot项目的Bean装配默认规则是根据Application类所在的包位置从上往下扫描！“Application类”是指SpringBoot项目入口类。这个类的位置很关键：如果Application类所在的包为：com.boot.app，则只会扫描com.boot.app包及其所有子包，如果service或dao所在包不在com.boot.app及其子包下，则不会被扫描！即, 把Application类放到dao、service所在包的上级，com.boot.Application知道这一点非常关键"></a>SpringBoot项目的Bean装配默认规则是根据Application类所在的包位置从上往下扫描！“Application类”是指SpringBoot项目入口类。这个类的位置很关键：如果Application类所在的包为：com.boot.app，则只会扫描com.boot.app包及其所有子包，如果service或dao所在包不在com.boot.app及其子包下，则不会被扫描！即, 把Application类放到dao、service所在包的上级，com.boot.Application知道这一点非常关键</h4>
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/error/" rel="tag">error</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
     <article id="post-SpringBoot03：yaml配置注入" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -419,378 +793,6 @@
     <footer class="article-footer">
       
       
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-如何给老婆解释什么是Restful" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/03/28/%E5%A6%82%E4%BD%95%E7%BB%99%E8%80%81%E5%A9%86%E8%A7%A3%E9%87%8A%E4%BB%80%E4%B9%88%E6%98%AFRestful/"
-    >如何给老婆解释什么是Restful</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/03/28/%E5%A6%82%E4%BD%95%E7%BB%99%E8%80%81%E5%A9%86%E8%A7%A3%E9%87%8A%E4%BB%80%E4%B9%88%E6%98%AFRestful/" class="article-date">
-  <time datetime="2020-03-28T12:48:36.000Z" itemprop="datePublished">2020-03-28</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>老婆经常喜欢翻看我订阅的技术杂志，她总能从她的视角提出很多有趣的问题。</p>
-<p>一个悠闲的周日下午，她午觉醒来，又习惯性的抓起这个月的杂志，饶有兴趣地看了起来。</p>
-<p>果不其然，看着看着，她又对我发难了，“Restful是什么呀，老公？是restaurant的形容词吗，突然就觉得好饿了啊……”</p>
-      
-      <a class="article-more-link" href="/2020/03/28/%E5%A6%82%E4%BD%95%E7%BB%99%E8%80%81%E5%A9%86%E8%A7%A3%E9%87%8A%E4%BB%80%E4%B9%88%E6%98%AFRestful/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A6%82%E4%BD%95%E7%BB%99%E8%80%81%E5%A9%86%E8%A7%A3%E9%87%8A-Restful/" rel="tag">-如何给老婆解释 -Restful</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-怎样优雅的自定义Typora" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/03/28/%E6%80%8E%E6%A0%B7%E4%BC%98%E9%9B%85%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89Typora/"
-    >怎样优雅的自定义Typora</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/03/28/%E6%80%8E%E6%A0%B7%E4%BC%98%E9%9B%85%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89Typora/" class="article-date">
-  <time datetime="2020-03-28T11:30:16.000Z" itemprop="datePublished">2020-03-28</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="更改所有文本字体"><a href="#更改所有文本字体" class="headerlink" title="更改所有文本字体"></a>更改所有文本字体</h1><ol>
-<li><p>找到你的主题路径，例如我的：C:\Users\17159\AppData\Roaming\Typora\themes</p>
-</li>
-<li><p>找到你想重置的主题css文件，例如我的：solarized.css</p>
-</li>
-<li><p>ctrl+f 替换所有的 <strong>font-family</strong> 为 <strong>font-family: ‘新字体’,</strong> 例如我的<strong>‘Open Sans’</strong>,所以我把全局的 <strong>font-family</strong> 替换为 <strong>font-family: ‘Open Sans’,</strong></p>
-</li>
-<li><p>同理可证其他的主体其他的样式</p>
-</li>
-</ol>
-
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-关于Hadoop" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/03/28/%E5%85%B3%E4%BA%8EHadoop/"
-    >关于Hadoop</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/03/28/%E5%85%B3%E4%BA%8EHadoop/" class="article-date">
-  <time datetime="2020-03-28T02:40:33.000Z" itemprop="datePublished">2020-03-28</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>Hadoop是一个开源框架，允许使用简单的编程模型在跨计算机集群的分布式环境中存储和处理大数据。它的设计是从单个服务器扩展到数千个机器，每个都提供本地计算和存储。</p>
-<h2>Hadoop - 简介</h2>
-Hadoop可运行于一般的商用服务器上，具有高容错、高可靠性、高扩展性等特点
-
-<p>特别适合写一次，读多次的场景</p>
-<p>适合<br>-大规模数据<br>-流式数据（写一次，读多次）<br>-商用硬件（一般硬件）<br>不适合<br>*低延时的数据访问<br>*大量的小文件<br>*频繁修改文件（基本就是写1次）</p>
-<p>Hadoop架构<br><img src="/images/innerimage/branch/h2.png" alt="hadoop"></p>
-<p>HDFS: 分布式文件存储<br>YARN: 分布式资源管理<br>MapReduce: 分布式计算<br>Others: 利用YARN的资源管理功能实现其他的数据处理方式<br>内部各个节点基本都是采用Master-Woker架构</p>
-      
-      <a class="article-more-link" href="/2020/03/28/%E5%85%B3%E4%BA%8EHadoop/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-Spring：AOP-面向切面编程" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/03/20/Spring%EF%BC%9AAOP-%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B/"
-    >Spring：AOP--面向切面编程</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/03/20/Spring%EF%BC%9AAOP-%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B/" class="article-date">
-  <time datetime="2020-03-20T12:18:47.000Z" itemprop="datePublished">2020-03-20</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h3 id="a">什么是AOP</h3>
-AOP（Aspect Oriented Programming）意为：面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。AOP是OOP的延续，是软件开发中的一个热点，也是Spring框架中的一个重要内容，是函数式编程的一种衍生范型。利用AOP可以对业务逻辑的各个部分进行隔离，从而使得业务逻辑各部分之间的耦合度降低，提高程序的可重用性，同时提高了开发的效率。
-      
-      <a class="article-more-link" href="/2020/03/20/Spring%EF%BC%9AAOP-%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-Spring：使用注解开发" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/03/20/Spring%EF%BC%9A%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3%E5%BC%80%E5%8F%91/"
-    >Spring：使用注解开发</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/03/20/Spring%EF%BC%9A%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3%E5%BC%80%E5%8F%91/" class="article-date">
-  <time datetime="2020-03-20T12:05:40.000Z" itemprop="datePublished">2020-03-20</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h3 id="a">说明</h3>
-在spring4之后，想要使用注解形式，必须得要引入aop的包
-
-<p><img src="/images/innerimage/SpringImage/320012.png" alt="cg"></p>
-<p>在配置文件当中，还得要引入一个context约束</p>
-      
-      <a class="article-more-link" href="/2020/03/20/Spring%EF%BC%9A%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3%E5%BC%80%E5%8F%91/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
-
 
     </footer>
 

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Native关键词、JNI详解 |  犬来八荒
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-Native关键词、JNI详解" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Native关键词、JNI详解
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/21/Native%E5%85%B3%E9%94%AE%E8%AF%8D%E3%80%81JNI%E8%AF%A6%E8%A7%A3/" class="article-date">
+  <time datetime="2020-04-21T12:12:13.000Z" itemprop="datePublished">2020-04-21</time>
+</a>
+      
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.7k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">6分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h3 id="1-native关键词的引入"><a href="#1-native关键词的引入" class="headerlink" title="1.native关键词的引入"></a>1.native关键词的引入</h3><p>　　再完美的编程语言也有自己的不足之处，当然Java也不例外，Java的不足之处除了体现在运行速度（这点往往被一些其他编程语言使用者所诟病）上要比传统的C++慢许多之外，Java无法直接访问到操作系统底层（如系统硬件等)，为此Java使用native(原生的)关键词来扩展Java程序的功能。native关键字说明其修饰的方法是一个原生态方法，方法对应的实现不是在当前文件，而是在用其他语言（如C和C++）实现的文件中。Java语言本身不能对操作系统底层进行访问和操作，但是可以通过JNI接口调用其他语言来实现对底层的访问。JNI是Java Native Interface的缩写，它提供了若干的API实现了Java和其他语言的通信（主要C&amp;C++）。从Java1.1开始，JNI标准成为java平台的一部分，它允许Java代码和其他语言写的代码进行交互。JNI一开始是为了本地已编译语言，尤其是C和C++而设计的，但是它并不妨碍你使用其他编程语言，只要调用约定受支持就可以了。使用java与本地已编译的代码交互，通常会丧失平台可移植性。但是，有些情况下这样做是可以接受的，甚至是必须的。例如，使用一些旧的库，与硬件、操作系统进行交互，或者为了提高程序的性能。JNI标准至少要保证本地代码能工作在任何Java 虚拟环境。简而言之，JNI功能即为：Java和本地代码间的双向交互。JNI允许Java代码使用以其他语言编写的代码和代码库。Invocation API（JNI的一部分）可以用来将Java虚拟机（JVM）嵌入到本机应用程序中，从而允许程序员从本机代码内部调用Java代码。</p>
+<a id="more"></a>
+
+<h3 id="2-JNI-Java-Native-Interface-的使用场合"><a href="#2-JNI-Java-Native-Interface-的使用场合" class="headerlink" title="2.JNI(Java Native Interface)的使用场合"></a>2.JNI(Java Native Interface)的使用场合</h3><p>1、JAVA程序和本地程序使用TCP/IP或者IPC进行交互。</p>
+<p>2、当用JAVA程序连接本地数据库时，使用JDBC提供的API。</p>
+<p>3、JAVA程序可以使用分布式对象技术，如JAVA IDL API。</p>
+<p>这些方案的共同点是，JAVA和C处于不同的线程，或者不同的机器上。这样，当本地程序崩溃时，不会影响到JAVA程序。</p>
+<p>下面这些场合中，同一进程内JNI的使用无法避免：</p>
+<p>1、程序当中用到了JAVA API不提供的特殊系统环境才会有的特征。而跨进程操作又不现实。</p>
+<p>2、可能想访问一些己有的本地库，但又不想付出跨进程调用时的代价，如效率，内存，数据传递方面。</p>
+<p>3、JAVA程序当中的一部分代码对效率要求非常高，如算法计算，图形渲染等。</p>
+<p>总之，只有当必须在同一进程中调用本地代码时，再使用JNI。</p>
+<h3 id="3-JNI的书写步骤"><a href="#3-JNI的书写步骤" class="headerlink" title="3.JNI的书写步骤"></a>3.JNI的书写步骤</h3><p>第一步：编写带有native声明的方法的Java类</p>
+<p>第二步：使用javac命令编译编写的Java类</p>
+<p>第三步：使用java -jni 来生成后缀名为.h的头文件</p>
+<p>第四步：使用其他语言（C、C++）实现本地方法</p>
+<p>第五步：将本地方法编写的文件生成动态链接库</p>
+<p>第六步：运行程序</p>
+<h3 id="4-一个JNI的简单应用例子（以HelloJNI为例子）"><a href="#4-一个JNI的简单应用例子（以HelloJNI为例子）" class="headerlink" title="4.一个JNI的简单应用例子（以HelloJNI为例子）"></a>4.一个JNI的简单应用例子（以HelloJNI为例子）</h3><p>第一步：编写带有native声明的方法的Java类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloJNI</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">displayHelloJNI</span><span class="params">()</span></span>;<span class="comment">//所有native关键词修饰的都是对本地的声明</span></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.loadLibrary(<span class="string">"hello"</span>);<span class="comment">//载入本地库</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> JNI().displayHelloJNI();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>声明native方法：如果想将一个方法做为一个本地方法的话，那么就必须声明该方法为native，并且不能实现。 Load动态库：System.loadLibrary(“hello”);加载动态库（可以这样理解：方法 displayHelloJNI()没有实现，但是在后续步骤中就直接使用了，所以必须在使用之前对它进行初始化），这里一般是以static块进行加载的。同时需要注意的是System.loadLibrary()的参数“hello”是动态库的名字。</p>
+<p>第二步：使用javac命令编译编写的Java类</p>
+<p>javac HelloJNI.java</p>
+<p>注意：<a href="https://jingyan.baidu.com/article/6dad5075d1dc40a123e36ea3.html" target="_blank" rel="noopener">JDK环境变量的配置</a></p>
+<p>第三步：使用java -jni 来生成后缀名为.h的头文件（ 生成扩展名为h的头文件javah HelloJNI）</p>
+<p>头文件javah HelloJNI内容如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> <span class="comment">/*DO NOT EDI TTHIS FILE - it is mach inegenerated*/</span></span><br><span class="line"> 2 #include&lt;jni.h&gt;</span><br><span class="line"> <span class="number">3</span> <span class="comment">/*Header for class HelloJNI*/</span></span><br><span class="line"> <span class="number">4</span>  </span><br><span class="line"> 5 #ifndef_Included_HelloJNI</span><br><span class="line"> 6 #define_Included_HelloJNI</span><br><span class="line"> 7 #ifdef__cplusplus</span><br><span class="line"> <span class="number">8</span> extern<span class="string">"C"</span>&#123;</span><br><span class="line"> 9 #endif</span><br><span class="line"><span class="number">10</span> <span class="comment">/*</span></span><br><span class="line"><span class="comment">11 *Class:HelloJNI</span></span><br><span class="line"><span class="comment">12 *Method:displayHelloJNI</span></span><br><span class="line"><span class="comment">13 *Signature:()V</span></span><br><span class="line"><span class="comment">14 */</span></span><br><span class="line"><span class="number">15</span> JNIEXPORTvoidJNICALL</span><br><span class="line"><span class="number">16</span> Java_HelloJNI_displayHelloJNI(JNIEnv*,jobject);</span><br><span class="line"><span class="number">17</span>  </span><br><span class="line">18 #ifdef__cplusplus</span><br><span class="line"><span class="number">19</span> &#125;</span><br><span class="line">20 #endif</span><br><span class="line">21 #endif</span><br></pre></td></tr></table></figure>
+
+<p>注意：这个h文件相当于在java里面的接口，这里声明了一个Java_HelloJNI_displayHelloJNI (JNIEnv *, jobject)方法，然后在本地方法里面实现这个方法，也就是说在编写C/C++程序的时候所使用的方法名必须和这里的一致</p>
+<p>第四步：使用其他语言（C、C++）实现本地方法（编写本地方法实现和由javah命令生成的头文件里面声明的方法名相同的方法）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 #include"jni.h"</span><br><span class="line"> 2 #include"HelloJNI.h"</span><br><span class="line"> <span class="number">3</span>  </span><br><span class="line"> <span class="number">4</span> <span class="comment">//#includeotherheaders</span></span><br><span class="line"> <span class="number">5</span>  </span><br><span class="line"> <span class="number">6</span> JNIEXPORT <span class="keyword">void</span> JNICALL</span><br><span class="line"> <span class="number">7</span> Java_HelloJNI_displayHelloJNI(JNIEnv*env,jobject obj)</span><br><span class="line"> <span class="number">8</span> &#123;</span><br><span class="line"> <span class="number">9</span> printf(<span class="string">"HelloJNI!\n"</span>);</span><br><span class="line"><span class="number">10</span> <span class="keyword">return</span>;</span><br><span class="line"><span class="number">11</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意：代码第一行需要将jni.h（该文件可以在%JAVA_HOME%/include文件夹下面找到）文件引入，因为在程序中的JNIEnv、 jobject等类型都是在该头文件中定义的；另外在第2行需要将HelloJNI.h头文件引入，然后保存为 HelloJNIImpl.c。</p>
+<p>第五步：将本地方法编写的文件生成动态链接库</p>
+<p>这里以在Windows中为例，需要生成dll文件。在保存HelloWorldJNI.c文件夹下面，使用VC的编辑器cl为：cl -I%java_home%\include -I%java_home%\include\win32 -LD HelloJNIImp.c -Fehello.dll 注意：生成的dll文件名在选项-Fe后面配置，这里是hello，因为在HelloJNI.java文件中我们loadLibary的时候使用的名字是hello。当然这里修改之后那里也需要修改。另外需要将-I%java_home%\include -I%java_home%\include\win32参数加上，因为在第四步里面编写本地方法的时候引入了jni.h文件。</p>
+<p>如果配置了MinGW,也可以这样来编译：gcc -Wall -D_JNI_IMPLEMENTATION_ -Wl,–kill-at -Id:/java/include –Id:/java/include/win32 -shared -o (输出的dll文件名，如sum.dll) (输入的c/c++源文件,如abc.c)。</p>
+<p>第六步：运行程序</p>
+<p>运行javaHelloJNI;如果用eclipse/myeclipse，需将dll或so文件放在项目下，而不是src及其子目录下;如果用命令行编译，把dll文件放在该包的同目录下。</p>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JVM-Native-JNI/" rel="tag">-JVM -Native -JNI</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/2020/04/21/JVM%E4%B9%8BPC%E5%AF%84%E5%AD%98%E5%99%A8/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            JVM之PC寄存器
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/04/21/java%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%9C%BA%E5%88%B6%E5%8F%8A%E4%BD%9C%E7%94%A8/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">java双亲委派机制及作用</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: '1qio8bDzfD0zIHgwuD84E3ff-gzGzoHsz',
+        app_key: '4qfVrr8y0w3o33NPw2hQONdg',
+        path: window.location.pathname,
+        notify: 'false',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2020
+        花重锦官城
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <kbd>访问量:<span id="busuanzi_value_page_pv"></span></kbd>
+  <kbd>访客数:<span id="busuanzi_value_site_uv"></span></kbd>
+</span>
+        
+      </li>
+      
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+    <aside class="sidebar">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="犬来八荒"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">目录</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://chengguolaogongya.lofter.com/" target="_blank" rel="noopener">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/2019/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+    strings: ['浮生有梦三千场 穷尽千里诗酒荒','徒把理想倾倒','不如早还乡'],
+    startDelay: 0,
+    typeSpeed: 100,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+  } catch (err) {
+  }
+  
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=1321020935&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

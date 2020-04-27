@@ -1,6 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Spring面试详细总结</title>
+    <url>/2020/04/27/Spring%E9%9D%A2%E8%AF%95%E8%AF%A6%E7%BB%86%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<h2 id="1、什么是Spring？"><a href="#1、什么是Spring？" class="headerlink" title="1、什么是Spring？"></a>1、什么是Spring？</h2><p>Spring是一个开源的Java EE开发框架。Spring框架的核心功能可以应用在任何Java应用程序中，但对Java EE平台上的Web应用程序有更好的扩展性。Spring框架的目标是使得Java EE应用程序的开发更加简捷，通过使用POJO为基础的编程模型促进良好的编程风格。</p>
+<h2 id="2、Spring有哪些优点？"><a href="#2、Spring有哪些优点？" class="headerlink" title="2、Spring有哪些优点？"></a>2、Spring有哪些优点？</h2><p>轻量级：Spring在大小和透明性方面绝对属于轻量级的，基础版本的Spring框架大约只有2MB。</p>
+<p>控制反转(IOC)：Spring使用控制反转技术实现了松耦合。依赖被注入到对象，而不是创建或寻找依赖对象。</p>
+<p>面向切面编程(AOP)： Spring支持面向切面编程，同时把应用的业务逻辑与系统的服务分离开来。</p>
+<p>容器：Spring包含并管理应用程序对象的配置及生命周期。</p>
+<p>MVC框架：Spring的web框架是一个设计优良的web MVC框架，很好的取代了一些web框架。</p>
+<p>事务管理：Spring对下至本地业务上至全局业务(JAT)提供了统一的事务管理接口。</p>
+<p>异常处理：Spring提供一个方便的API将特定技术的异常(由JDBC, Hibernate, 或JDO抛出)转化为一致的、Unchecked异常。</p>
+<h2 id="3、Spring-事务实现方式"><a href="#3、Spring-事务实现方式" class="headerlink" title="3、Spring 事务实现方式"></a>3、Spring 事务实现方式</h2><ul>
+<li>编程式事务管理：这意味着你可以通过编程的方式管理事务，这种方式带来了很大的灵活性，但很难维护。</li>
+<li>声明式事务管理：这种方式意味着你可以将事务管理和业务代码分离。你只需要通过注解或者XML配置管理事务。</li>
+</ul>
+<a id="more"></a>
+
+<h2 id="4、Spring框架的事务管理有哪些"><a href="#4、Spring框架的事务管理有哪些" class="headerlink" title="4、Spring框架的事务管理有哪些"></a>4、Spring框架的事务管理有哪些</h2><p>优点</p>
+<ul>
+<li>它为不同的事务API(如JTA, JDBC, Hibernate, JPA, 和JDO)提供了统一的编程模型。</li>
+<li>它为编程式事务管理提供了一个简单的API而非一系列复杂的事务API(如JTA).</li>
+<li>它支持声明式事务管理。</li>
+<li>它可以和Spring 的多种数据访问技术很好的融合。</li>
+</ul>
+<h2 id="5、spring事务定义的传播规则"><a href="#5、spring事务定义的传播规则" class="headerlink" title="5、spring事务定义的传播规则"></a>5、spring事务定义的传播规则</h2><ul>
+<li>PROPAGATION_REQUIRED: 支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择。</li>
+<li>PROPAGATION_SUPPORTS: 支持当前事务，如果当前没有事务，就以非事务方式执行。</li>
+<li>PROPAGATION_MANDATORY: 支持当前事务，如果当前没有事务，就抛出异常。</li>
+<li>PROPAGATION_REQUIRES_NEW: 新建事务，如果当前存在事务，把当前事务挂起。</li>
+<li>PROPAGATION_NOT_SUPPORTED: 以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。</li>
+<li>PROPAGATION_NEVER: 以非事务方式执行，如果当前存在事务，则抛出异常。</li>
+<li>PROPAGATION_NESTED: 如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则进行与PROPAGATION_REQUIRED类似的操作。</li>
+</ul>
+<h2 id="6、Spring-事务底层原理"><a href="#6、Spring-事务底层原理" class="headerlink" title="6、Spring 事务底层原理"></a>6、Spring 事务底层原理</h2><ul>
+<li>划分处理单元——IoC</li>
+</ul>
+<p>由于spring解决的问题是对单个数据库进行局部事务处理的，具体的实现首先用spring中的IoC划分了事务处理单元。并且将对事务的各种配置放到了ioc容器中（设置事务管理器，设置事务的传播特性及隔离机制）。</p>
+<ul>
+<li>AOP拦截需要进行事务处理的类</li>
+</ul>
+<p>Spring事务处理模块是通过AOP功能来实现声明式事务处理的，具体操作（比如事务实行的配置和读取，事务对象的抽象），用TransactionProxyFactoryBean接口来使用AOP功能，生成proxy代理对象，通过TransactionInterceptor完成对代理方法的拦截，将事务处理的功能编织到拦截的方法中。读取ioc容器事务配置属性，转化为spring事务处理需要的内部数据结构（TransactionAttributeSourceAdvisor），转化为TransactionAttribute表示的数据对象。</p>
+<ul>
+<li>对事务处理实现（事务的生成、提交、回滚、挂起）</li>
+</ul>
+<p>spring委托给具体的事务处理器实现。实现了一个抽象和适配。适配的具体事务处理器：DataSource数据源支持、hibernate数据源事务处理支持、JDO数据源事务处理支持，JPA、JTA数据源事务处理支持。这些支持都是通过设计PlatformTransactionManager、AbstractPlatforTransaction一系列事务处理的支持。 为常用数据源支持提供了一系列的TransactionManager。</p>
+<ul>
+<li>结合</li>
+</ul>
+<p>PlatformTransactionManager实现了TransactionInterception接口，让其与TransactionProxyFactoryBean结合起来，形成一个Spring声明式事务处理的设计体系。</p>
+<h2 id="7、Spring-MVC-运行流程"><a href="#7、Spring-MVC-运行流程" class="headerlink" title="7、Spring MVC 运行流程"></a>7、Spring MVC 运行流程</h2><p>第一步：发起请求到前端控制器(DispatcherServlet)</p>
+<p>第二步：前端控制器请求HandlerMapping查找 Handler（ 可以根据xml配置、注解进行查找）</p>
+<p>第三步：处理器映射器HandlerMapping向前端控制器返回Handler</p>
+<p>第四步：前端控制器调用处理器适配器去执行Handler</p>
+<p>第五步：处理器适配器去执行Handler</p>
+<p>第六步：Handler执行完成给适配器返回ModelAndView</p>
+<p>第七步：处理器适配器向前端控制器返回ModelAndView（ModelAndView是springmvc框架的一个底层对象，包括Model和view）</p>
+<p>第八步：前端控制器请求视图解析器去进行视图解析（根据逻辑视图名解析成真正的视图(jsp)）</p>
+<p>第九步：视图解析器向前端控制器返回View</p>
+<p>第十步：前端控制器进行视图渲染（ 视图渲染将模型数据(在ModelAndView对象中)填充到request域）</p>
+<p>第十一步：前端控制器向用户响应结果</p>
+<h2 id="8、BeanFactory和ApplicationContext有什么区别？"><a href="#8、BeanFactory和ApplicationContext有什么区别？" class="headerlink" title="8、BeanFactory和ApplicationContext有什么区别？"></a>8、BeanFactory和ApplicationContext有什么区别？</h2><p>ApplicationContext提供了一种解决文档信息的方法，一种加载文件资源的方式(如图片)，他们可以向监听他们的beans发送消息。另外，容器或者容器中beans的操作，这些必须以bean工厂的编程方式处理的操作可以在应用上下文中以声明的方式处理。应用上下文实现了MessageSource，该接口用于获取本地消息，实际的实现是可选的。</p>
+<p>相同点：两者都是通过xml配置文件加载bean,ApplicationContext和BeanFacotry相比,提供了更多的扩展功能。</p>
+<p>不同点：BeanFactory是延迟加载,如果Bean的某一个属性没有注入，BeanFacotry加载后，直至第一次使用调用getBean方法才会抛出异常；而ApplicationContext则在初始化自身是检验，这样有利于检查所依赖属性是否注入；所以通常情况下我们选择使用ApplicationContext。</p>
+<h2 id="9、什么是Spring-Beans？"><a href="#9、什么是Spring-Beans？" class="headerlink" title="9、什么是Spring Beans？"></a>9、什么是Spring Beans？</h2><p>Spring Beans是构成Spring应用核心的Java对象。这些对象由Spring IOC容器实例化、组装、管理。这些对象通过容器中配置的元数据创建，例如，使用XML文件中定义的创建。</p>
+<p>在Spring中创建的beans都是单例的beans。在bean标签中有一个属性为”singleton”,如果设为true，该bean是单例的，如果设为false，该bean是原型bean。Singleton属性默认设置为true。因此，spring框架中所有的bean都默认为单例bean。</p>
+<h2 id="10、说一下Spring中支持的bean作用域"><a href="#10、说一下Spring中支持的bean作用域" class="headerlink" title="10、说一下Spring中支持的bean作用域"></a>10、说一下Spring中支持的bean作用域</h2><p>Spring框架支持如下五种不同的作用域：</p>
+<ul>
+<li>singleton：在Spring IOC容器中仅存在一个Bean实例，Bean以单实例的方式存在。</li>
+<li>prototype：一个bean可以定义多个实例。</li>
+<li>request：每次HTTP请求都会创建一个新的Bean。该作用域仅适用于WebApplicationContext环境。</li>
+<li>session：一个HTTP Session定义一个Bean。该作用域仅适用于WebApplicationContext环境。</li>
+<li>globalSession：同一个全局HTTP Session定义一个Bean。该作用域同样仅适用于WebApplicationContext环境。</li>
+</ul>
+<p>bean默认的scope属性是”singleton”。</p>
+<h2 id="11、Spring-的单例实现原理"><a href="#11、Spring-的单例实现原理" class="headerlink" title="11、Spring 的单例实现原理"></a>11、Spring 的单例实现原理</h2><p>Spring框架对单例的支持是采用单例注册表的方式进行实现的，而这个注册表的缓存是HashMap对象，如果配置文件中的配置信息不要求使用单例，Spring会采用新建实例的方式返回对象实例。</p>
+<h2 id="12、解释Spring框架中bean的生命周期"><a href="#12、解释Spring框架中bean的生命周期" class="headerlink" title="12、解释Spring框架中bean的生命周期"></a>12、解释Spring框架中bean的生命周期</h2><p>ApplicationContext容器中，Bean的生命周期流程如上图所示，流程大致如下：</p>
+<p><img src="/images/innerimage/qinzidong/v2-e87d88dc80c2ee64c699d017084b6e4c_hd.jpg" alt="img"></p>
+<p>1.首先容器启动后，会对scope为singleton且非懒加载的bean进行实例化，</p>
+<p>2.按照Bean定义信息配置信息，注入所有的属性，</p>
+<p>3.如果Bean实现了BeanNameAware接口，会回调该接口的setBeanName()方法，传入该Bean的id，此时该Bean就获得了自己在配置文件中的id，</p>
+<p>4.如果Bean实现了BeanFactoryAware接口,会回调该接口的setBeanFactory()方法，传入该Bean的BeanFactory，这样该Bean就获得了自己所在的BeanFactory，</p>
+<p>5.如果Bean实现了ApplicationContextAware接口,会回调该接口的setApplicationContext()方法，传入该Bean的ApplicationContext，这样该Bean就获得了自己所在的ApplicationContext，</p>
+<p>6.如果有Bean实现了BeanPostProcessor接口，则会回调该接口的postProcessBeforeInitialzation()方法，</p>
+<p>7.如果Bean实现了InitializingBean接口，则会回调该接口的afterPropertiesSet()方法，</p>
+<p>8.如果Bean配置了init-method方法，则会执行init-method配置的方法，</p>
+<p>9.如果有Bean实现了BeanPostProcessor接口，则会回调该接口的postProcessAfterInitialization()方法，</p>
+<p>10.经过流程9之后，就可以正式使用该Bean了,对于scope为singleton的Bean,Spring的ioc容器中会缓存一份该bean的实例，而对于scope为prototype的Bean,每次被调用都会new一个新的对象，期生命周期就交给调用方管理了，不再是Spring容器进行管理了</p>
+<p>11.容器关闭后，如果Bean实现了DisposableBean接口，则会回调该接口的destroy()方法，</p>
+<p>12.如果Bean配置了destroy-method方法，则会执行destroy-method配置的方法，至此，整个Bean的生命周期结束</p>
+<h2 id="13、Resource-是如何被查找、加载的？"><a href="#13、Resource-是如何被查找、加载的？" class="headerlink" title="13、Resource 是如何被查找、加载的？"></a>13、Resource 是如何被查找、加载的？</h2><p>Resource 接口是 Spring 资源访问策略的抽象，它本身并不提供任何资源访问实现，具体的资源访问由该接口的实现类完成——每个实现类代表一种资源访问策略。 Spring 为 Resource 接口提供了如下实现类：</p>
+<ul>
+<li>UrlResource：访问网络资源的实现类。</li>
+<li>ClassPathResource：访问类加载路径里资源的实现类。</li>
+<li>FileSystemResource：访问文件系统里资源的实现类。</li>
+<li>ServletContextResource：访问相对于 ServletContext 路径里的资源的实现类：</li>
+<li>InputStreamResource：访问输入流资源的实现类。</li>
+<li>ByteArrayResource：访问字节数组资源的实现类。 这些 Resource 实现类，针对不同的的底层资源，提供了相应的资源访问逻辑，并提供便捷的包装，以利于客户端程序的资源访问。</li>
+</ul>
+<h2 id="14、解释自动装配的各种模式？"><a href="#14、解释自动装配的各种模式？" class="headerlink" title="14、解释自动装配的各种模式？"></a>14、解释自动装配的各种模式？</h2><p>自动装配提供五种不同的模式供Spring容器用来自动装配beans之间的依赖注入:</p>
+<p>no：默认的方式是不进行自动装配，通过手工设置ref 属性来进行装配bean。</p>
+<p>byName：通过参数名自动装配，Spring容器查找beans的属性，这些beans在XML配置文件中被设置为byName。之后容器试图匹配、装配和该bean的属性具有相同名字的bean。</p>
+<p>byType：通过参数的数据类型自动自动装配，Spring容器查找beans的属性，这些beans在XML配置文件中被设置为byType。之后容器试图匹配和装配和该bean的属性类型一样的bean。如果有多个bean符合条件，则抛出错误。</p>
+<p>constructor：这个同byType类似，不过是应用于构造函数的参数。如果在BeanFactory中不是恰好有一个bean与构造函数参数相同类型，则抛出一个严重的错误。</p>
+<p>autodetect：如果有默认的构造方法，通过 construct的方式自动装配，否则使用 byType的方式自动装配。</p>
+<h2 id="15、Spring中的依赖注入是什么？"><a href="#15、Spring中的依赖注入是什么？" class="headerlink" title="15、Spring中的依赖注入是什么？"></a>15、Spring中的依赖注入是什么？</h2><p>依赖注入作为控制反转(IOC)的一个层面，可以有多种解释方式。在这个概念中，你不用创建对象而只需要描述如何创建它们。你不必通过代码直接的将组件和服务连接在一起，而是通过配置文件说明哪些组件需要什么服务。之后IOC容器负责衔接。</p>
+<h2 id="16、有哪些不同类型的IOC-依赖注入-？"><a href="#16、有哪些不同类型的IOC-依赖注入-？" class="headerlink" title="16、有哪些不同类型的IOC(依赖注入)？"></a>16、有哪些不同类型的IOC(依赖注入)？</h2><p>构造器依赖注入：构造器依赖注入在容器触发构造器的时候完成，该构造器有一系列的参数，每个参数代表注入的对象。</p>
+<p>Setter方法依赖注入：首先容器会触发一个无参构造函数或无参静态工厂方法实例化对象，之后容器调用bean中的setter方法完成Setter方法依赖注入。</p>
+<h2 id="17、你推荐哪种依赖注入？构造器依赖注入还是Setter方法依赖注入？"><a href="#17、你推荐哪种依赖注入？构造器依赖注入还是Setter方法依赖注入？" class="headerlink" title="17、你推荐哪种依赖注入？构造器依赖注入还是Setter方法依赖注入？"></a>17、你推荐哪种依赖注入？构造器依赖注入还是Setter方法依赖注入？</h2><p>你可以同时使用两种方式的依赖注入，最好的选择是使用构造器参数实现强制依赖注入，使用setter方法实现可选的依赖关系。</p>
+<h2 id="18、Spring-IOC-如何实现"><a href="#18、Spring-IOC-如何实现" class="headerlink" title="18、Spring IOC 如何实现"></a>18、Spring IOC 如何实现</h2><p>Spring中的 org.springframework.beans 包和 org.springframework.context包构成了Spring框架IoC容器的基础。</p>
+<p>BeanFactory 接口提供了一个先进的配置机制，使得任何类型的对象的配置成为可能。ApplicationContex接口对BeanFactory（是一个子接口）进行了扩展，在BeanFactory的基础上添加了其他功能，比如与Spring的AOP更容易集成，也提供了处理message resource的机制（用于国际化）、事件传播以及应用层的特别配置，比如针对Web应用的WebApplicationContext。</p>
+<p>org.springframework.beans.factory.BeanFactory 是Spring IoC容器的具体实现，用来包装和管理前面提到的各种bean。BeanFactory接口是Spring IoC 容器的核心接口。</p>
+<h2 id="19、Spring-IoC容器是什么？"><a href="#19、Spring-IoC容器是什么？" class="headerlink" title="19、Spring IoC容器是什么？"></a>19、Spring IoC容器是什么？</h2><p>Spring IOC负责创建对象、管理对象(通过依赖注入)、整合对象、配置对象以及管理这些对象的生命周期。</p>
+<h2 id="20、IoC有什么优点？"><a href="#20、IoC有什么优点？" class="headerlink" title="20、IoC有什么优点？"></a>20、IoC有什么优点？</h2><p>IOC或依赖注入减少了应用程序的代码量。它使得应用程序的测试很简单，因为在单元测试中不再需要单例或JNDI查找机制。简单的实现以及较少的干扰机制使得松耦合得以实现。IOC容器支持勤性单例及延迟加载服务。</p>
+<h2 id="21、解释AOP模块"><a href="#21、解释AOP模块" class="headerlink" title="21、解释AOP模块"></a>21、解释AOP模块</h2><p>AOP模块用来开发Spring应用程序中具有切面性质的部分。该模块的大部分服务由AOP Aliance提供，这就保证了Spring框架和其他AOP框架之间的互操作性。另外，该模块将元数据编程引入到了Spring。</p>
+<h2 id="22、Spring面向切面编程-AOP"><a href="#22、Spring面向切面编程-AOP" class="headerlink" title="22、Spring面向切面编程(AOP)"></a>22、Spring面向切面编程(AOP)</h2><p>面向切面编程（AOP）：允许程序员模块化横向业务逻辑，或定义核心部分的功能，例如日志管理和事务管理。</p>
+<p>切面(Aspect) ：AOP的核心就是切面，它将多个类的通用行为封装为可重用的模块。该模块含有一组API提供 cross-cutting功能。例如,日志模块称为日志的AOP切面。根据需求的不同，一个应用程序可以有若干切面。在Spring AOP中，切面通过带有@Aspect注解的类实现。</p>
+<p>通知(Advice)：通知表示在方法执行前后需要执行的动作。实际上它是Spring AOP框架在程序执行过程中触发的一些代码。Spring切面可以执行一下五种类型的通知:</p>
+<ul>
+<li>before(前置通知)：在一个方法之前执行的通知。</li>
+<li>after(最终通知)：当某连接点退出的时候执行的通知（不论是正常返回还是异常退出）。</li>
+<li>after-returning(后置通知)：在某连接点正常完成后执行的通知。</li>
+<li>after-throwing(异常通知)：在方法抛出异常退出时执行的通知。</li>
+<li>around(环绕通知)：在方法调用前后触发的通知。</li>
+</ul>
+<p>切入点(Pointcut)：切入点是一个或一组连接点，通知将在这些位置执行。可以通过表达式或匹配的方式指明切入点。</p>
+<p>引入：引入允许我们在已有的类上添加新的方法或属性。</p>
+<p>目标对象：被一个或者多个切面所通知的对象。它通常是一个代理对象。也被称做被通知（advised）对象。</p>
+<p>代理：代理是将通知应用到目标对象后创建的对象。从客户端的角度看，代理对象和目标对象是一样的。有以下几种代理：</p>
+<ul>
+<li>BeanNameAutoProxyCreator：bean名称自动代理创建器</li>
+<li>DefaultAdvisorAutoProxyCreator：默认通知者自动代理创建器</li>
+<li>Metadata autoproxying：元数据自动代理</li>
+</ul>
+<p>织入：将切面和其他应用类型或对象连接起来创建一个通知对象的过程。织入可以在编译、加载或运行时完成。</p>
+<h2 id="23、Spring-AOP-实现原理"><a href="#23、Spring-AOP-实现原理" class="headerlink" title="23、Spring AOP 实现原理"></a>23、Spring AOP 实现原理</h2><p>实现AOP的技术，主要分为两大类：</p>
+<ul>
+<li>一是采用动态代理技术，利用截取消息的方式，对该消息进行装饰，以取代原有对象行为的执行；</li>
+<li>二是采用静态织入的方式，引入特定的语法创建“方面”，从而使得编译器可以在编译期间织入有关“方面”的代码。</li>
+</ul>
+<p>Spring AOP 的实现原理其实很简单：AOP 框架负责动态地生成 AOP 代理类，这个代理类的方法则由 Advice和回调目标对象的方法所组成, 并将该对象可作为目标对象使用。AOP 代理包含了目标对象的全部方法，但AOP代理中的方法与目标对象的方法存在差异，AOP方法在特定切入点添加了增强处理，并回调了目标对象的方法。</p>
+<p>Spring AOP使用动态代理技术在运行期织入增强代码。使用两种代理机制：基于JDK的动态代理（JDK本身只提供接口的代理）和基于CGlib的动态代理。</p>
+<ul>
+<li><ul>
+<li><ul>
+<li>(1) JDK的动态代理<br>JDK的动态代理主要涉及java.lang.reflect包中的两个类：Proxy和InvocationHandler。其中InvocationHandler只是一个接口，可以通过实现该接口定义横切逻辑，并通过反射机制调用目标类的代码，动态的将横切逻辑与业务逻辑织在一起。而Proxy利用InvocationHandler动态创建一个符合某一接口的实例，生成目标类的代理对象。<br>其代理对象必须是某个接口的实现, 它是通过在运行期间创建一个接口的实现类来完成对目标对象的代理.只能实现接口的类生成代理,而不能针对类</li>
+<li>(2)CGLib<br>CGLib采用底层的字节码技术，为一个类创建子类，并在子类中采用方法拦截的技术拦截所有父类的调用方法，并顺势织入横切逻辑.它运行期间生成的代理对象是目标类的扩展子类.所以无法通知final、private的方法,因为它们不能被覆写.是针对类实现代理,主要是为指定的类生成一个子类,覆盖其中方法.<br>在spring中默认情况下使用JDK动态代理实现AOP,如果proxy-target-class设置为true或者使用了优化策略那么会使用CGLIB来创建动态代理.Spring　AOP在这两种方式的实现上基本一样．以JDK代理为例，会使用JdkDynamicAopProxy来创建代理，在invoke()方法首先需要织入到当前类的增强器封装到拦截器链中，然后递归的调用这些拦截器完成功能的织入．最终返回代理对象．</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>-Spring -面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Spring事务管理（应对面试）</title>
+    <url>/2020/04/27/Spring%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%EF%BC%88%E5%BA%94%E5%AF%B9%E9%9D%A2%E8%AF%95%EF%BC%89/</url>
+    <content><![CDATA[<h2 id="1-初步理解"><a href="#1-初步理解" class="headerlink" title="1.初步理解"></a>1.初步理解</h2><p>理解事务之前，先讲一个你日常生活中最常干的事：取钱。<br>比如你去ATM机取1000块钱，大体有两个步骤：首先输入密码金额，银行卡扣掉1000元钱；然后ATM出1000元钱。这两个步骤必须是要么都执行要么都不执行。如果银行卡扣除了1000块但是ATM出钱失败的话，你将会损失1000元；如果银行卡扣钱失败但是ATM却出了1000块，那么银行将损失1000元。所以，如果一个步骤成功另一个步骤失败对双方都不是好事，如果不管哪一个步骤失败了以后，整个取钱过程都能回滚，也就是完全取消所有操作的话，这对双方都是极好的。<br>事务就是用来解决类似问题的。事务是一系列的动作，它们综合在一起才是一个完整的工作单元，这些动作必须全部完成，如果有一个失败的话，那么事务就会回滚到最开始的状态，仿佛什么都没发生过一样。<br>在企业级应用程序开发中，事务管理必不可少的技术，用来确保数据的完整性和一致性。</p>
+<p>##2.事务有四个特性：ACID<br>原子性（Atomicity）：事务是一个原子操作，由一系列动作组成。事务的原子性确保动作要么全部完成，要么完全不起作用。<br>一致性（Consistency）：一旦事务完成（不管成功还是失败），系统必须确保它所建模的业务处于一致的状态，而不会是部分完成部分失败。在现实中的数据不应该被破坏。<br>隔离性（Isolation）：可能有许多事务会同时处理相同的数据，因此每个事务都应该与其他事务隔离开来，防止数据损坏。<br>持久性（Durability）：一旦事务完成，无论发生什么系统错误，它的结果都不应该受到影响，这样就能从任何系统崩溃中恢复过来。通常情况下，事务的结果被写到持久化存储器中。</p>
+<p>##3.事务的传播行为<br>PROPAGATION_REQUIRED    表示当前方法必须运行在事务中。如果当前事务存在，方法将会在该事务中运行。否则，会启动一个新的事务<br>PROPAGATION_SUPPORTS    表示当前方法不需要事务上下文，但是如果存在当前事务的话，那么该方法会在这个事务中运行<br>PROPAGATION_MANDATORY    表示该方法必须在事务中运行，如果当前事务不存在，则会抛出一个异常<br>PROPAGATION_REQUIRED_NEW    表示当前方法必须运行在它自己的事务中。一个新的事务将被启动。如果存在当前事务，在该方法执行期间，当前事务会被挂起。如果使用JTATransactionManager的话，则需要访问TransactionManager<br>PROPAGATION_NOT_SUPPORTED    表示该方法不应该运行在事务中。如果存在当前事务，在该方法运行期间，当前事务将被挂起。如果使用JTATransactionManager的话，则需要访问TransactionManager<br>PROPAGATION_NEVER    表示当前方法不应该运行在事务上下文中。如果当前正有一个事务在运行，则会抛出异常<br>PROPAGATION_NESTED    表示如果当前已经存在一个事务，那么该方法将会在嵌套事务中运行。嵌套的事务可以独立于当前事务进行单独地提交或回滚。如果当前事务不存在，那么其行为与PROPAGATION_REQUIRED一样。注意各厂商对这种传播行为的支持是有所差异的。可以参考资源管理器的文档来确认它们是否支持嵌套事务</p>
+<h2 id="4-事务的隔离级别"><a href="#4-事务的隔离级别" class="headerlink" title="4.事务的隔离级别"></a>4.事务的隔离级别</h2><p>ISOLATION_DEFAULT    使用后端数据库默认的隔离级别<br>ISOLATION_READ_UNCOMMITTED（读未提交）    最低的隔离级别，允许读取尚未提交的数据变更，可能会导致脏读、幻读或不可重复读<br>ISOLATION_READ_COMMITTED（读已提交）    允许读取并发事务已经提交的数据，可以阻止脏读，但是幻读或不可重复读仍有可能发生<br>ISOLATION_REPEATABLE_READ（可重复读）    对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，可以阻止脏读和不可重复读，但幻读仍有可能发生<br>ISOLATION_SERIALIZABLE（串行化）    最高的隔离级别，完全服从ACID的隔离级别，确保阻止脏读、不可重复读以及幻读，也是最慢的事务隔离级别，因为它通常是通过完全锁定事务相关的数据库表来实现的。</p>
+]]></content>
+      <tags>
+        <tag>-Spring -面试</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>JVM方法区精简（背诵全文）</title>
     <url>/2020/04/21/JVM%E6%96%B9%E6%B3%95%E5%8C%BA%E7%B2%BE%E7%AE%80%EF%BC%88%E8%83%8C%E8%AF%B5%E5%85%A8%E6%96%87%EF%BC%89/</url>
     <content><![CDATA[<p>JAVA虚拟机方法区介绍</p>

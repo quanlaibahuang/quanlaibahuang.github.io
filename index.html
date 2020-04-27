@@ -65,6 +65,160 @@
     
     
     
+    <article id="post-Spring面试详细总结" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/27/Spring%E9%9D%A2%E8%AF%95%E8%AF%A6%E7%BB%86%E6%80%BB%E7%BB%93/"
+    >Spring面试详细总结</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/27/Spring%E9%9D%A2%E8%AF%95%E8%AF%A6%E7%BB%86%E6%80%BB%E7%BB%93/" class="article-date">
+  <time datetime="2020-04-27T02:14:45.000Z" itemprop="datePublished">2020-04-27</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="1、什么是Spring？"><a href="#1、什么是Spring？" class="headerlink" title="1、什么是Spring？"></a>1、什么是Spring？</h2><p>Spring是一个开源的Java EE开发框架。Spring框架的核心功能可以应用在任何Java应用程序中，但对Java EE平台上的Web应用程序有更好的扩展性。Spring框架的目标是使得Java EE应用程序的开发更加简捷，通过使用POJO为基础的编程模型促进良好的编程风格。</p>
+<h2 id="2、Spring有哪些优点？"><a href="#2、Spring有哪些优点？" class="headerlink" title="2、Spring有哪些优点？"></a>2、Spring有哪些优点？</h2><p>轻量级：Spring在大小和透明性方面绝对属于轻量级的，基础版本的Spring框架大约只有2MB。</p>
+<p>控制反转(IOC)：Spring使用控制反转技术实现了松耦合。依赖被注入到对象，而不是创建或寻找依赖对象。</p>
+<p>面向切面编程(AOP)： Spring支持面向切面编程，同时把应用的业务逻辑与系统的服务分离开来。</p>
+<p>容器：Spring包含并管理应用程序对象的配置及生命周期。</p>
+<p>MVC框架：Spring的web框架是一个设计优良的web MVC框架，很好的取代了一些web框架。</p>
+<p>事务管理：Spring对下至本地业务上至全局业务(JAT)提供了统一的事务管理接口。</p>
+<p>异常处理：Spring提供一个方便的API将特定技术的异常(由JDBC, Hibernate, 或JDO抛出)转化为一致的、Unchecked异常。</p>
+<h2 id="3、Spring-事务实现方式"><a href="#3、Spring-事务实现方式" class="headerlink" title="3、Spring 事务实现方式"></a>3、Spring 事务实现方式</h2><ul>
+<li>编程式事务管理：这意味着你可以通过编程的方式管理事务，这种方式带来了很大的灵活性，但很难维护。</li>
+<li>声明式事务管理：这种方式意味着你可以将事务管理和业务代码分离。你只需要通过注解或者XML配置管理事务。</li>
+</ul>
+      
+      <a class="article-more-link" href="/2020/04/27/Spring%E9%9D%A2%E8%AF%95%E8%AF%A6%E7%BB%86%E6%80%BB%E7%BB%93/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%9D%A2%E8%AF%95/" rel="tag">-Spring -面试</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-Spring事务管理（应对面试）" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/27/Spring%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%EF%BC%88%E5%BA%94%E5%AF%B9%E9%9D%A2%E8%AF%95%EF%BC%89/"
+    >Spring事务管理（应对面试）</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/27/Spring%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%EF%BC%88%E5%BA%94%E5%AF%B9%E9%9D%A2%E8%AF%95%EF%BC%89/" class="article-date">
+  <time datetime="2020-04-27T02:06:55.000Z" itemprop="datePublished">2020-04-27</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="1-初步理解"><a href="#1-初步理解" class="headerlink" title="1.初步理解"></a>1.初步理解</h2><p>理解事务之前，先讲一个你日常生活中最常干的事：取钱。<br>比如你去ATM机取1000块钱，大体有两个步骤：首先输入密码金额，银行卡扣掉1000元钱；然后ATM出1000元钱。这两个步骤必须是要么都执行要么都不执行。如果银行卡扣除了1000块但是ATM出钱失败的话，你将会损失1000元；如果银行卡扣钱失败但是ATM却出了1000块，那么银行将损失1000元。所以，如果一个步骤成功另一个步骤失败对双方都不是好事，如果不管哪一个步骤失败了以后，整个取钱过程都能回滚，也就是完全取消所有操作的话，这对双方都是极好的。<br>事务就是用来解决类似问题的。事务是一系列的动作，它们综合在一起才是一个完整的工作单元，这些动作必须全部完成，如果有一个失败的话，那么事务就会回滚到最开始的状态，仿佛什么都没发生过一样。<br>在企业级应用程序开发中，事务管理必不可少的技术，用来确保数据的完整性和一致性。</p>
+<p>##2.事务有四个特性：ACID<br>原子性（Atomicity）：事务是一个原子操作，由一系列动作组成。事务的原子性确保动作要么全部完成，要么完全不起作用。<br>一致性（Consistency）：一旦事务完成（不管成功还是失败），系统必须确保它所建模的业务处于一致的状态，而不会是部分完成部分失败。在现实中的数据不应该被破坏。<br>隔离性（Isolation）：可能有许多事务会同时处理相同的数据，因此每个事务都应该与其他事务隔离开来，防止数据损坏。<br>持久性（Durability）：一旦事务完成，无论发生什么系统错误，它的结果都不应该受到影响，这样就能从任何系统崩溃中恢复过来。通常情况下，事务的结果被写到持久化存储器中。</p>
+<p>##3.事务的传播行为<br>PROPAGATION_REQUIRED    表示当前方法必须运行在事务中。如果当前事务存在，方法将会在该事务中运行。否则，会启动一个新的事务<br>PROPAGATION_SUPPORTS    表示当前方法不需要事务上下文，但是如果存在当前事务的话，那么该方法会在这个事务中运行<br>PROPAGATION_MANDATORY    表示该方法必须在事务中运行，如果当前事务不存在，则会抛出一个异常<br>PROPAGATION_REQUIRED_NEW    表示当前方法必须运行在它自己的事务中。一个新的事务将被启动。如果存在当前事务，在该方法执行期间，当前事务会被挂起。如果使用JTATransactionManager的话，则需要访问TransactionManager<br>PROPAGATION_NOT_SUPPORTED    表示该方法不应该运行在事务中。如果存在当前事务，在该方法运行期间，当前事务将被挂起。如果使用JTATransactionManager的话，则需要访问TransactionManager<br>PROPAGATION_NEVER    表示当前方法不应该运行在事务上下文中。如果当前正有一个事务在运行，则会抛出异常<br>PROPAGATION_NESTED    表示如果当前已经存在一个事务，那么该方法将会在嵌套事务中运行。嵌套的事务可以独立于当前事务进行单独地提交或回滚。如果当前事务不存在，那么其行为与PROPAGATION_REQUIRED一样。注意各厂商对这种传播行为的支持是有所差异的。可以参考资源管理器的文档来确认它们是否支持嵌套事务</p>
+<h2 id="4-事务的隔离级别"><a href="#4-事务的隔离级别" class="headerlink" title="4.事务的隔离级别"></a>4.事务的隔离级别</h2><p>ISOLATION_DEFAULT    使用后端数据库默认的隔离级别<br>ISOLATION_READ_UNCOMMITTED（读未提交）    最低的隔离级别，允许读取尚未提交的数据变更，可能会导致脏读、幻读或不可重复读<br>ISOLATION_READ_COMMITTED（读已提交）    允许读取并发事务已经提交的数据，可以阻止脏读，但是幻读或不可重复读仍有可能发生<br>ISOLATION_REPEATABLE_READ（可重复读）    对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，可以阻止脏读和不可重复读，但幻读仍有可能发生<br>ISOLATION_SERIALIZABLE（串行化）    最高的隔离级别，完全服从ACID的隔离级别，确保阻止脏读、不可重复读以及幻读，也是最慢的事务隔离级别，因为它通常是通过完全锁定事务相关的数据库表来实现的。</p>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-%E9%9D%A2%E8%AF%95/" rel="tag">-Spring -面试</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
     <article id="post-JVM方法区精简（背诵全文）" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -654,161 +808,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Error/" rel="tag">Error</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-什么是幂等性" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/12/%E4%BB%80%E4%B9%88%E6%98%AF%E5%B9%82%E7%AD%89%E6%80%A7/"
-    >什么是幂等性</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/12/%E4%BB%80%E4%B9%88%E6%98%AF%E5%B9%82%E7%AD%89%E6%80%A7/" class="article-date">
-  <time datetime="2020-04-12T08:10:31.000Z" itemprop="datePublished">2020-04-12</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>HTTP 幂等方法，是指无论调用多少次都不会有不同结果的 HTTP 方法。不管你调用一次，还是调用一百次，一千次，结果都是相同的。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET     /tickets       <span class="comment"># 获取ticket列表</span></span><br><span class="line">GET     /tickets/12    <span class="comment"># 查看某个具体的ticket</span></span><br><span class="line">POST    /tickets       <span class="comment"># 新建一个ticket</span></span><br><span class="line">PUT     /tickets/12    <span class="comment"># 更新ticket 12</span></span><br><span class="line">PATCH   /tickets/12    <span class="comment"># 更新ticket 12</span></span><br><span class="line">DELETE  /tickets/12    <span class="comment"># 删除ticekt 12</span></span><br></pre></td></tr></table></figure>
-      
-      <a class="article-more-link" href="/2020/04/12/%E4%BB%80%E4%B9%88%E6%98%AF%E5%B9%82%E7%AD%89%E6%80%A7/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Restful-%E5%B9%82%E7%AD%89%E6%80%A7/" rel="tag">-Restful -幂等性</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-关于单例模式" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/12/%E5%85%B3%E4%BA%8E%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/"
-    >关于单例模式</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/12/%E5%85%B3%E4%BA%8E%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" class="article-date">
-  <time datetime="2020-04-12T07:43:14.000Z" itemprop="datePublished">2020-04-12</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>很久之前看到一篇讲单例的文章，看完才知道看似简单的单例模式，其实有很大的考究，最近又看到了几篇类似的文章，发现单例其实很复杂。费了很大力气，理顺了思路，顿时又觉得单例模式可以不用那么复杂了。</p>
-<p>首先，我们得问自己一个问题：为什么要使用单例？</p>
-<h2 id="为什么要使用单例"><a href="#为什么要使用单例" class="headerlink" title="为什么要使用单例"></a>为什么要使用单例</h2><p>单例，顾名思义，就是让一个类只存在一个实例对象，那么什么时候我们会需要单例呢？最常见的有以下两种情形：</p>
-<ul>
-<li><strong>无状态的工具类</strong>：比如日志工具类，不管是在哪里使用，我们需要的只是它帮我们记录日志信息，除此之外，并不需要在它的实例对象上存储任何状态，这时候我们就只需要一个实例对象即可。</li>
-<li><strong>全局信息类</strong>：比如我们在一个类上记录网站的访问次数，我们不希望有的访问被记录在对象A上，有的却记录在对象B上，这时候我们就让这个类成为单例。</li>
-</ul>
-<p>单例起到的好处主要有两点：</p>
-<ul>
-<li>节省内存</li>
-<li>方便管理</li>
-</ul>
-<p>值得注意的是，单例往往都可以通过static来实现，把一个实例方法变成静态方法，或者把一个实例变量变成静态变量，都可以起到单例的效果。在我看来，这只是面向对象和面向过程的区别。</p>
-      
-      <a class="article-more-link" href="/2020/04/12/%E5%85%B3%E4%BA%8E%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%8D%95%E4%BE%8B/" rel="tag">-设计模式 -单例</a></li></ul>
 
 
     </footer>

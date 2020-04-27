@@ -65,6 +65,161 @@
     
     
     
+    <article id="post-什么是幂等性" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/%E4%BB%80%E4%B9%88%E6%98%AF%E5%B9%82%E7%AD%89%E6%80%A7/"
+    >什么是幂等性</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/%E4%BB%80%E4%B9%88%E6%98%AF%E5%B9%82%E7%AD%89%E6%80%A7/" class="article-date">
+  <time datetime="2020-04-12T08:10:31.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>HTTP 幂等方法，是指无论调用多少次都不会有不同结果的 HTTP 方法。不管你调用一次，还是调用一百次，一千次，结果都是相同的。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET     /tickets       <span class="comment"># 获取ticket列表</span></span><br><span class="line">GET     /tickets/12    <span class="comment"># 查看某个具体的ticket</span></span><br><span class="line">POST    /tickets       <span class="comment"># 新建一个ticket</span></span><br><span class="line">PUT     /tickets/12    <span class="comment"># 更新ticket 12</span></span><br><span class="line">PATCH   /tickets/12    <span class="comment"># 更新ticket 12</span></span><br><span class="line">DELETE  /tickets/12    <span class="comment"># 删除ticekt 12</span></span><br></pre></td></tr></table></figure>
+      
+      <a class="article-more-link" href="/2020/04/12/%E4%BB%80%E4%B9%88%E6%98%AF%E5%B9%82%E7%AD%89%E6%80%A7/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Restful-%E5%B9%82%E7%AD%89%E6%80%A7/" rel="tag">-Restful -幂等性</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-关于单例模式" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/12/%E5%85%B3%E4%BA%8E%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/"
+    >关于单例模式</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/12/%E5%85%B3%E4%BA%8E%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" class="article-date">
+  <time datetime="2020-04-12T07:43:14.000Z" itemprop="datePublished">2020-04-12</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>很久之前看到一篇讲单例的文章，看完才知道看似简单的单例模式，其实有很大的考究，最近又看到了几篇类似的文章，发现单例其实很复杂。费了很大力气，理顺了思路，顿时又觉得单例模式可以不用那么复杂了。</p>
+<p>首先，我们得问自己一个问题：为什么要使用单例？</p>
+<h2 id="为什么要使用单例"><a href="#为什么要使用单例" class="headerlink" title="为什么要使用单例"></a>为什么要使用单例</h2><p>单例，顾名思义，就是让一个类只存在一个实例对象，那么什么时候我们会需要单例呢？最常见的有以下两种情形：</p>
+<ul>
+<li><strong>无状态的工具类</strong>：比如日志工具类，不管是在哪里使用，我们需要的只是它帮我们记录日志信息，除此之外，并不需要在它的实例对象上存储任何状态，这时候我们就只需要一个实例对象即可。</li>
+<li><strong>全局信息类</strong>：比如我们在一个类上记录网站的访问次数，我们不希望有的访问被记录在对象A上，有的却记录在对象B上，这时候我们就让这个类成为单例。</li>
+</ul>
+<p>单例起到的好处主要有两点：</p>
+<ul>
+<li>节省内存</li>
+<li>方便管理</li>
+</ul>
+<p>值得注意的是，单例往往都可以通过static来实现，把一个实例方法变成静态方法，或者把一个实例变量变成静态变量，都可以起到单例的效果。在我看来，这只是面向对象和面向过程的区别。</p>
+      
+      <a class="article-more-link" href="/2020/04/12/%E5%85%B3%E4%BA%8E%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%8D%95%E4%BE%8B/" rel="tag">-设计模式 -单例</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
     <article id="post-Redis实现分布式锁2" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -892,181 +1047,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ResultMap-%E5%88%86%E9%A1%B5/" rel="tag">-ResultMap -分页</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-MyBatis02：CRUD操作及配置解析" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/09/MyBatis02%EF%BC%9ACRUD%E6%93%8D%E4%BD%9C%E5%8F%8A%E9%85%8D%E7%BD%AE%E8%A7%A3%E6%9E%90/"
-    >MyBatis02：CRUD操作及配置解析</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/09/MyBatis02%EF%BC%9ACRUD%E6%93%8D%E4%BD%9C%E5%8F%8A%E9%85%8D%E7%BD%AE%E8%A7%A3%E6%9E%90/" class="article-date">
-  <time datetime="2020-04-09T00:22:30.000Z" itemprop="datePublished">2020-04-09</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>#CRUD操作</p>
-<blockquote>
-<p>  namespace</p>
-</blockquote>
-<ol>
-<li>将上面案例中的UserMapper接口改名为 UserDao；</li>
-<li>将UserMapper.xml中的namespace改为为UserDao的路径 .</li>
-<li>再次测试</li>
-</ol>
-<p><strong>结论：</strong></p>
-<p>配置文件中namespace中的名称为对应Mapper接口或者Dao接口的完整包名,必须一致！</p>
-<blockquote>
-<p>  select</p>
-</blockquote>
-<ul>
-<li><p>select标签是mybatis中最常用的标签之一</p>
-</li>
-<li><p>select语句有很多属性可以详细配置每一条SQL语句</p>
-</li>
-<li><ul>
-<li>SQL语句返回值类型。【完整的类名或者别名】</li>
-<li>传入SQL语句的参数类型 。【万能的Map，可以多尝试使用】</li>
-<li>命名空间中唯一的标识符</li>
-<li>接口中的方法名与映射文件中的SQL语句ID 一一对应</li>
-<li>id</li>
-<li>parameterType</li>
-<li>resultType</li>
-</ul>
-</li>
-<li>
-      
-      <a class="article-more-link" href="/2020/04/09/MyBatis02%EF%BC%9ACRUD%E6%93%8D%E4%BD%9C%E5%8F%8A%E9%85%8D%E7%BD%AE%E8%A7%A3%E6%9E%90/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mybatis-CRUD-%E9%85%8D%E7%BD%AE/" rel="tag">-Mybatis -CRUD -配置</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-SpringMVC009-文件上传和下载" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/08/SpringMVC009-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%92%8C%E4%B8%8B%E8%BD%BD/"
-    >SpringMVC009:文件上传和下载</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/08/SpringMVC009-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%92%8C%E4%B8%8B%E8%BD%BD/" class="article-date">
-  <time datetime="2020-04-08T12:15:33.000Z" itemprop="datePublished">2020-04-08</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="文件上传和下载"><a href="#文件上传和下载" class="headerlink" title="文件上传和下载"></a>文件上传和下载</h1><blockquote>
-<p>  准备工作</p>
-</blockquote>
-<p>文件上传是项目开发中最常见的功能之一 ,springMVC 可以很好的支持文件上传，但是SpringMVC上下文中默认没有装配MultipartResolver，因此默认情况下其不能处理文件上传工作。如果想使用Spring的文件上传功能，则需要在上下文中配置MultipartResolver。</p>
-<p>前端表单要求：为了能上传文件，必须将表单的method设置为POST，并将enctype设置为multipart/form-data。只有在这样的情况下，浏览器才会把用户选择的文件以二进制数据发送给服务器；</p>
-      
-      <a class="article-more-link" href="/2020/04/08/SpringMVC009-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%92%8C%E4%B8%8B%E8%BD%BD/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD/" rel="tag">-文件上传 -文件下载</a></li></ul>
 
 
     </footer>
